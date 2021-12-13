@@ -5,12 +5,17 @@ const PORT = 5000;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.get('/test', (req, res) => {
+app.get('/api/test', (req, res) => {
   res.send('test');
 });
 
-app.post('/signup', (req, res) => {
+app.post('/api/login', (req, res) => {
+  res.status(200).send();
+});
+
+app.post('/api/signup', (req, res) => {
   console.log(req.body);
+  res.status(200).send();
 });
 
 app.listen(PORT, () => {

@@ -9,6 +9,7 @@ const MainContainer = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  padding: 40px;
 `;
 
 const Logo = styled.h1`
@@ -17,7 +18,7 @@ const Logo = styled.h1`
   line-height: 0.9;
 
   &:nth-child(2) {
-    margin-left: -33px;
+    // margin-left: -33px;
   }
   &:nth-child(3) {
     margin-bottom: 33px;
@@ -48,7 +49,7 @@ const Main = () => {
     <MainContainer>
       <Logo>우리</Logo>
       <Logo>동네</Logo>
-      <Logo>덕후</Logo>
+      <Logo>오타쿠</Logo>
       <Link to="/login">
         <UserButton>로그인</UserButton>
       </Link>
