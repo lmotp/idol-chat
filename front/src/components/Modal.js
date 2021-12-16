@@ -51,33 +51,10 @@ const ModalContent = styled.div`
   overflow: hidden;
 `;
 
-const ModalButtonBox = styled.div`
-  padding-top: 20px;
-  text-align: center;
-  border-top: 1px solid black;
-`;
-
-const ModalButton = styled.button`
-  padding: 8px 16px;
-  margin-right: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  color: white;
-  background: black;
-  cursor: pointer;
-  display: inline-block;
-  border-radius: 3px;
-`;
-
-const Modal = ({ modalState, children, ModalClose }) => {
+const Modal = ({ modalState, children }) => {
   return (
     <ModalContainer modalState={modalState}>
-      <ModalContent>
-        {children}
-        <ModalButtonBox>
-          <ModalButton onClick={ModalClose}>취소</ModalButton>
-        </ModalButtonBox>
-      </ModalContent>
+      <ModalContent>{children}</ModalContent>
     </ModalContainer>
   );
 };

@@ -6,7 +6,7 @@ export const Form = styled.form`
 `;
 
 export const InputWrap = styled.div`
-  margin-bottom: 32px;
+  margin-bottom: 50px;
 `;
 
 export const Input = styled.input`
@@ -48,7 +48,7 @@ export const AuthButton = styled.button`
 `;
 
 export const AuthButtonWrap = styled.div`
-  margin-top: 70px;
+  margin-top: 60px;
   text-align: center;
 `;
 
@@ -59,7 +59,6 @@ export const ErrorValue = styled.div`
 `;
 
 export const SignUpItemBox = styled.div`
-  margin-top: 10px;
   display: flex;
   align-items: flex-end;
 `;

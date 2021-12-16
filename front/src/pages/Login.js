@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
@@ -72,8 +72,21 @@ const Login = () => {
       return errorFunc(1, '비밀번호를 입력해주세요');
     }
 
-    axios.post('/api/login', info).then(() => navigate('/'));
+    axios.post('/api/auth/login', info, { withCredentials: true }).then(({ data }) => {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+      if (data.loginSuccess) {
+        navigate('/');
+      }
+    });
   };
+
+  useEffect(() => {
+    axios.get('/api/auth/auth-check').then(({ data }) => {
+      if (data.authCheckTrue) {
+        navigate('/');
+      }
+    });
+  }, [navigate]);
 
   return (
     <>

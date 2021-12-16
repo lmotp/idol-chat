@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -18,6 +18,7 @@ const Point = styled.span`
 
 const LabelGender = styled.label`
   padding: 12px 20px;
+  margin-top: 10px;
   margin-right: 6px;
   font-size: 16px;
   font-weight: 700;
@@ -55,7 +56,6 @@ export const SignUp = () => {
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
   const nicknameRef = useRef(null);
-  const locationRef = useRef(null);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const [errorCode, setErrorCode] = useState();
@@ -110,31 +110,32 @@ export const SignUp = () => {
   const signUp = (e) => {
     e.preventDefault();
 
+    const passwordConfirm = passwordConfirmRef.current.value;
+
     const info = {
       email: emailRef.current.value,
       password: passwordRef.current.value,
-      passwordConfirm: passwordConfirmRef.current.value,
       nickname: nicknameRef.current.value,
       gender: radioSelect,
-      nowLocation: locationRef.current.value,
+      location: nowLocation,
     };
 
     if (!info.email) {
       return errorFunc(0, '이메일 형식에 맞게 작성해주세요.');
     }
 
-    if (!info.password || !info.passwordConfirm) {
+    if (!info.password || !passwordConfirm) {
       return errorFunc(1, '비밀번호를 입력해주세요');
     }
 
     if (
       !(info.password.length <= 16 && info.password.length >= 8) ||
-      !(info.passwordConfirm.length <= 16 && info.passwordConfirm.length >= 8)
+      !(passwordConfirm.length <= 16 && passwordConfirm.length >= 8)
     ) {
       return errorFunc(1, '비밀번호는 8자리 이상으로 16자리 이하로 입력해주세요');
     }
 
-    if (info.password !== info.passwordConfirm) {
+    if (info.password !== passwordConfirm) {
       return errorFunc(2, '비밀번호가 일치하지 않습니다.');
     }
 
@@ -142,10 +143,25 @@ export const SignUp = () => {
       return errorFunc(3, '닉네임을 입력해주세요');
     }
 
-    axios.post('/api/signup', info).then(() => {
-      navigate('/');
-    });
+    axios
+      .post('/api/auth/signup', info)
+      .then(({ data }) => {
+        if (data.success) {
+          navigate('/');
+        } else {
+          window.alert(data.message);
+        }
+      })
+      .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    axios.get('/api/auth/auth-check').then(({ data }) => {
+      if (data.authCheckTrue) {
+        navigate('/');
+      }
+    });
+  }, [navigate]);
 
   return (
     <>
@@ -154,7 +170,7 @@ export const SignUp = () => {
         <InputWrap>
           <Label htmlFor="email">이메일</Label>
           <Point>*</Point>
-          <Input type="text" id="email" placeholder="이메일을 입력해주세요." ref={emailRef}></Input>
+          <Input type="text" id="email" placeholder="이메일을 입력해주세요." ref={emailRef} autoComplete="off"></Input>
           {errorCode === 0 && <ErrorValue>{errorMessage}</ErrorValue>}
         </InputWrap>
 

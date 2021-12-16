@@ -41,6 +41,24 @@ const LocationItem = styled.li`
   }
 `;
 
+const ModalButtonBox = styled.div`
+  padding-top: 20px;
+  text-align: center;
+  border-top: 1px solid black;
+`;
+
+const ModalButton = styled.button`
+  padding: 8px 16px;
+  margin-right: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: black;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 3px;
+`;
+
 const LocationModal = ({ setNowLocation, ModalClose }) => {
   const locationSearchRef = useRef();
   const [locationItem, setLocationItem] = useState([]);
@@ -51,7 +69,7 @@ const LocationModal = ({ setNowLocation, ModalClose }) => {
       return;
     }
     axios
-      .get(`https://dapi.kakao.com/v2/local/search/address.json?query=${locationSearchRef.current.value}`, {
+      .get(`https://dapi.kakao.com/v2/local/search/address.json?size=30&query=${locationSearchRef.current.value}`, {
         headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_API}` },
       })
       .then(({ data }) => {
@@ -70,7 +88,7 @@ const LocationModal = ({ setNowLocation, ModalClose }) => {
         <LocationItemBox>
           {locationItem.map((v) => (
             <LocationItem
-              key={v.id}
+              key={v.address_name}
               onClick={() => {
                 ModalClose();
                 setNowLocation(v.address_name);
@@ -81,6 +99,16 @@ const LocationModal = ({ setNowLocation, ModalClose }) => {
             </LocationItem>
           ))}
         </LocationItemBox>
+        <ModalButtonBox>
+          <ModalButton
+            onClick={() => {
+              ModalClose();
+              setLocationItem([]);
+            }}
+          >
+            취소
+          </ModalButton>
+        </ModalButtonBox>
       </LocationModalContainer>
     </>
   );
