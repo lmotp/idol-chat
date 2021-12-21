@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 import BackBar from '../components/BackBar';
-import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label, SignUpItemBox } from '../CSS/FormStyle';
+import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label, SignUpItemBox } from '../css/FormStyle';
 import { ReactComponent as Location } from '../images/compass-regular.svg';
 import dotenv from 'dotenv';
 import Modal from '../components/Modal';
@@ -157,6 +157,7 @@ export const SignUp = () => {
 
   useEffect(() => {
     axios.get('/api/auth/auth-check').then(({ data }) => {
+      console.log(data);
       if (data.authCheckTrue) {
         navigate('/');
       }

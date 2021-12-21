@@ -1,9 +1,9 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
-import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label } from '../CSS/FormStyle';
+import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label } from '../css/FormStyle';
 import { ReactComponent as Twitter } from '../images/twitter-brands.svg';
 
 const Line = styled.div`
@@ -44,7 +44,8 @@ const SignUpValue = styled.span`
   color: rgb(111, 111, 111);
 `;
 
-const Login = () => {
+const Login = (props) => {
+  console.log(props);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const navigate = useNavigate();
@@ -79,14 +80,6 @@ const Login = () => {
       }
     });
   };
-
-  useEffect(() => {
-    axios.get('/api/auth/auth-check').then(({ data }) => {
-      if (data.authCheckTrue) {
-        navigate('/');
-      }
-    });
-  }, [navigate]);
 
   return (
     <>

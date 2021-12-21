@@ -2,9 +2,8 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 const isAuth = (req, res, next) => {
-  if (req.headers.authorization) {
+  if (req.headers.authorization || req.headers.cookie) {
     const headerAccessToken = req.headers.authorization.split('Bearer ')[1];
-
     if (!headerAccessToken) {
       throw Error('API 사용 권한이 없습니다.');
     }

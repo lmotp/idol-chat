@@ -6,6 +6,8 @@ import Main from './pages/Main';
 import Login from './pages/Login';
 import { SignUp } from './pages/SignUp';
 
+import { WithAuthCheck } from './HOC/WithAuthCheck';
+
 const GlobalStyle = createGlobalStyle`
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard-dynamic-subset.css');
 
@@ -38,8 +40,8 @@ function App() {
       <Container>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={WithAuthCheck(Main)} />
+            <Route path="/login" element={WithAuthCheck(Login)} />
             <Route path="signup" element={<SignUp />} />
           </Routes>
         </BrowserRouter>

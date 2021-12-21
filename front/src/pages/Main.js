@@ -44,7 +44,7 @@ const UserButton = styled.button`
   }
 `;
 
-const Main = () => {
+const Main = (props) => {
   return (
     <MainContainer>
       <Logo>우리</Logo>
