@@ -1,10 +1,12 @@
 import axios from 'axios';
 import React, { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
 import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label } from '../css/FormStyle';
-import { ReactComponent as Twitter } from '../images/twitter-brands.svg';
+import { FaTwitter } from 'react-icons/fa';
+import { userCheckActions } from '../modules/actions/UserActions';
 
 const Line = styled.div`
   text-align: center;
@@ -44,13 +46,13 @@ const SignUpValue = styled.span`
   color: rgb(111, 111, 111);
 `;
 
-const Login = (props) => {
-  console.log(props);
+const Login = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const [errorCode, setErrorCode] = useState();
+  const dispatch = useDispatch();
 
   const errorFunc = (code, message) => {
     setErrorMessage(message);
@@ -74,9 +76,9 @@ const Login = (props) => {
     }
 
     axios.post('/api/auth/login', info, { withCredentials: true }).then(({ data }) => {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
       if (data.loginSuccess) {
-        navigate('/');
+        dispatch(userCheckActions());
+        navigate('/pages/home');
       }
     });
   };
@@ -107,7 +109,8 @@ const Login = (props) => {
           <AuthButton color="black">로그인하기</AuthButton>
           <Line>또는</Line>
           <AuthButton color="#00acee ">
-            <Twitter width="20px" height="20px" fill="white" /> &nbsp; 트위터 로그인하기
+            <FaTwitter size="20px" />
+            &nbsp; 트위터 로그인하기
           </AuthButton>
 
           <GotoSingUp>

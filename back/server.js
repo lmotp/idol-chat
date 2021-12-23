@@ -31,6 +31,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/category', require('./routes/category'));
+app.use('/api/my-class', require('./routes/myClass'));
 
 app.listen(PORT, () => {
   console.log(`서버 ${PORT}가 열렸습니다.`);

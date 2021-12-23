@@ -1,11 +1,10 @@
-import { put, call, takeLatest } from 'redux-saga/effects';
+import { put, call, takeEvery } from 'redux-saga/effects';
 import { userSuccessCheck, userFailCheck } from '../actions/UserActions';
 import { USER_CHECK } from '../actions/UserActions';
 import api from '../api';
 
 function* fecherUser() {
   try {
-    console.log(api.loginCheck);
     const { data } = yield call(api.loginCheck);
 
     yield put(userSuccessCheck(data));
@@ -14,6 +13,8 @@ function* fecherUser() {
   }
 }
 
-export function* rootSaga() {
-  yield takeLatest(USER_CHECK, fecherUser);
+function* rootSaga() {
+  yield takeEvery(USER_CHECK, fecherUser);
 }
+
+export default rootSaga;

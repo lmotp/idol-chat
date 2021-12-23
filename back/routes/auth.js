@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
 const isAuth = require('../middleware/isAuth');
 
 router.post('/signup', (req, res) => {
@@ -40,36 +39,27 @@ router.post('/login', (req, res) => {
         message: '로그인에 실패하셨습니다.',
       });
     } else {
-      const refreshToken = jwt.sign({}, process.env.JWT_SCRET_KEY, {
-        expiresIn: '6h',
-        issuer: 'unoeye22',
-        subject: 'userInfo',
+      user.generateToken((err, user) => {
+        if (err) return res.status(400).send(err);
+        res.cookie('auth', user.token).status(200).json({
+          loginSuccess: true,
+          userId: user._id,
+        });
       });
-      user.token = refreshToken;
-      user.save();
-
-      const accessToken = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SCRET_KEY, {
-        expiresIn: '1h',
-        issuer: 'unoeye22',
-        subject: 'userInfoAccess',
-      });
-
-      res.cookie('Ref_auth', refreshToken, { httpOnly: true });
-      res.send({ accessToken, loginSuccess: true });
     }
   });
 });
 
 router.get('/auth-check', isAuth, (req, res) => {
-  const { _id, email, nickname, location, gender } = req.user;
+  const { email, gender, location, nickname, _id } = req.user;
 
-  res.json({
-    _id,
-    email,
-    nickname,
-    location,
-    gender,
-    authCheckTrue: true,
+  res.json({ email, gender, location, nickname, _id, loginSuccess: true });
+});
+
+router.get('/logout', isAuth, (req, res) => {
+  User.findOneAndUpdate({ _id: req.user._id }, { token: '' }, (err, doc) => {
+    if (err) return res.json({ err });
+    return res.clearCookie('auth').status(200).send();
   });
 });
 

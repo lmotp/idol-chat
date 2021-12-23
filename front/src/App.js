@@ -5,8 +5,13 @@ import { createGlobalStyle } from 'styled-components';
 import Main from './pages/Main';
 import Login from './pages/Login';
 import { SignUp } from './pages/SignUp';
+import { withAuthCheck } from './HOC/withAuthCheck';
 
-import { WithAuthCheck } from './HOC/WithAuthCheck';
+import Home from './pages/Home';
+import MyClass from './pages/MyClass';
+import SeeMore from './pages/SeeMore';
+import Search from './pages/Search';
+import PageContainer from './layouts/PageContainer';
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard-dynamic-subset.css');
@@ -30,6 +35,7 @@ const GlobalStyle = createGlobalStyle`
 
   a {
     text-decoration: none;
+    color:inherit;
   }
 `;
 
@@ -40,9 +46,15 @@ function App() {
       <Container>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={WithAuthCheck(Main)} />
-            <Route path="/login" element={WithAuthCheck(Login)} />
-            <Route path="signup" element={<SignUp />} />
+            <Route path="/" element={withAuthCheck(Main)} />
+            <Route path="/login" element={withAuthCheck(Login, null)} />
+            <Route path="/signup" element={withAuthCheck(SignUp, null)} />
+            <Route path="/pages/*" element={withAuthCheck(PageContainer, true)}>
+              <Route path="home" index element={<Home />} />
+              <Route path="search" element={<Search />} />
+              <Route path="my-class" element={<MyClass />} />
+              <Route path="see-more" element={<SeeMore />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </Container>

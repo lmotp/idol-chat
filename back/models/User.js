@@ -13,10 +13,27 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-userSchema.statics.findByToken = function (token, cb) {
-  const user = this;
+userSchema.methods.generateToken = function (cb) {
+  var user = this;
 
-  user.findOne({ token });
+  var token = jwt.sign(user._id.toString(), process.env.JWT_SCRET_KEY);
+
+  user.token = token;
+  user.save(function (err, user) {
+    if (err) return cb(err);
+    cb(null, user);
+  });
+};
+
+userSchema.statics.findByToken = function (token, cb) {
+  var user = this;
+
+  jwt.verify(token, process.env.JWT_SCRET_KEY, function (err, decode) {
+    user.findOne({ _id: decode, token: token }, function (err, doc) {
+      if (err) return cb(err);
+      cb(null, doc);
+    });
+  });
 };
 
 module.exports = mongoose.model('User', userSchema);

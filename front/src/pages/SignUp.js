@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 import BackBar from '../components/BackBar';
 import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label, SignUpItemBox } from '../css/FormStyle';
-import { ReactComponent as Location } from '../images/compass-regular.svg';
+import { BiCurrentLocation } from 'react-icons/bi';
 import dotenv from 'dotenv';
 import Modal from '../components/Modal';
 import LocationModal from '../components/LocationModal';
@@ -51,7 +51,8 @@ const LocationButton = styled.button`
   align-items: center;
 `;
 
-export const SignUp = () => {
+export const SignUp = ({ user }) => {
+  console.log(user);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
@@ -155,15 +156,6 @@ export const SignUp = () => {
       .catch((err) => console.log(err));
   };
 
-  useEffect(() => {
-    axios.get('/api/auth/auth-check').then(({ data }) => {
-      console.log(data);
-      if (data.authCheckTrue) {
-        navigate('/');
-      }
-    });
-  }, [navigate]);
-
   return (
     <>
       <BackBar title="회원가입" />
@@ -255,7 +247,7 @@ export const SignUp = () => {
               readOnly
             ></Input>
             <LocationButton onClick={nowLocationSurch}>
-              <Location width="20px" height="20px" />
+              <BiCurrentLocation size="24px" />
             </LocationButton>
           </SignUpItemBox>
         </InputWrap>

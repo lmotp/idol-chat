@@ -3,7 +3,7 @@ export const USER_FAIL_CHECK = 'USER_FAILT_CHECK';
 
 const userInfo = {};
 
-export const userCheckReducers = (state = userInfo, action) => {
+const userCheckReducers = (state = userInfo, action) => {
   switch (action.type) {
     case USER_SUCCESS_CHECK:
       return {
@@ -19,3 +19,5 @@ export const userCheckReducers = (state = userInfo, action) => {
       return state;
   }
 };
+
+export default userCheckReducers;
