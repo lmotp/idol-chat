@@ -10,6 +10,11 @@ import Modal from '../components/Modal';
 import LocationModal from '../components/LocationModal';
 dotenv.config();
 
+const SignContainer = styled.section`
+  width: 100%;
+  height: 100vh;
+`;
+
 const Point = styled.span`
   color: red;
   font-size: 12px;
@@ -157,7 +162,7 @@ export const SignUp = ({ user }) => {
   };
 
   return (
-    <>
+    <SignContainer>
       <BackBar title="회원가입" />
       <Form>
         <InputWrap>
@@ -261,6 +266,6 @@ export const SignUp = ({ user }) => {
       <Modal modalState={modalState} ModalClose={ModalClose}>
         <LocationModal setNowLocation={setNowLocation} ModalClose={ModalClose} />
       </Modal>
-    </>
+    </SignContainer>
   );
 };

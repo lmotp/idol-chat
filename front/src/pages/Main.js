@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const MainContainer = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,7 +30,7 @@ const UserButton = styled.button`
   width: 110px;
   height: 30px;
   cursor: pointer;
-  ouline: none;
+  outline: none;
   background: transparent;
   border-radius: 10px;
   border: 1px solid black;

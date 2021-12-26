@@ -46,6 +46,11 @@ const SignUpValue = styled.span`
   color: rgb(111, 111, 111);
 `;
 
+const LoginContainer = styled.section`
+  width: 100%;
+  height: 100vh;
+`;
+
 const Login = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -84,7 +89,7 @@ const Login = () => {
   };
 
   return (
-    <>
+    <LoginContainer>
       <BackBar title="로그인" />
       <Form onSubmit={loginFunc}>
         <InputWrap>
@@ -121,7 +126,7 @@ const Login = () => {
           </GotoSingUp>
         </AuthButtonWrap>
       </Form>
-    </>
+    </LoginContainer>
   );
 };
 

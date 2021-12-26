@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Form = styled.form`
   width: 100%;
-  padding: 50px 40px;
+  padding: ${(props) => props.pd || '50px 40px'};
 `;
 
 export const InputWrap = styled.div`
@@ -10,12 +10,13 @@ export const InputWrap = styled.div`
 `;
 
 export const Input = styled.input`
-  width: 100%;
+  width: ${(props) => props.width || '100%'};
   padding: 10px 0;
   outline: none;
   border: none;
-  border-bottom: 1px solid;
-  font-size: 16px;
+  margin-left: ${(props) => props.ml || '0'};
+  border-bottom: ${(props) => props.border || '1px solid'};
+  font-size: ${(props) => props.fz || '16px'};
   font-weight: bold;
   cursor: ${(props) => props.cursor || 'auto'};
   ::placeholder {
@@ -61,4 +62,8 @@ export const ErrorValue = styled.div`
 export const SignUpItemBox = styled.div`
   display: flex;
   align-items: flex-end;
+`;
+
+export const Icon = styled.div`
+  margin-right: 10px;
 `;

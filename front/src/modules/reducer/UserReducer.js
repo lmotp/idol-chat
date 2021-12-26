@@ -1,5 +1,4 @@
-export const USER_SUCCESS_CHECK = 'USER_SUCCESS_CHECK';
-export const USER_FAIL_CHECK = 'USER_FAILT_CHECK';
+import { USER_SUCCESS_CHECK, USER_FAIL_CHECK } from '../actions/UserActions';
 
 const userInfo = {};
 
