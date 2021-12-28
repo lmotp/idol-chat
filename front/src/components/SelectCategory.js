@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { IoIosMore } from 'react-icons/io';
-import SettingModal from './SettingModal';
+import SettingModal from './Modal/SettingModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { mainCategoryRemove } from '../../modules/actions/UserCategoryActions';
+import { mainCategoryRemove } from '../modules/actions/UserCategoryActions';
 
 const SelectCategoryContainer = styled.div`
-  width: 90%;
+  width: 100%;
   height: auto;
   margin: 24px auto;
   font-size: 14px;

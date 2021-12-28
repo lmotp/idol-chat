@@ -53,7 +53,7 @@ function App() {
             <Route path="/" element={withAuthCheck(Main)} />
             <Route path="/login" element={withAuthCheck(Login, null)} />
             <Route path="/signup" element={withAuthCheck(SignUp, null)} />
-            <Route path="/pages/*" element={withAuthCheck(PageContainer, true)}>
+            <Route path="/pages/*" element={withAuthCheck(PageContainer)}>
               <Route path="home" index element={<Home />} />
               <Route path="search" element={<Search />} />
               <Route path="my-class" element={<MyClass />} />

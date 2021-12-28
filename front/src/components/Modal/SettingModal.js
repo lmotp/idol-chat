@@ -4,13 +4,14 @@ import styled, { css } from 'styled-components';
 import { mainCategoryAdd } from '../../modules/actions/UserCategoryActions';
 
 const SettingModalBox = styled.div`
-  width: 26%;
+  width: 30%;
   background: white;
   padding: 10px;
   border: 1px solid rgb(200, 200, 200);
   position: absolute;
-  right: 5%;
-  top: 60%;
+  right: 3%;
+  top: 82%;
+  z-index: 9999;
 
   ${(props) =>
     props.modalState &&
@@ -33,9 +34,9 @@ const SettingModalCategory = styled.ul`
 `;
 
 const CategoryList = styled.li`
-  width: 42%;
+  width: 40%;
   margin-bottom: 4px;
-  margin-right: 8%;
+  margin-right: 10%;
   cursor: pointer;
   padding: 4px;
 

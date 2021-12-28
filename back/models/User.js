@@ -6,9 +6,11 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, loadClass: true, trim: true },
     password: { type: String, required: true, trim: true },
     nickname: { type: String, required: true, trim: true },
+    profileimg: { type: String, default: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240' },
     gender: { type: String, default: 'nothing' },
     location: { type: String },
     token: { type: String },
+    firstCategory: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

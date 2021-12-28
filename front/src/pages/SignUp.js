@@ -6,8 +6,8 @@ import BackBar from '../components/BackBar';
 import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label, SignUpItemBox } from '../css/FormStyle';
 import { BiCurrentLocation } from 'react-icons/bi';
 import dotenv from 'dotenv';
-import Modal from '../components/Modal';
-import LocationModal from '../components/LocationModal';
+import Modal from '../components/Modal/Modal';
+import LocationModal from '../components/Modal/LocationModal';
 dotenv.config();
 
 const SignContainer = styled.section`

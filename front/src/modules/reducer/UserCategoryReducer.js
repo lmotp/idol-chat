@@ -1,6 +1,6 @@
 import { MAIN_CATEGORY_REMOVE, MAIN_CATEGORY_ADD } from '../actions/UserCategoryActions';
 
-const testTag = ['남자아이돌', '여자아이돌'];
+const testTag = ['전체', '남자아이돌', '여자아이돌'];
 
 const userCategoryReducer = (state = testTag, action) => {
   switch (action.type) {

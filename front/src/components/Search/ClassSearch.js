@@ -14,7 +14,7 @@ const ClassSearch = () => {
   const searchRef = useRef();
 
   return (
-    <Form pd="42px 0">
+    <Form pd="56px 0 40px 0">
       <SearchInputWrap border="1px solid black">
         <BiSearch size="26px" />
         <Input placeholder="모임이나 커뮤니티를 검색하세요." ref={searchRef} border="none" fz="21px" ml="14px" />

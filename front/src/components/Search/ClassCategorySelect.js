@@ -69,8 +69,8 @@ const ClassCategorySelect = () => {
             <CategoryInfoBox>
               <Category key={i}>{v.category}</Category>
               <CategoryExample>
-                {v.example.map((v) => {
-                  return <Example>#{v}</Example>;
+                {v.example.map((v, i) => {
+                  return <Example key={i}>#{v}</Example>;
                 })}
               </CategoryExample>
             </CategoryInfoBox>

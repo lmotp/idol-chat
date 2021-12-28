@@ -16,19 +16,21 @@ import {
   ListtHumbnail,
 } from '../../css/ClassListStyle';
 
-const HomeClassList = ({ v }) => {
+const MyClassList = ({ v }) => {
   return (
-    <HomeClassListContainer>
-      <ListtHumbnail src={v.thumnail} />
-      <ListInfoWrap>
-        <InfoLocation>
+    <HomeClassListContainer height="210px">
+      <ListtHumbnail src={v.thumnail} width="30%" order="3" />
+      <ListInfoWrap width="56%" ml="0" al="flex-end" order="2">
+        <InfoLocation mb="4px">
           <InfoLocationWrap>
             <GrLocation />
             {v.location}
           </InfoLocationWrap>
         </InfoLocation>
         <InfoMainTitle>{v.mainTitle}</InfoMainTitle>
-        <InfoSubTitle>{v.subTitle}</InfoSubTitle>
+        <InfoSubTitle height="60px" ta="right">
+          {v.subTitle}
+        </InfoSubTitle>
         <InfoHasTagWrap>
           <InfoMainHasTag>{v.mainTag}</InfoMainHasTag>
           {v.hasTag.map((v, i) => {
@@ -36,7 +38,7 @@ const HomeClassList = ({ v }) => {
           })}
         </InfoHasTagWrap>
       </ListInfoWrap>
-      <InfoMember>
+      <InfoMember order="1">
         <HiUsers />
         <InfoCounter>{v.memberCount}</InfoCounter>
       </InfoMember>
@@ -44,4 +46,4 @@ const HomeClassList = ({ v }) => {
   );
 };
 
-export default HomeClassList;
+export default MyClassList;
