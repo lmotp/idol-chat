@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const CategoryBox = styled.ul`
   width: 100%;
@@ -59,15 +60,19 @@ const Example = styled.li`
 
 const ClassCategorySelect = () => {
   const mainCategory = useSelector((state) => state.mainCategoryReducer);
+  const navigate = useNavigate();
 
   return (
     <CategoryBox>
       {mainCategory.map((v, i) => {
         return (
-          <CategoryWrap>
+          <CategoryWrap
+            key={i}
+            onClick={() => navigate('/pages/search/detail', { state: { mainCategory: v.category } })}
+          >
             <CategoryThumnail src={v.img}></CategoryThumnail>
             <CategoryInfoBox>
-              <Category key={i}>{v.category}</Category>
+              <Category>{v.category}</Category>
               <CategoryExample>
                 {v.example.map((v, i) => {
                   return <Example key={i}>#{v}</Example>;

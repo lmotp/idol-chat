@@ -4,6 +4,7 @@ import { IoIosMore } from 'react-icons/io';
 import SettingModal from './Modal/SettingModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { mainCategoryRemove } from '../modules/actions/UserCategoryActions';
+import { SelectCategoryText, SelectCategoryTextBox } from '../css/SelectBoxStyle';
 
 const SelectCategoryContainer = styled.div`
   width: 100%;
@@ -16,25 +17,9 @@ const SelectCategoryContainer = styled.div`
   position: relative;
 `;
 
-const SelectCategoryText = styled.span`
-  margin-right: 12px;
-  background: #db7093;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 3px;
-
-  &:last-child {
-    margin-right: 0;
-  }
-`;
-
-const SelectCategoryTextBox = styled.div`
-  color: white;
-`;
-
 const SelectCategory = () => {
   const [modalState, setModalState] = useState(false);
-  const testTag = useSelector((state) => state.userCategoryReducer);
+  const category = useSelector((state) => state.userCategoryReducer);
   const dispatch = useDispatch();
 
   const settingModalOpen = () => {
@@ -48,14 +33,14 @@ const SelectCategory = () => {
   return (
     <SelectCategoryContainer>
       <SelectCategoryTextBox>
-        {testTag.map((v, i) => (
+        {category.map((v, i) => (
           <SelectCategoryText onClick={() => removeCategory(v)} key={i}>
             {v}
           </SelectCategoryText>
         ))}
       </SelectCategoryTextBox>
       <IoIosMore style={{ cursor: 'pointer' }} size="24px" onClick={settingModalOpen} />
-      {modalState && <SettingModal testTag={testTag} />}
+      {modalState && <SettingModal testTag={category} />}
     </SelectCategoryContainer>
   );
 };

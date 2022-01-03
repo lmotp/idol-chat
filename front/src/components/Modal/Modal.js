@@ -41,9 +41,9 @@ const ModalContainer = styled.div`
 `;
 
 const ModalContent = styled.div`
-  width: 470px;
+  width: ${(props) => props.width || '470px'};
   height: auto;
-  padding-bottom: 20px;
+  padding-bottom: 0;
   margin: 0 auto;
   border-radius: 0.3rem;
   background-color: #fff;
@@ -54,7 +54,7 @@ const ModalContent = styled.div`
 const Modal = ({ modalState, children }) => {
   return (
     <ModalContainer modalState={modalState}>
-      <ModalContent>{children}</ModalContent>
+      <ModalContent width="540px">{children}</ModalContent>
     </ModalContainer>
   );
 };

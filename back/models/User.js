@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true, trim: true },
     nickname: { type: String, required: true, trim: true },
     profileimg: { type: String, default: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240' },
+    myself: { type: String, maxlength: 60, default: '안녕하세요? 잘 부탁드립니다' },
     gender: { type: String, default: 'nothing' },
     location: { type: String },
     token: { type: String },

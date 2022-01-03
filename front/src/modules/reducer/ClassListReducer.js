@@ -12,6 +12,26 @@ const testClassList = [
     thumnail: 'http://newsimg.hankookilbo.com/2018/01/02/201801021740746656_4.jpg',
     location: '은평구',
     mainTitle: '피아노의 디링디링',
+    subTitle: `평상시에 마마무 노래를 듣기만했으면 이제는 같이 만들어가자.
+글자를 많이 많이 처보자고 이렇게 치면은 더 많아지나요?`,
+    mainTag: '여자아이돌',
+    hasTag: ['마마무', '휘인', '피아노', '단체'],
+    memberCount: 5,
+  },
+  {
+    thumnail: 'http://newsimg.hankookilbo.com/2018/01/02/201801021740746656_4.jpg',
+    location: '은평구',
+    mainTitle: '피아노의 디링디링',
+    subTitle:
+      '평상시에 마마무 노래를 듣기만했으면 이제는 같이 만들어가자.글자를 많이 많이 처보자고 이렇게 치면은 더 많아지나요?',
+    mainTag: '여자아이돌',
+    hasTag: ['마마무', '휘인', '피아노', '단체'],
+    memberCount: 5,
+  },
+  {
+    thumnail: 'http://newsimg.hankookilbo.com/2018/01/02/201801021740746656_4.jpg',
+    location: '은평구',
+    mainTitle: '피아노의 디링디링',
     subTitle:
       '평상시에 마마무 노래를 듣기만했으면 이제는 같이 만들어가자.글자를 많이 많이 처보자고 이렇게 치면은 더 많아지나요?',
     mainTag: '여자아이돌',

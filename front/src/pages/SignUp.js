@@ -107,7 +107,7 @@ export const SignUp = ({ user }) => {
     setErrorCode(code);
   };
 
-  // 생년월일 바꾸는 함수
+  // 성별 바꾸는 함수
   const radioCheckChange = (e) => {
     setRadioSelect(e.target.id);
   };
@@ -244,7 +244,7 @@ export const SignUp = ({ user }) => {
               autoComplete="none"
               type="text"
               id="location"
-              placeholder="현재 위치를 알려주세요"
+              placeholder="클릭해서 현재 위치를 알려주세요"
               value={nowLocation}
               onChange={(e) => setNowLocation(e.target.value)}
               onClick={ModalOpen}
@@ -263,7 +263,7 @@ export const SignUp = ({ user }) => {
           </AuthButton>
         </AuthButtonWrap>
       </Form>
-      <Modal modalState={modalState} ModalClose={ModalClose}>
+      <Modal modalState={modalState}>
         <LocationModal setNowLocation={setNowLocation} ModalClose={ModalClose} />
       </Modal>
     </SignContainer>

@@ -1,16 +1,13 @@
 import React from 'react';
-
 import styled from 'styled-components';
 
 const ProfileImgWrap = styled.div`
-  width: 120px;
-  height: 120px;
+  width: 18%;
+  height: auto;
   border-radius: 50%;
   border: 1px solid rgb(200, 200, 200);
   overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 const InfoProfileImg = styled.img.attrs((props) => ({
@@ -20,10 +17,10 @@ const InfoProfileImg = styled.img.attrs((props) => ({
   object-fit: cover;
 `;
 
-const ProfileImg = ({ profileImgSrc }) => {
+const ProfileImg = ({ profileimg }) => {
   return (
     <ProfileImgWrap>
-      <InfoProfileImg src={profileImgSrc} />
+      <InfoProfileImg src={profileimg} />
     </ProfileImgWrap>
   );
 };

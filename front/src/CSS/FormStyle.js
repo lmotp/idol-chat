@@ -45,7 +45,7 @@ export const AuthButton = styled.button`
   color: white;
   background: ${(props) => props.color};
   border-radius: 5px;
-  margin: 30px 0;
+  margin: ${(props) => props.margin || '30px 0;'};
 `;
 
 export const AuthButtonWrap = styled.div`
@@ -66,4 +66,31 @@ export const SignUpItemBox = styled.div`
 
 export const Icon = styled.div`
   margin-right: 10px;
+`;
+
+export const Line = styled.div`
+  text-align: center;
+  position: relative;
+  color: rgb(111, 111, 111);
+  margin: ${(props) => props.margin || '0%'};
+
+  &:before {
+    width: ${(props) => props.width || '45%'};
+    height: 1px;
+    background: rgb(181, 181, 181);
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+  }
+  &:after {
+    width: ${(props) => props.width || '45%'};
+    height: 1px;
+    background: rgb(181, 181, 181);
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+  }
 `;

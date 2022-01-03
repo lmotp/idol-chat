@@ -51,9 +51,9 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/auth-check', isAuth, (req, res) => {
-  const { email, gender, location, nickname, profileimg, _id } = req.user;
+  const { gender, location, nickname, profileimg, myself, _id } = req.user;
 
-  res.json({ email, gender, location, nickname, profileimg, _id, loginSuccess: true });
+  res.json({ gender, location, nickname, profileimg, myself, _id, loginSuccess: true });
 });
 
 router.get('/logout', isAuth, (req, res) => {

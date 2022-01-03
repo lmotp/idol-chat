@@ -6,19 +6,16 @@ import { userCheckActions } from '../modules/actions/UserActions';
 import { useNavigate } from 'react-router-dom';
 import SeeMoreUserInfo from '../components/SeeMore/SeeMoreUserInfo';
 import SelectCategory from '../components/SelectCategory';
+import { AuthButton, Line } from '../css/FormStyle';
+import InviteMessageBox from '../components/SeeMore/InviteMessageBox';
 
 const SeeMoreContainer = styled.div`
   width: 90%;
   margin: 0 auto;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-`;
-
-const SeeMoreButton = styled.button`
-  width: 100px;
-  margin-bottom: 20px;
+  padding: 40px 0 90px;
 `;
 
 const SeeMore = () => {
@@ -36,7 +33,13 @@ const SeeMore = () => {
     <SeeMoreContainer>
       <SeeMoreUserInfo />
       <SelectCategory />
-      <SeeMoreButton onClick={logoutClick}>로그아웃</SeeMoreButton>
+      <Line margin="0 0 20px 0" width="40%">
+        초대받은 모임
+      </Line>
+      <InviteMessageBox />
+      <AuthButton color="black" margin="0" onClick={logoutClick}>
+        로그아웃
+      </AuthButton>
     </SeeMoreContainer>
   );
 };

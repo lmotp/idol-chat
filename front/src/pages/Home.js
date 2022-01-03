@@ -1,12 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import HomeClassList from '../components/Home/HomeClassList';
+import ClassList from '../components/ClassList';
 import MyCategory from '../components/Home/MyCategory';
 import SelectCategory from '../components/SelectCategory';
 
 const HomeContainer = styled.div`
-  padding-bottom: 70px;
+  padding-bottom: 90px;
 `;
 
 const MyCategroyBox = styled.div`
@@ -75,7 +75,7 @@ const Home = () => {
       <HomeClassListBox>
         <SelectCategory />
         {classList.map((v, i) => {
-          return <HomeClassList v={v} key={i} />;
+          return <ClassList v={v} key={i} />;
         })}
       </HomeClassListBox>
     </HomeContainer>

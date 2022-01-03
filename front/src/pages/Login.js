@@ -4,35 +4,9 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
-import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label } from '../css/FormStyle';
+import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label, Line } from '../css/FormStyle';
 import { FaTwitter } from 'react-icons/fa';
 import { userCheckActions } from '../modules/actions/UserActions';
-
-const Line = styled.div`
-  text-align: center;
-  position: relative;
-  color: rgb(111, 111, 111);
-
-  &:before {
-    width: 45%;
-    height: 1px;
-    background: rgb(181, 181, 181);
-    content: '';
-    display: block;
-    position: absolute;
-    top: 50%;
-  }
-  &:after {
-    width: 45%;
-    height: 1px;
-    background: rgb(181, 181, 181);
-    content: '';
-    display: block;
-    position: absolute;
-    top: 50%;
-    right: 0;
-  }
-`;
 
 const GotoSingUp = styled.div`
   font-size: 12px;

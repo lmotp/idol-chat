@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ClassCategorySelect from '../components/Search/ClassCategorySelect';
-import ClassSearch from '../components/Search/ClassSearch';
+import ClassSearch from '../components/ClassSearch';
 
 const SearchContainer = styled.div`
   width: 90%;
@@ -12,7 +12,7 @@ const SearchContainer = styled.div`
 const Search = () => {
   return (
     <SearchContainer>
-      <ClassSearch />
+      <ClassSearch pd="56px 0 40px 0" />
       <ClassCategorySelect />
     </SearchContainer>
   );
