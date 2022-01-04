@@ -15,3 +15,10 @@ export const SelectCategoryText = styled.span`
 export const SelectCategoryTextBox = styled.div`
   color: white;
 `;
+
+export const Hr = styled.hr`
+  border: none;
+  background: rgb(200, 200, 200);
+  border-radius: 4px;
+  height: 6px;
+`;

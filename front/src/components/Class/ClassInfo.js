@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GrLocation } from 'react-icons/gr';
 import { IoIosMore } from 'react-icons/io';
 import styled from 'styled-components';
+import Modal from '../Modal/Modal';
+import ModifyClassModal from '../Modal/ModifyClassModal';
 const ClassInfoContainer = styled.div`
-  margin-bottom: 24px;
+  margin-bottom: 54px;
 `;
 const InfoHeader = styled.div`
   width: 100%;
@@ -66,6 +68,16 @@ const InfoContent = styled.p`
 `;
 
 const ClassInfo = ({ title, subTitle, location, hashTag, mainTag, admin }) => {
+  const [modalState, setModalState] = useState(false);
+
+  const ModalOpen = () => {
+    setModalState(true);
+  };
+
+  const ModalClose = () => {
+    setModalState(false);
+  };
+
   return (
     <ClassInfoContainer>
       <InfoHeader>
@@ -78,15 +90,18 @@ const ClassInfo = ({ title, subTitle, location, hashTag, mainTag, admin }) => {
           </InfoLocation>
           <InfoTitle>{title}</InfoTitle>
         </TitleInfoWrap>
-        {admin && <IoIosMore size="24px" cursor="pointer" />}
+        {admin && <IoIosMore size="24px" cursor="pointer" onClick={ModalOpen} />}
       </InfoHeader>
       <InfoTagWrap>
         <InfoMainTag>#{mainTag}</InfoMainTag>
-        {hashTag.map((v) => (
-          <InfoHashTag>#{v}</InfoHashTag>
+        {hashTag.map((v, i) => (
+          <InfoHashTag key={i}>#{v}</InfoHashTag>
         ))}
       </InfoTagWrap>
       <InfoContent>{subTitle}</InfoContent>
+      <Modal modalState={modalState}>
+        <ModifyClassModal modalState={modalState} ModalClose={ModalClose} title={title} subTitle={subTitle} />
+      </Modal>
     </ClassInfoContainer>
   );
 };

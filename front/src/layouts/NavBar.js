@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { FaHome, FaRegCommentAlt } from 'react-icons/fa';
 import { BiSearch } from 'react-icons/bi';
 import { IoIosMore } from 'react-icons/io';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const NavBarConatiner = styled.div`
   position: fixed;
@@ -30,6 +31,12 @@ const NavIconWrap = styled.div`
 `;
 
 const NavBar = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <NavBarConatiner>
       <NavButton>
