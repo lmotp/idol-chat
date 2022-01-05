@@ -131,8 +131,7 @@ const ClassMeeting = ({ admin, array }) => {
                     <AiOutlineCalendar size="16px" style={{ marginRight: '4px' }} />
                     {format(v.day, 'MM월 dd일 ')}
                     {dayArray[v.day.getDay()]}
-                    {format(array[0].day, 'aaa') === 'pm' ? ' 오후 ' : ' 오전 '}
-                    {format(v.day, ' hh시mm분')}
+                    {format(v.day, ` ${'aaa' === 'pm' ? ' 오후 ' : ' 오전 '} hh시mm분`)}
                   </MeetingInfoItem>
                   <MeetingInfoItem>
                     <GrLocation size="16px" style={{ marginRight: '4px' }} />

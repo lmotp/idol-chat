@@ -1,12 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ButtonWrap, ModifyButton, ModifyInfoInput } from '../../css/ModifyStyle';
 import format from 'date-fns/format';
-import getDay from 'date-fns/getDay';
+import { BiWon } from 'react-icons/bi';
+import { GrLocation } from 'react-icons/gr';
+import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai';
+import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
+import { BsFillPersonPlusFill } from 'react-icons/bs';
 
 const MeetingMakeModalContainer = styled.div`
-  width: 95%;
+  width: 90%;
+  height: 390px;
   margin: 0 auto;
+  padding: 33px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const MeetingWrap = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const MeetingDayWrap = styled.div`
+  width: 100%;
+  height: 86px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 `;
 
 const MeetingInfoThumnail = styled.div`
@@ -15,44 +43,99 @@ const MeetingInfoThumnail = styled.div`
   justify-content: center;
   flex-direction: column;
   border: 1px solid rgb(200, 200, 200);
-  width: 8%;
+  width: 18%;
+  height: 100%;
   border-radius: 4px;
+`;
+
+const MeetingDayValueWrap = styled.div`
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const MeetingInfoDay = styled.div`
   font-size: 14px;
+  margin-bottom: 4px;
 `;
 const MeetingInfoDate = styled.div`
   font-weight: bold;
   font-size: 21px;
+  margin-bottom: 4px;
+`;
+
+const MeetingInfoTime = styled.div`
+  font-size: 12px;
 `;
 
 const daysArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+const now = new Date();
 
 const MeetingMakeModal = ({ ModalClose }) => {
-  console.log(daysArray);
+  const [meetingDayValue, setMeetingDayValue] = useState(format(now, `MM월 dd일 ${daysArray[now.getDay()]}`));
+  const [meetingTimeValue, setMeetingTimeValue] = useState(format(now, `${'aaa' === 'pm' ? '오후 ' : '오전 '} hh:mm`));
+
   return (
     <>
       <MeetingMakeModalContainer>
-        <ModifyInfoInput />
-        <ModifyInfoInput />
-        {/* <MeetingInfoDay>{daysArray[0]}</MeetingInfoDay>
-          <MeetingInfoDate>
-            {format('dd') - format(new Date(), 'dd') === 0
-              ? '오늘'
-              : format('dd') - format(new Date(), 'dd') === 1
-              ? '내일'
-              : format('dd') - format(new Date(), 'dd') === 2
-              ? '모레'
-              : format('dd')}
-          </MeetingInfoDate> */}
-        <ModifyInfoInput />
-        <ModifyInfoInput />
-        <ModifyInfoInput />
-        <MeetingInfoThumnail></MeetingInfoThumnail>
+        {/* 정모이름 */}
+        <MeetingWrap>
+          <ModifyInfoInput type="text" placeholder="정모 이름을 적어주세요." />
+        </MeetingWrap>
+
+        {/* 정모날짜 */}
+        <MeetingDayWrap>
+          <MeetingDayValueWrap>
+            <MeetingWrap>
+              <AiOutlineCalendar size="18px" style={{ marginRight: '8px' }} />
+              <ModifyInfoInput value={meetingDayValue} type="text" placeholder="모일 날을 적어주세요." />
+            </MeetingWrap>
+
+            {/* 정모시간 */}
+            <MeetingWrap>
+              <AiOutlineClockCircle size="18px" style={{ marginRight: '8px' }} />
+              <ModifyInfoInput value={meetingTimeValue} type="text" placeholder="모일 시간을 적어주세요." />
+            </MeetingWrap>
+          </MeetingDayValueWrap>
+
+          <MeetingInfoThumnail>
+            <MeetingInfoDay>{daysArray[now.getDay()]}</MeetingInfoDay>
+            <MeetingInfoDate>
+              {format(now, 'dd') - format(new Date(), 'dd') === 0
+                ? '오늘'
+                : format(now, 'dd') - format(new Date(), 'dd') === 1
+                ? '내일'
+                : format(now, 'dd') - format(new Date(), 'dd') === 2
+                ? '모레'
+                : format(now, 'dd')}
+            </MeetingInfoDate>
+            <MeetingInfoTime>{meetingTimeValue}</MeetingInfoTime>
+          </MeetingInfoThumnail>
+        </MeetingDayWrap>
+
+        {/* 정모장소 */}
+        <MeetingWrap>
+          <GrLocation size="18px" style={{ marginRight: '8px' }} />
+          <ModifyInfoInput type="text" placeholder="모일 곳을 적어주세요." />
+        </MeetingWrap>
+
+        {/* 정모비용 */}
+        <MeetingWrap>
+          <BiWon size="18px" style={{ marginRight: '8px' }} />
+          <ModifyInfoInput type="text" placeholder="정모 비용을 적어주세요." />
+        </MeetingWrap>
+        <ClassMemberCountWrap>
+          <ClassMemberCount>
+            <BsFillPersonPlusFill size="18px" style={{ marginRight: '10px' }} />
+            정원 (20 ~ 20명)
+          </ClassMemberCount>
+          <ModifyInfoInput al="center" width="10%" type="text" placeholder="20" />
+        </ClassMemberCountWrap>
       </MeetingMakeModalContainer>
       <ButtonWrap>
-        <ModifyButton>실행</ModifyButton>
+        <ModifyButton>만들기</ModifyButton>
         <ModifyButton onClick={ModalClose}>취소</ModifyButton>
       </ButtonWrap>
     </>

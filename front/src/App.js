@@ -14,6 +14,7 @@ import PageContainer from './layouts/PageContainer';
 import FirstLoginCategory from './pages/FirstLoginCategory';
 import DetailSearch from './pages/DetailSearch';
 import Class from './pages/Class';
+import MakeClass from './pages/MakeClass';
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard-dynamic-subset.css');
@@ -66,6 +67,7 @@ function App() {
               <Route path="search/detail" element={<DetailSearch />} />
               <Route path="my-class" element={<MyClass />} />
               <Route path="see-more" element={<SeeMore />} />
+              <Route path="class/make" element={<MakeClass />} />
               <Route path="class/:id" element={<Class />} />
             </Route>
           </Routes>

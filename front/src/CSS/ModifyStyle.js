@@ -2,21 +2,27 @@ import styled from 'styled-components';
 
 export const ModifyInfoTextArea = styled.textarea`
   border-radius: 4px;
-  padding: 6px;
+  padding: 10px;
   width: 100%;
-  height: 70px;
+  height: ${(props) => props.height || '70px'};
+  font-size: 14px;
   border: 1px solid rgb(200, 200, 200);
   resize: none;
   outline: none;
   overflow: hidden;
+
+  ::placeholder {
+    font-size: 14px;
+  }
 `;
 
 export const ModifyInfoInput = styled.input`
   border-radius: 4px;
-  padding: 7px 8px;
-  width: 100%;
+  padding: 7px 10px !important;
+  width: ${(props) => props.width || '100%'};
   outline: none;
-  border: 1px solid rgb(200, 200, 200);
+  border: 1px solid rgb(200, 200, 200) !important;
+  text-align: ${(props) => props.al || 'left'};
 
   &:last-child {
     border: none;
@@ -29,6 +35,7 @@ export const ButtonWrap = styled.div`
   padding: 20px 0;
   text-align: center;
 `;
+
 export const ModifyButton = styled.button`
   margin-right: 20px;
   padding: 6px 14px;

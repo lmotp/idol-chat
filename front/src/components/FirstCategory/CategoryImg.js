@@ -8,8 +8,8 @@ const CategoryListLogo = styled.div`
   background-position: center;
   background-size: cover;
   box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
-  width: 120px;
-  height: 120px;
+  width: ${(props) => props.width || '120px'};
+  height: ${(props) => props.height || '120px'};
   border-radius: 50%;
   cursor: pointer;
 `;
@@ -24,12 +24,17 @@ const CategoryClickTag = styled.div`
   justify-content: center;
 `;
 
-const CategoryImg = ({ v, selectCategoryFunc }) => {
+const CategoryImg = ({ v, selectCategoryFunc, width, height }) => {
   const [clickState, setClickState] = useState(false);
 
   return (
     <>
-      <CategoryListLogo src={v.img} onClick={() => selectCategoryFunc(setClickState, clickState, v.category)}>
+      <CategoryListLogo
+        width={width}
+        height={height}
+        src={v.img}
+        onClick={() => selectCategoryFunc(setClickState, clickState, v.category)}
+      >
         <CategoryClickTag hover={clickState}>
           <BsCheckLg color="white" size="33px" />
         </CategoryClickTag>

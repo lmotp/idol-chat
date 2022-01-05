@@ -94,3 +94,29 @@ export const Line = styled.div`
     right: 0;
   }
 `;
+
+export const LocationButton = styled.button`
+  width: 40px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid black;
+  background: transparent;
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ClassMemberCountWrap = styled.div`
+  width: 100%;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const ClassMemberCount = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
