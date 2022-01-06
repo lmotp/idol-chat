@@ -10,7 +10,7 @@ import { BsFillPersonPlusFill } from 'react-icons/bs';
 
 const MeetingMakeModalContainer = styled.div`
   width: 90%;
-  height: 390px;
+  height: 372px;
   margin: 0 auto;
   padding: 33px 0;
   display: flex;
@@ -126,7 +126,7 @@ const MeetingMakeModal = ({ ModalClose }) => {
           <BiWon size="18px" style={{ marginRight: '8px' }} />
           <ModifyInfoInput type="text" placeholder="정모 비용을 적어주세요." />
         </MeetingWrap>
-        <ClassMemberCountWrap>
+        <ClassMemberCountWrap mt="0">
           <ClassMemberCount>
             <BsFillPersonPlusFill size="18px" style={{ marginRight: '10px' }} />
             정원 (20 ~ 20명)

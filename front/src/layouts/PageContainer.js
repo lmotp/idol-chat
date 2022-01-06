@@ -13,7 +13,7 @@ const PageContainer = () => {
   return (
     <PageContainerBox>
       <Outlet />
-      <CircleButton value="개설" />
+      <CircleButton />
       <NavBar />
     </PageContainerBox>
   );

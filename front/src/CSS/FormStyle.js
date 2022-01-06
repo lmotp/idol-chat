@@ -109,7 +109,7 @@ export const LocationButton = styled.button`
 
 export const ClassMemberCountWrap = styled.div`
   width: 100%;
-  margin-top: 12px;
+  margin-top: ${(props) => props.mt || '12px'};
   display: flex;
   justify-content: space-between;
   align-items: center;

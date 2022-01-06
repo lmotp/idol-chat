@@ -5,6 +5,7 @@ import { BsFillPersonPlusFill } from 'react-icons/bs';
 import { GrLocation } from 'react-icons/gr';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import BackBar from '../components/BackBar';
 import LocationModal from '../components/Modal/LocationModal';
 import Modal from '../components/Modal/Modal';
 import { AuthButton, ClassMemberCount, ClassMemberCountWrap, LocationButton } from '../css/FormStyle';
@@ -12,12 +13,11 @@ import { ModifyInfoInput, ModifyInfoTextArea } from '../css/ModifyStyle';
 
 const MakeClassContainer = styled.div`
   width: 90%;
-  height: 100vh;
+  height: 89vh;
   margin: 0 auto;
   display: flex;
-  justify-content: center;
   flex-direction: column;
-  padding-bottom: 90px;
+  padding-top: 60px;
 `;
 
 const MakeCategoryWrap = styled.ul`
@@ -40,6 +40,9 @@ const CategoryList = styled.li`
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
+  &:nth-child(n + 4) {
+    margin-bottom: 33px;
+  }
 `;
 
 const CategoryListLogo = styled.div`
@@ -63,7 +66,7 @@ const MakeClassWrap = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 33px;
 `;
 const LocationTitle = styled.div`
   width: 16%;
@@ -125,71 +128,75 @@ const MakeClass = () => {
   };
 
   return (
-    <MakeClassContainer>
-      <MakeCategoryWrap>
-        {category.map((v, i) => {
-          return (
-            <CategoryList key={i}>
-              <CategoryListLogo src={v.img} />
-              <CategoryListValue>{v.category}</CategoryListValue>
-            </CategoryList>
-          );
-        })}
-      </MakeCategoryWrap>
+    <>
+      <BackBar title="모임 만들기" />
 
-      <MakeClassWrap>
-        <LocationTitle>
-          <GrLocation size="16px" style={{ marginRight: '4px' }} />
-          지역
-        </LocationTitle>
-        <ModifyInfoInput
-          autoComplete="none"
-          type="text"
-          id="location"
-          placeholder="클릭해서 현재 위치를 알려주세요"
-          value={nowLocation}
-          onChange={(e) => setNowLocation(e.target.value)}
-          onClick={ModalOpen}
-          style={{ cursor: 'pointer' }}
-          readOnly
-        />
-        <LocationButton onClick={nowLocationSurch}>
-          <BiCurrentLocation size="24px" />
-        </LocationButton>
-      </MakeClassWrap>
+      <MakeClassContainer>
+        <MakeCategoryWrap>
+          {category.map((v, i) => {
+            return (
+              <CategoryList key={i}>
+                <CategoryListLogo src={v.img} />
+                <CategoryListValue>{v.category}</CategoryListValue>
+              </CategoryList>
+            );
+          })}
+        </MakeCategoryWrap>
 
-      <MakeClassWrap>
-        <MakeClassNameLogoWrap>
-          <MakeClassNameLogo src={category[0].img} />
-        </MakeClassNameLogoWrap>
-        <ModifyInfoInput type="text" placeholder="모임 이름" />
-      </MakeClassWrap>
+        <MakeClassWrap>
+          <LocationTitle>
+            <GrLocation size="16px" style={{ marginRight: '4px' }} />
+            지역
+          </LocationTitle>
+          <ModifyInfoInput
+            autoComplete="none"
+            type="text"
+            id="location"
+            placeholder="클릭해서 현재 위치를 알려주세요"
+            value={nowLocation}
+            onChange={(e) => setNowLocation(e.target.value)}
+            onClick={ModalOpen}
+            style={{ cursor: 'pointer' }}
+            readOnly
+          />
+          <LocationButton onClick={nowLocationSurch}>
+            <BiCurrentLocation size="24px" />
+          </LocationButton>
+        </MakeClassWrap>
 
-      <ModifyInfoSubTitleWrap>
-        <ModifyInfoTextArea
-          value={subTitleValue}
-          onChange={(e) => setSubTitleValue(e.target.value)}
-          type="text"
-          placeholder="모임 폭표를 설정해주세요."
-          height="180px"
-        />
-      </ModifyInfoSubTitleWrap>
-      <ClassMemberCountWrap>
-        <ClassMemberCount>
-          <BsFillPersonPlusFill size="18px" style={{ marginRight: '10px' }} />
-          정원 (20 ~ 20명)
-        </ClassMemberCount>
-        <ModifyInfoInput al="center" width="10%" type="text" placeholder="20" />
-      </ClassMemberCountWrap>
+        <MakeClassWrap>
+          <MakeClassNameLogoWrap>
+            <MakeClassNameLogo src={category[0].img} />
+          </MakeClassNameLogoWrap>
+          <ModifyInfoInput type="text" placeholder="모임 이름" />
+        </MakeClassWrap>
 
-      <AuthButton color="black" margin="33px 0">
-        만들기
-      </AuthButton>
+        <ModifyInfoSubTitleWrap>
+          <ModifyInfoTextArea
+            value={subTitleValue}
+            onChange={(e) => setSubTitleValue(e.target.value)}
+            type="text"
+            placeholder="모임 폭표를 설정해주세요."
+            height="180px"
+          />
+        </ModifyInfoSubTitleWrap>
+        <ClassMemberCountWrap>
+          <ClassMemberCount>
+            <BsFillPersonPlusFill size="18px" style={{ marginRight: '10px' }} />
+            정원 (20 ~ 20명)
+          </ClassMemberCount>
+          <ModifyInfoInput al="center" width="10%" type="text" placeholder="20" />
+        </ClassMemberCountWrap>
 
-      <Modal modalState={modalState}>
-        <LocationModal setNowLocation={setNowLocation} ModalClose={ModalClose} />
-      </Modal>
-    </MakeClassContainer>
+        <AuthButton color="black" margin="48px 0">
+          개설하기
+        </AuthButton>
+
+        <Modal modalState={modalState}>
+          <LocationModal setNowLocation={setNowLocation} ModalClose={ModalClose} />
+        </Modal>
+      </MakeClassContainer>
+    </>
   );
 };
 

@@ -38,43 +38,47 @@ const NavBar = () => {
   }, [pathname]);
 
   return (
-    <NavBarConatiner>
-      <NavButton>
-        <NavLink to="/pages/home" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
-          <NavIconWrap>
-            <FaHome size="24px" />
-            <NavText>메인</NavText>
-          </NavIconWrap>
-        </NavLink>
-      </NavButton>
+    <>
+      {!pathname.includes('/chat') && (
+        <NavBarConatiner>
+          <NavButton>
+            <NavLink to="/pages/home" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
+              <NavIconWrap>
+                <FaHome size="24px" />
+                <NavText>메인</NavText>
+              </NavIconWrap>
+            </NavLink>
+          </NavButton>
 
-      <NavButton>
-        <NavLink to="/pages/search" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
-          <NavIconWrap>
-            <BiSearch size="24px" />
-            <NavText>검색</NavText>
-          </NavIconWrap>
-        </NavLink>
-      </NavButton>
+          <NavButton>
+            <NavLink to="/pages/search" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
+              <NavIconWrap>
+                <BiSearch size="24px" />
+                <NavText>검색</NavText>
+              </NavIconWrap>
+            </NavLink>
+          </NavButton>
 
-      <NavButton>
-        <NavLink to="/pages/my-class" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
-          <NavIconWrap>
-            <FaRegCommentAlt size="20px" />
-            <NavText>모임</NavText>
-          </NavIconWrap>
-        </NavLink>
-      </NavButton>
+          <NavButton>
+            <NavLink to="/pages/my-class" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
+              <NavIconWrap>
+                <FaRegCommentAlt size="20px" />
+                <NavText>모임</NavText>
+              </NavIconWrap>
+            </NavLink>
+          </NavButton>
 
-      <NavButton>
-        <NavLink to="/pages/see-more" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
-          <NavIconWrap>
-            <IoIosMore size="24px" />
-            <NavText>더보기</NavText>
-          </NavIconWrap>
-        </NavLink>
-      </NavButton>
-    </NavBarConatiner>
+          <NavButton>
+            <NavLink to="/pages/see-more" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
+              <NavIconWrap>
+                <IoIosMore size="24px" />
+                <NavText>더보기</NavText>
+              </NavIconWrap>
+            </NavLink>
+          </NavButton>
+        </NavBarConatiner>
+      )}
+    </>
   );
 };
 

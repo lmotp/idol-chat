@@ -3,7 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 import BackBar from '../components/BackBar';
-import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label, SignUpItemBox } from '../css/FormStyle';
+import {
+  AuthButton,
+  AuthButtonWrap,
+  ErrorValue,
+  Form,
+  Input,
+  InputWrap,
+  Label,
+  LocationButton,
+  SignUpItemBox,
+} from '../css/FormStyle';
 import { BiCurrentLocation } from 'react-icons/bi';
 import dotenv from 'dotenv';
 import Modal from '../components/Modal/Modal';
@@ -44,20 +54,7 @@ const InputCheckBox = styled.input`
   }
 `;
 
-const LocationButton = styled.button`
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
-  border: 1px solid black;
-  background: transparent;
-  margin-left: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 export const SignUp = ({ user }) => {
-  console.log(user);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);

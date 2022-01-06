@@ -31,6 +31,8 @@ const MyCategoryWrapBox = styled.div`
   align-items: center;
 `;
 
+const id = 1;
+
 const MyCategory = ({ v, i }) => {
   const startPostionRef = useRef(0);
   const stopPostionRef = useRef(0);
@@ -52,7 +54,7 @@ const MyCategory = ({ v, i }) => {
 
   return (
     <MyCategoryWrap onMouseDown={mouseDownFunc} onMouseUp={mouseUpFunc}>
-      <Link to="/">
+      <Link to={`/pages/class/${id}/chat`}>
         <MyCategoryWrapBox>
           <MyCategoryButton image={v.thumnail} />
           <MyCategoryClassName>{v.className}</MyCategoryClassName>

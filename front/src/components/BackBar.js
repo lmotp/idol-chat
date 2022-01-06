@@ -1,6 +1,9 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { GiHamburgerMenu } from 'react-icons/gi';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
+import { menuToggle } from '../modules/actions/MemberListAction';
 
 const BarContainer = styled.div`
   width: 100%;
@@ -10,30 +13,34 @@ const BarContainer = styled.div`
   padding: 20px 40px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const BarWrap = styled.div``;
 
 const BarTitle = styled.span`
-  margin-right: 10px;
+  margin-right: 18px;
   cursor: pointer;
-
-  &:last-child {
-    margin-right: 0;
-  }
 `;
+const BarClassTitle = styled.span``;
 
-const BackBar = ({ title, nextTitle, clickCategory, page }) => {
+const BackBar = ({ title, classTitle, nextTitle, clickCategory, page }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const dispatch = useDispatch();
 
   return (
     <BarContainer>
       <BarWrap onClick={() => navigate(-1)}>
         <BarTitle>◀</BarTitle>
         <BarTitle>{title}</BarTitle>
+        {pathname.includes('/chat') && <BarClassTitle>" {classTitle} "</BarClassTitle>}
       </BarWrap>
 
       {clickCategory?.length > 0 && <BarTitle onClick={() => navigate(page)}>{nextTitle}</BarTitle>}
+      {pathname.includes('/chat') && (
+        <GiHamburgerMenu size="24px" cursor="pointer" onClick={() => dispatch(menuToggle())} />
+      )}
     </BarContainer>
   );
 };
