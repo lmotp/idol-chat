@@ -1,8 +1,17 @@
 const express = require('express');
 const app = express();
+const server = require('http').createServer(app);
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const SocketIo = require('socket.io');
+const io = new SocketIo.Server(server, {
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
+});
+
 const PORT = 5000;
 
 require('dotenv').config();
@@ -34,6 +43,21 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/category', require('./routes/category'));
 app.use('/api/my-class', require('./routes/myClass'));
 
-app.listen(PORT, () => {
+const nsp = io.of('/test').on('connection', (socket) => {
+  socket.on('test', (data) => {
+    console.log(data);
+    console.log(socket);
+    socket.emit('test', '여기는 테스트');
+  });
+});
+
+io.on('connection', (socket) => {
+  socket.on('message', (data) => {
+    console.log(io);
+    socket.emit('message', data);
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`서버 ${PORT}가 열렸습니다.`);
 });

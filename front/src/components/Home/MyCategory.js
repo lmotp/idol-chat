@@ -54,7 +54,7 @@ const MyCategory = ({ v, i }) => {
 
   return (
     <MyCategoryWrap onMouseDown={mouseDownFunc} onMouseUp={mouseUpFunc}>
-      <Link to={`/pages/class/${id}/chat`}>
+      <Link to={`/pages/class/${id}`}>
         <MyCategoryWrapBox>
           <MyCategoryButton image={v.thumnail} />
           <MyCategoryClassName>{v.className}</MyCategoryClassName>

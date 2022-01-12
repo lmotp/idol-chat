@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
+import ChatItem from '../components/Chat/ChatItem';
 import ChatList from '../components/Chat/ChatList';
 import MemberList from '../components/Chat/MemberList';
 
@@ -41,6 +42,7 @@ const ChatRoom = () => {
       <MemberList testMember={testMember} />
       <ChatRoomWrap>
         <ChatList testMember={testMember} />
+        <ChatItem />
       </ChatRoomWrap>
     </ChatRoomContainer>
   );

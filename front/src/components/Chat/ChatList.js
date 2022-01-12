@@ -3,9 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 const ChatListContainer = styled.div`
   padding-top: 33px;
-  padding-left: 33px;
+  padding-left: 21px;
   width: 100%;
-  height: 100%;
+  height: 86%;
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
@@ -27,7 +27,7 @@ const ChatBox = styled.li`
   display: flex;
   justify-content: ${(props) => props.me && 'flex-end'};
   margin-bottom: 33px;
-  padding-right: 33px;
+  padding-right: 21px;
 `;
 
 const ChatImg = styled.img.attrs((props) => ({
