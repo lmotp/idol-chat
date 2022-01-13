@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema(
     location: { type: String },
     token: { type: String },
     firstCategory: { type: Boolean, default: false },
+    category: [String],
+    myClass: [String],
   },
   { timestamps: true },
 );

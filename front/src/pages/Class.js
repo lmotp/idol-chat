@@ -1,4 +1,5 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -15,6 +16,10 @@ const ClassContainer = styled.div`
 const Class = () => {
   const { id } = useParams();
   const classList = useSelector((state) => state.classListReducer);
+
+  useEffect(() => {
+    axios.get(`/api/class/info/${id}`).then((data) => console.log(data));
+  }, [id]);
 
   const testMeetingDay = [
     { title: '얼굴 봅시다!', day: new Date(), location: '건대 (임시장소)', price: '엔빵' },
@@ -46,18 +51,18 @@ const Class = () => {
 
   return (
     <>
-      <ClassMainImg img={classList[id].thumnail} />
+      <ClassMainImg img={classList[1].thumnail} />
       <ClassContainer>
         <ClassInfo
           admin="true"
-          title={classList[id].mainTitle}
-          subTitle={classList[id].subTitle}
-          location={classList[id].location}
-          hashTag={classList[id].hasTag}
-          mainTag={classList[id].mainTag}
+          title={classList[1].mainTitle}
+          subTitle={classList[1].subTitle}
+          location={classList[1].location}
+          hashTag={classList[1].hasTag}
+          mainTag={classList[1].mainTag}
         />
         <ClassMeeting admin="true" array={testMeetingDay} />
-        <ClassMember memberCount={classList[id].memberCount} array={testMember} />
+        <ClassMember memberCount={classList[1].memberCount} array={testMember} />
       </ClassContainer>
     </>
   );

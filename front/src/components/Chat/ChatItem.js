@@ -36,18 +36,17 @@ const ButtonBox = styled.button`
   align-items: center;
 `;
 
-const socket = io('/test');
-
 const ChatItem = () => {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
+  const socket = io('/test');
   const textRef = useRef();
 
   useEffect(() => {
     socket.on('test', (data) => {
       console.log(data);
     });
-  }, []);
+  }, [socket]);
 
   const onMessageSubmit = (e) => {
     e.preventDefault();

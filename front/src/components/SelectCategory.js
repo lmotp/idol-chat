@@ -19,24 +19,18 @@ const SelectCategoryContainer = styled.div`
 
 const SelectCategory = () => {
   const [modalState, setModalState] = useState(false);
-  const category = useSelector((state) => state.userCategoryReducer);
-  const dispatch = useDispatch();
+  const { category } = useSelector((state) => state.userCheckReducers?.result);
+  console.log(category);
 
   const settingModalOpen = () => {
     setModalState(!modalState);
-  };
-
-  const removeCategory = (value) => {
-    dispatch(mainCategoryRemove(value));
   };
 
   return (
     <SelectCategoryContainer>
       <SelectCategoryTextBox>
         {category.map((v, i) => (
-          <SelectCategoryText onClick={() => removeCategory(v)} key={i}>
-            {v}
-          </SelectCategoryText>
+          <SelectCategoryText key={i}>{v}</SelectCategoryText>
         ))}
       </SelectCategoryTextBox>
       <IoIosMore style={{ cursor: 'pointer' }} size="24px" onClick={settingModalOpen} />

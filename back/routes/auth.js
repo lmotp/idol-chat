@@ -44,6 +44,7 @@ router.post('/login', (req, res) => {
         res.cookie('auth', user.token).status(200).json({
           loginSuccess: true,
           userId: user._id,
+          firstCategory: user.firstCategory,
         });
       });
     }
@@ -51,9 +52,21 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/auth-check', isAuth, (req, res) => {
-  const { gender, location, nickname, profileimg, myself, _id } = req.user;
+  const { gender, location, nickname, profileimg, myself, firstCategory, category, _id } = req.user;
 
-  res.json({ gender, location, nickname, profileimg, myself, _id, loginSuccess: true });
+  res.json({ gender, location, nickname, profileimg, myself, _id, category, firstCategory, loginSuccess: true });
+});
+
+router.post('/select-category', (req, res) => {
+  const { clickCategory, id } = req.body;
+
+  User.findOneAndUpdate({ _id: id }, { firstCategory: true, $push: { category: clickCategory } }, (err, doc) => {
+    if (err) {
+      console.log(err);
+    }
+
+    return res.status(200).send('굿');
+  });
 });
 
 router.get('/logout', isAuth, (req, res) => {

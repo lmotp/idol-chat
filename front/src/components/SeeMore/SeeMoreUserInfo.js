@@ -38,7 +38,7 @@ const InfoLocation = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 128px;
+  width: 32%;
   margin: 4px 0 6px;
   font-size: 15px;
 `;

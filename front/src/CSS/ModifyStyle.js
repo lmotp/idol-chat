@@ -38,7 +38,7 @@ export const ButtonWrap = styled.div`
 
 export const ModifyButton = styled.button`
   margin-right: 20px;
-  padding: 6px 14px;
+  padding: ${(props) => props.pd || '6px 14px'};
   color: white;
   background: black;
   border-radius: 2px;

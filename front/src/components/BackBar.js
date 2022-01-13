@@ -4,6 +4,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { menuToggle } from '../modules/actions/MemberListAction';
+import axios from 'axios';
 
 const BarContainer = styled.div`
   width: 100%;
@@ -24,10 +25,16 @@ const BarTitle = styled.span`
 `;
 const BarClassTitle = styled.span``;
 
-const BackBar = ({ title, classTitle, nextTitle, clickCategory, page }) => {
+const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, id }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+
+  const selectCategory = () => {
+    axios.post('/api/auth/select-category', { clickCategory, id }).then((data) => {
+      navigate(page);
+    });
+  };
 
   return (
     <BarContainer>
@@ -37,7 +44,7 @@ const BackBar = ({ title, classTitle, nextTitle, clickCategory, page }) => {
         {pathname.includes('/chat') && <BarClassTitle>" {classTitle} "</BarClassTitle>}
       </BarWrap>
 
-      {clickCategory?.length > 0 && <BarTitle onClick={() => navigate(page)}>{nextTitle}</BarTitle>}
+      {clickCategory?.length > 0 && <BarTitle onClick={selectCategory}>{nextTitle}</BarTitle>}
       {pathname.includes('/chat') && (
         <GiHamburgerMenu size="24px" cursor="pointer" onClick={() => dispatch(menuToggle())} />
       )}

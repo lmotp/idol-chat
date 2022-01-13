@@ -57,7 +57,11 @@ const Login = () => {
     axios.post('/api/auth/login', info, { withCredentials: true }).then(({ data }) => {
       if (data.loginSuccess) {
         dispatch(userCheckActions());
-        navigate('/pages/home');
+        if (!data.firstCategory) {
+          navigate('/category');
+        } else {
+          navigate('/pages/home');
+        }
       }
     });
   };

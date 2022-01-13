@@ -41,7 +41,7 @@ app.use(cookieParser());
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/category', require('./routes/category'));
-app.use('/api/my-class', require('./routes/myClass'));
+app.use('/api/class', require('./routes/Class'));
 
 const nsp = io.of('/test').on('connection', (socket) => {
   socket.on('test', (data) => {

@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { BiCurrentLocation } from 'react-icons/bi';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import { GrLocation } from 'react-icons/gr';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
 import LocationModal from '../components/Modal/LocationModal';
@@ -26,7 +27,7 @@ const MakeCategoryWrap = styled.ul`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; ;
 `;
 
 const CategoryList = styled.li`
@@ -37,6 +38,7 @@ const CategoryList = styled.li`
   align-items: center;
   padding: 10px;
   border: 1px solid rgb(200, 200, 200);
+  border-color: ${(props) => props.select && '#6667ab'};
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
@@ -95,7 +97,13 @@ const MakeClass = () => {
   const [modalState, setModalState] = useState(false);
   const [nowLocation, setNowLocation] = useState('');
   const [subTitleValue, setSubTitleValue] = useState('');
+  const [categoryValue, setCategoryValue] = useState();
+  const classNameRef = useRef('');
+  const classTargetRef = useRef('');
+  const memberCountRef = useRef(1);
   const category = useSelector((state) => state.mainCategoryReducer);
+  const { _id } = useSelector((state) => state.userCheckReducers.result);
+  const navigate = useNavigate();
 
   const nowLocationSurch = (e) => {
     e.preventDefault();
@@ -127,6 +135,21 @@ const MakeClass = () => {
     setModalState(false);
   };
 
+  const makeClassFunc = () => {
+    axios
+      .post('/api/class/make', {
+        location: nowLocation,
+        category: categoryValue,
+        className: classNameRef.current.value,
+        classTarget: classTargetRef.current.value,
+        memberCount: 20,
+        makeUser: _id,
+      })
+      .then(({ data }) => {
+        navigate(`/pages/class/${data}`);
+      });
+  };
+
   return (
     <>
       <BackBar title="모임 만들기" />
@@ -135,7 +158,7 @@ const MakeClass = () => {
         <MakeCategoryWrap>
           {category.map((v, i) => {
             return (
-              <CategoryList key={i}>
+              <CategoryList key={i} onClick={() => setCategoryValue(v.category)} select={categoryValue === v.category}>
                 <CategoryListLogo src={v.img} />
                 <CategoryListValue>{v.category}</CategoryListValue>
               </CategoryList>
@@ -168,7 +191,7 @@ const MakeClass = () => {
           <MakeClassNameLogoWrap>
             <MakeClassNameLogo src={category[0].img} />
           </MakeClassNameLogoWrap>
-          <ModifyInfoInput type="text" placeholder="모임 이름" />
+          <ModifyInfoInput type="text" placeholder="모임 이름" ref={classNameRef} />
         </MakeClassWrap>
 
         <ModifyInfoSubTitleWrap>
@@ -178,6 +201,7 @@ const MakeClass = () => {
             type="text"
             placeholder="모임 폭표를 설정해주세요."
             height="180px"
+            ref={classTargetRef}
           />
         </ModifyInfoSubTitleWrap>
         <ClassMemberCountWrap>
@@ -185,10 +209,10 @@ const MakeClass = () => {
             <BsFillPersonPlusFill size="18px" style={{ marginRight: '10px' }} />
             정원 (20 ~ 20명)
           </ClassMemberCount>
-          <ModifyInfoInput al="center" width="10%" type="text" placeholder="20" />
+          <ModifyInfoInput al="center" width="10%" type="text" placeholder="20" ref={memberCountRef} readOnly />
         </ClassMemberCountWrap>
 
-        <AuthButton color="black" margin="48px 0">
+        <AuthButton color="black" margin="48px 0" onClick={makeClassFunc}>
           개설하기
         </AuthButton>
 
