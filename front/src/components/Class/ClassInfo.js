@@ -67,7 +67,7 @@ const InfoContent = styled.p`
   white-space: pre-wrap;
 `;
 
-const ClassInfo = ({ title, subTitle, location, hashTag, mainTag, admin }) => {
+const ClassInfo = ({ title, classTarget, location, hashTag, category, admin }) => {
   const [modalState, setModalState] = useState(false);
 
   const ModalOpen = () => {
@@ -93,14 +93,14 @@ const ClassInfo = ({ title, subTitle, location, hashTag, mainTag, admin }) => {
         {admin && <IoIosMore size="24px" cursor="pointer" onClick={ModalOpen} />}
       </InfoHeader>
       <InfoTagWrap>
-        <InfoMainTag>#{mainTag}</InfoMainTag>
-        {hashTag.map((v, i) => (
+        <InfoMainTag>#{category}</InfoMainTag>
+        {/* {hashTag.map((v, i) => (
           <InfoHashTag key={i}>#{v}</InfoHashTag>
-        ))}
+        ))} */}
       </InfoTagWrap>
-      <InfoContent>{subTitle}</InfoContent>
+      <InfoContent>{classTarget}</InfoContent>
       <Modal modalState={modalState}>
-        <ModifyClassModal modalState={modalState} ModalClose={ModalClose} title={title} subTitle={subTitle} />
+        <ModifyClassModal modalState={modalState} ModalClose={ModalClose} title={title} classTarget={classTarget} />
       </Modal>
     </ClassInfoContainer>
   );

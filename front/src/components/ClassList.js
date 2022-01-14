@@ -3,6 +3,7 @@ import { HiUsers } from 'react-icons/hi';
 import { GrLocation } from 'react-icons/gr';
 import { BsHeartFill } from 'react-icons/bs';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const ClassListContainer = styled.div`
   width: 100%;
@@ -13,6 +14,7 @@ const ClassListContainer = styled.div`
   margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
 
   &:last-child {
     margin-bottom: 0;
@@ -22,8 +24,11 @@ const ClassListContainer = styled.div`
 const ListThumbnailWrap = styled.div`
   width: 30%;
   border-radius: 6px;
-  background: url(${(props) => props.src}) center no-repeat;
+  background: ${(props) => (props.src ? `url(${props.src})` : 'white')} center no-repeat;
   background-size: cover;
+  border: ${(props) => !props.src && '1px solid rgb(180,180,180)'};
+  border-style: ${(props) => !props.src && 'dashed'};
+
   position: relative;
   order: ${(props) => props.order || '0'};
 `;
@@ -120,8 +125,10 @@ const InfoLocationWrap = styled.div`
 `;
 
 const ClassList = ({ v, on, od1, od2, od3, ml, al, ta }) => {
+  const navigate = useNavigate();
+
   return (
-    <ClassListContainer>
+    <ClassListContainer onClick={() => navigate(`/pages/class/${v._id}`)}>
       <ListThumbnailWrap src={v.thumnail} order={od3}>
         <HeartWrap>
           <BsHeartFill color={on ? 'red' : 'black'} />
@@ -131,23 +138,23 @@ const ClassList = ({ v, on, od1, od2, od3, ml, al, ta }) => {
         <InfoLocation mb="4px">
           <InfoLocationWrap>
             <GrLocation />
-            {v.location}
+            {v.location.split(' ')[1]}
           </InfoLocationWrap>
         </InfoLocation>
-        <InfoMainTitle>{v.mainTitle}</InfoMainTitle>
+        <InfoMainTitle>{v.className}</InfoMainTitle>
         <InfoSubTitle height="60px" ta={ta}>
-          {v.subTitle}
+          {v.classTarget}
         </InfoSubTitle>
         <InfoHasTagWrap>
-          <InfoMainHasTag>{v.mainTag}</InfoMainHasTag>
-          {v.hasTag.map((v, i) => {
+          <InfoMainHasTag>{v.category}</InfoMainHasTag>
+          {/* {v.hasTag.map((v, i) => {
             return <InfoHasTag key={i}>#{v}</InfoHasTag>;
-          })}
+          })} */}
         </InfoHasTagWrap>
       </ListInfoWrap>
       <InfoMember order={od1}>
         <HiUsers />
-        <InfoCounter>{v.memberCount}</InfoCounter>
+        <InfoCounter>{v.member.length}</InfoCounter>
       </InfoMember>
     </ClassListContainer>
   );

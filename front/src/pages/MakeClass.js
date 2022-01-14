@@ -96,7 +96,6 @@ const ModifyInfoSubTitleWrap = styled.div``;
 const MakeClass = () => {
   const [modalState, setModalState] = useState(false);
   const [nowLocation, setNowLocation] = useState('');
-  const [subTitleValue, setSubTitleValue] = useState('');
   const [categoryValue, setCategoryValue] = useState();
   const classNameRef = useRef('');
   const classTargetRef = useRef('');
@@ -195,14 +194,7 @@ const MakeClass = () => {
         </MakeClassWrap>
 
         <ModifyInfoSubTitleWrap>
-          <ModifyInfoTextArea
-            value={subTitleValue}
-            onChange={(e) => setSubTitleValue(e.target.value)}
-            type="text"
-            placeholder="모임 폭표를 설정해주세요."
-            height="180px"
-            ref={classTargetRef}
-          />
+          <ModifyInfoTextArea type="text" placeholder="모임 폭표를 설정해주세요." height="180px" ref={classTargetRef} />
         </ModifyInfoSubTitleWrap>
         <ClassMemberCountWrap>
           <ClassMemberCount>

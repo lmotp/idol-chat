@@ -1,4 +1,5 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import ClassList from '../components/ClassList';
@@ -17,15 +18,25 @@ const MyClassTitle = styled.h2`
 `;
 
 const MyClass = () => {
-  const classList = useSelector((state) => state.classListReducer);
+  const { _id } = useSelector((state) => state.userCheckReducers.result);
+  const [myClassList, setMyClassList] = useState([]);
+
+  useEffect(() => {
+    axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
+      console.log(data);
+      setMyClassList(data);
+    });
+  }, [_id]);
+
+  console.log(myClassList);
 
   return (
     <MyClassContainer>
       <MyClassTitle>가입한 모임</MyClassTitle>
       <SelectCategory />
       <MyClassSchedule />
-      {classList.map((v, i) => {
-        return <ClassList v={v} key={i} od1="1" od2="2" od3="3" ml="0" al="flex-end" ta="right" />;
+      {myClassList.map((v, i) => {
+        return <ClassList v={v} key={i} on="true" od1="1" od2="2" od3="3" ml="0" al="flex-end" ta="right" />;
       })}
     </MyClassContainer>
   );

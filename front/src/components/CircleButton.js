@@ -30,7 +30,6 @@ const CircleButtonWrap = styled.button`
 const CircleButton = () => {
   const { pathname } = useLocation();
   const { id } = useParams();
-  console.log(id);
 
   return (
     <>

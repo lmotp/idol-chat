@@ -60,7 +60,7 @@ const Login = () => {
         if (!data.firstCategory) {
           navigate('/category');
         } else {
-          navigate('/pages/home');
+          navigate('/');
         }
       }
     });

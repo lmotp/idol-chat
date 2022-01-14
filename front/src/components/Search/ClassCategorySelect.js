@@ -66,10 +66,7 @@ const ClassCategorySelect = () => {
     <CategoryBox>
       {mainCategory.map((v, i) => {
         return (
-          <CategoryWrap
-            key={i}
-            onClick={() => navigate('/pages/search/detail', { state: { mainCategory: v.category } })}
-          >
+          <CategoryWrap key={i} onClick={() => navigate(`/pages/search/${v.category}`)}>
             <CategoryThumnail src={v.img}></CategoryThumnail>
             <CategoryInfoBox>
               <Category>{v.category}</Category>

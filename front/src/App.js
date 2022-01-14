@@ -65,7 +65,7 @@ function App() {
             <Route path="/pages/*" element={withAuthCheck(PageContainer)}>
               <Route path="home" index element={<Home />} />
               <Route path="search" element={<Search />} />
-              <Route path="search/detail" element={<DetailSearch />} />
+              <Route path="search/:category" element={<DetailSearch />} />
               <Route path="my-class" element={<MyClass />} />
               <Route path="see-more" element={<SeeMore />} />
               <Route path="class/make" element={<MakeClass />} />

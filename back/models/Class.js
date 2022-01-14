@@ -9,7 +9,7 @@ const classSchema = new mongoose.Schema(
     member: [{ type: String, validate: [arrayLimit] }],
     memberCount: { type: Number, required: true },
     makeUser: { type: String, required: true },
-    thumnail: { type: String },
+    thumnail: { type: String, default: null },
   },
   { timestamps: true },
 );

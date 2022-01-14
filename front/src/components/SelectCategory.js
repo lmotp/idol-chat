@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { IoIosMore } from 'react-icons/io';
 import SettingModal from './Modal/SettingModal';
-import { useDispatch, useSelector } from 'react-redux';
-import { mainCategoryRemove } from '../modules/actions/UserCategoryActions';
+import { useSelector } from 'react-redux';
 import { SelectCategoryText, SelectCategoryTextBox } from '../css/SelectBoxStyle';
 
 const SelectCategoryContainer = styled.div`
@@ -20,7 +19,6 @@ const SelectCategoryContainer = styled.div`
 const SelectCategory = () => {
   const [modalState, setModalState] = useState(false);
   const { category } = useSelector((state) => state.userCheckReducers?.result);
-  console.log(category);
 
   const settingModalOpen = () => {
     setModalState(!modalState);

@@ -1,7 +1,9 @@
 const express = require('express');
 const Class = require('../models/Class');
+const User = require('../models/User');
 const router = express.Router();
 
+// 모임만들기
 router.post('/make', (req, res) => {
   const classMake = new Class(req.body);
   classMake.save((err, doc) => {
@@ -13,10 +15,17 @@ router.post('/make', (req, res) => {
         console.log('모임장 멤버에넣을때 에러', err);
       }
     });
+    User.updateOne({ _id: doc.makeUser }, { $push: { myClass: doc._id } }, (err, doc) => {
+      if (err) {
+        console.log('모임장 유저 내에 myClass에 push 실패', err);
+      }
+    });
     res.status(200).send(doc._id);
   });
 });
 
+// 모임자세히보기 부분
+// 모임 정보
 router.get('/info/:id', (req, res) => {
   Class.find({ _id: req.params.id }, (err, doc) => {
     if (err) {
@@ -27,6 +36,76 @@ router.get('/info/:id', (req, res) => {
   });
 });
 
-router.get('/list/:category', (req, res) => {});
+// 모임 멤버리스트
+router.get('/info/member/:id', (req, res) => {
+  const { id } = req.params;
+
+  Class.find({ _id: id }, (err, doc) => {
+    if (err) {
+      console.log('멤버 가져오는데 클래스 에러', err);
+    }
+
+    User.find({ _id: { $in: doc[0].member } }, (err, doc) => {
+      if (err) {
+        console.log('멤버 가져오는데 멤버 에러', err);
+      }
+      const obj = { profileImg: doc[0].profileimg, mySelf: doc[0].myself, nickName: doc[0].nickname };
+      res.status(200).send(obj);
+    });
+  });
+});
+
+// 모임 가입하기
+router.post('/info/join/member', (req, res) => {
+  const { userId, classId } = req.body;
+
+  Class.findOneAndUpdate({ _id: classId }, { $push: { member: userId } }, (err, doc) => {
+    if (err) {
+      console.log('모임 가입하기 실패', err);
+    }
+    res.status(200).send(doc);
+  });
+});
+////////////////////////////////////////////////////
+
+// 카테고리에 맞는 모임리스트
+router.get('/list/:category', (req, res) => {
+  const { category } = req.params;
+
+  if (category === 'all') {
+    Class.find((err, doc) => {
+      if (err) {
+        console.log('전체카테고리 찾는데 에러', err);
+      }
+      console.log(doc);
+      res.send(doc);
+    });
+  } else {
+    Class.find({ category }, (err, doc) => {
+      if (err) {
+        console.log('클래스 카테고리 리스티 찾기 에러', err);
+      }
+      console.log('굿');
+      res.send(doc);
+    });
+  }
+});
+
+// 내 모임
+router.get('/list/my/:id', (req, res) => {
+  const { id } = req.params;
+  User.find({ _id: id }, (err, doc) => {
+    if (err) {
+      console.log('마이클래스 유저아이템가져오기 실패', err);
+    }
+
+    Class.find({ _id: { $in: doc[0].myClass } }, (err, doc) => {
+      if (err) {
+        console.log('마이리스트 내 클래스 가져오기 실패', err);
+      }
+      res.status(200).send(doc);
+    });
+  });
+});
 
 module.exports = router;

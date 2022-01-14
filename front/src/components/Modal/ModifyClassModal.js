@@ -32,8 +32,8 @@ const ModifyMainImgLabel = styled.label`
   margin-bottom: 24px;
 `;
 
-const ModifyClassModal = ({ modalState, ModalClose, title, subTitle }) => {
-  const [subTitleValue, setSubTitleValue] = useState(subTitle);
+const ModifyClassModal = ({ modalState, ModalClose, title, classTarget }) => {
+  const [classTargetValue, setClassTargetValue] = useState(classTarget);
   const [titleValue, setTitleValue] = useState(title);
 
   return (
@@ -54,8 +54,8 @@ const ModifyClassModal = ({ modalState, ModalClose, title, subTitle }) => {
 
         <ModifyInfoSubTitleWrap>
           <ModifyInfoTextArea
-            value={subTitleValue}
-            onChange={(e) => setSubTitleValue(e.target.value)}
+            value={classTargetValue}
+            onChange={(e) => setClassTargetValue(e.target.value)}
             type="text"
             placeholder="모임 폭표를 설명해주세요."
             height="180px"

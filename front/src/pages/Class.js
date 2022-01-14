@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -16,9 +16,16 @@ const ClassContainer = styled.div`
 const Class = () => {
   const { id } = useParams();
   const classList = useSelector((state) => state.classListReducer);
+  const { _id } = useSelector((state) => state.userCheckReducers.result);
+  const [classInfo, setClassInfo] = useState([]);
 
   useEffect(() => {
-    axios.get(`/api/class/info/${id}`).then((data) => console.log(data));
+    if (id) {
+      axios.get(`/api/class/info/${id}`).then(({ data }) => {
+        setClassInfo(data[0]);
+        console.log(data[0].location.split(' ')[1]);
+      });
+    }
   }, [id]);
 
   const testMeetingDay = [
@@ -51,18 +58,18 @@ const Class = () => {
 
   return (
     <>
-      <ClassMainImg img={classList[1].thumnail} />
+      <ClassMainImg img={classInfo.thumnail} title={classInfo.className} classTarget={classInfo.classTarget} />
       <ClassContainer>
         <ClassInfo
-          admin="true"
-          title={classList[1].mainTitle}
-          subTitle={classList[1].subTitle}
-          location={classList[1].location}
+          admin={_id === classInfo.makeUser}
+          title={classInfo.className}
+          classTarget={classInfo.classTarget}
+          location={classInfo.location?.split(' ')[1]}
           hashTag={classList[1].hasTag}
-          mainTag={classList[1].mainTag}
+          category={classInfo.category}
         />
-        <ClassMeeting admin="true" array={testMeetingDay} />
-        <ClassMember memberCount={classList[1].memberCount} array={testMember} />
+        <ClassMeeting admin={_id === classInfo.makeUser} array={testMeetingDay} userId={_id} classId={id} />
+        <ClassMember array={classInfo} />
       </ClassContainer>
     </>
   );

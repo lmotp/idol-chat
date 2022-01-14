@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const ClassMemberContainer = styled.div``;
@@ -47,11 +48,22 @@ const MemberClasses = styled.div`
 `;
 
 const ClassMember = ({ array }) => {
-  console.log(array[0].classes);
+  const [memberInfo, setMemberInfo] = useState([]);
+
+  useEffect(() => {
+    console.log(array._id);
+    if (array._id) {
+      axios.get(`/api/class/info/member/${array._id}`).then(({ data }) => {
+        console.log(data);
+        setMemberInfo(data);
+      });
+    }
+  }, [array]);
+
   return (
     <ClassMemberContainer>
-      <MemberTitle>모임 멤버 ({array.length}명)</MemberTitle>
-      {array.map((v, i) => (
+      <MemberTitle>모임 멤버 (1명)</MemberTitle>
+      {/* {array.map((v, i) => (
         <MemberInfoWrap key={i}>
           <MemberInfo>
             <MemberProfileImg src={v.profileImg} />
@@ -62,7 +74,7 @@ const ClassMember = ({ array }) => {
           </MemberInfo>
           <MemberClasses classes={v.classes !== '회원'}>{v.classes}</MemberClasses>
         </MemberInfoWrap>
-      ))}
+      ))} */}
     </ClassMemberContainer>
   );
 };

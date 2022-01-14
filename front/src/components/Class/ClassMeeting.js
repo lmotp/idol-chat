@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { AuthButton } from '../../css/FormStyle';
 import { Hr } from '../../css/SelectBoxStyle';
 import format from 'date-fns/format';
+import axios from 'axios';
 
 const ClassMeetingContainer = styled.div`
   margin-bottom: 33px;
@@ -93,7 +94,7 @@ const PlusButton = styled.div`
 
 const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
-const ClassMeeting = ({ admin, array }) => {
+const ClassMeeting = ({ admin, array, userId, classId }) => {
   const [modalState, setModalState] = useState(false);
 
   const ModalOpen = () => {
@@ -102,6 +103,13 @@ const ClassMeeting = ({ admin, array }) => {
 
   const ModalClose = () => {
     setModalState(false);
+  };
+
+  const classJoinFunc = () => {
+    console.log('hi');
+    axios.post(`/api/class/info/join/member`, { userId, classId }).then(({ data }) => {
+      console.log(data);
+    });
   };
 
   return (
@@ -162,7 +170,9 @@ const ClassMeeting = ({ admin, array }) => {
           정모 만들기
         </AuthButton>
       ) : (
-        <AuthButton color="#00acee">가입하기</AuthButton>
+        <AuthButton onClick={classJoinFunc} color="#00acee">
+          가입하기
+        </AuthButton>
       )}
       <Hr />
       <Modal modalState={modalState}>

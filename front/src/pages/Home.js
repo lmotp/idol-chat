@@ -1,9 +1,10 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import ClassList from '../components/ClassList';
 import MyCategory from '../components/Home/MyCategory';
 import SelectCategory from '../components/SelectCategory';
+import { useSelector } from 'react-redux';
 
 const HomeContainer = styled.div`
   padding-bottom: 90px;
@@ -24,7 +25,19 @@ const HomeClassListBox = styled.div`
 `;
 
 const Home = () => {
-  const classList = useSelector((state) => state.classListReducer);
+  const { _id } = useSelector((state) => state.userCheckReducers.result);
+  const [classList, setClassList] = useState([]);
+  const [category, useCategory] = useState('all');
+  const [myClassList, setMyClassList] = useState([]);
+
+  useEffect(() => {
+    axios.get(`/api/class/list/${category}`).then(({ data }) => setClassList(data));
+    axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
+      console.log(data);
+      const classNames = data.map((v) => v.className);
+      setMyClassList(classNames);
+    });
+  }, [category, _id]);
 
   const testImage = [
     {
@@ -74,8 +87,8 @@ const Home = () => {
       </MyCategroyBox>
       <HomeClassListBox>
         <SelectCategory />
-        {classList.map((v, i) => {
-          return <ClassList v={v} key={i} />;
+        {classList.map((v) => {
+          return <ClassList v={v} key={v._id} on={myClassList.includes(v.className)} />;
         })}
       </HomeClassListBox>
     </HomeContainer>

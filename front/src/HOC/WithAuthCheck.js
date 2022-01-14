@@ -9,6 +9,8 @@ export const withAuthCheck = (WrapComponents, isAdmin = false) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    console.log(user);
+
     useEffect(() => {
       dispatch(userCheckActions());
       if (!user.result?.loginSuccess) {
