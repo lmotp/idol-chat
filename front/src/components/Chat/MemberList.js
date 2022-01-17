@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuToggle } from '../../modules/actions/MemberListAction';
 import { AiFillCloseCircle } from 'react-icons/ai';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const MemberListContainer = styled.div`
   width: 50%;
@@ -14,6 +16,7 @@ const MemberListContainer = styled.div`
   box-shadow: -8px 0 5px rgb(190, 190, 190, 0.2);
   transform: translateX(400px);
   transition: all 0.5s ease-in-out;
+  z-index: 1000;
   ${({ state }) =>
     state &&
     css`
@@ -85,9 +88,18 @@ const MemberListMine = styled.div`
   color: white;
 `;
 
-const MemberList = ({ testMember }) => {
+const MemberList = () => {
+  const [mebmerList, setMemberList] = useState([]);
+  const { _id } = useSelector((state) => state.userCheckReducers.result);
   const dispatch = useDispatch();
   const state = useSelector((state) => state.chatMemberReducer);
+  const { id } = useParams();
+
+  useEffect(() => {
+    axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
+      setMemberList(data);
+    });
+  }, [id]);
 
   return (
     <>
@@ -97,13 +109,13 @@ const MemberList = ({ testMember }) => {
           대화 참여자
         </MebmerListHeader>
         <MemberListInfoWrap>
-          {testMember.map((v, i) => {
+          {mebmerList.map((v, i) => {
             return (
               <MemberListInfoBox key={i}>
-                <MemberListImg src={v.img} />
+                <MemberListImg src={v.profileImg} />
                 <MemberListNickName>
                   {v.nickName}
-                  {v.me && <MemberListMine>나</MemberListMine>}
+                  {v._id === _id && <MemberListMine>나</MemberListMine>}
                 </MemberListNickName>
               </MemberListInfoBox>
             );

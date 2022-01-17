@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { AuthButton } from '../../css/FormStyle';
 
 const ClassMemberContainer = styled.div``;
 const MemberTitle = styled.h3`
@@ -47,35 +49,40 @@ const MemberClasses = styled.div`
   color: ${(props) => (props.classes ? '#6667ab' : 'black')};
 `;
 
-const ClassMember = ({ array }) => {
-  const [memberInfo, setMemberInfo] = useState([]);
+const ClassMember = ({ memberInfo, joinState, userId, classId, reloadState }) => {
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(array._id);
-    if (array._id) {
-      axios.get(`/api/class/info/member/${array._id}`).then(({ data }) => {
-        console.log(data);
-        setMemberInfo(data);
-      });
-    }
-  }, [array]);
+  const memberSecession = () => {
+    axios.post('/api/class/info/secession/member', { userId, classId }).then(() => {
+      navigate('/pages/home');
+    });
+  };
 
   return (
-    <ClassMemberContainer>
-      <MemberTitle>모임 멤버 (1명)</MemberTitle>
-      {/* {array.map((v, i) => (
-        <MemberInfoWrap key={i}>
-          <MemberInfo>
-            <MemberProfileImg src={v.profileImg} />
-            <MemberInfoValue>
-              <MemberNickName>{v.nickName}</MemberNickName>
-              <MemberMySelf>{v.mySelf}</MemberMySelf>
-            </MemberInfoValue>
-          </MemberInfo>
-          <MemberClasses classes={v.classes !== '회원'}>{v.classes}</MemberClasses>
-        </MemberInfoWrap>
-      ))} */}
-    </ClassMemberContainer>
+    <>
+      {reloadState ? null : (
+        <ClassMemberContainer>
+          <MemberTitle>모임 멤버 ({memberInfo.length}명)</MemberTitle>
+          {memberInfo.map((v, i) => (
+            <MemberInfoWrap key={i}>
+              <MemberInfo>
+                <MemberProfileImg src={v.profileImg} />
+                <MemberInfoValue>
+                  <MemberNickName>{v.nickName}</MemberNickName>
+                  <MemberMySelf>{v.mySelf}</MemberMySelf>
+                </MemberInfoValue>
+              </MemberInfo>
+              <MemberClasses classes={v.classes !== '회원'}>{v.classes}</MemberClasses>
+            </MemberInfoWrap>
+          ))}
+          {joinState && (
+            <AuthButton onClick={memberSecession} color="rgb(180,180,180)">
+              모임나가기
+            </AuthButton>
+          )}
+        </ClassMemberContainer>
+      )}
+    </>
   );
 };
 

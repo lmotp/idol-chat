@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -14,46 +14,30 @@ const ClassContainer = styled.div`
 `;
 
 const Class = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // 모임아이디
+  const { _id } = useSelector((state) => state.userCheckReducers.result); //유저아이디
   const classList = useSelector((state) => state.classListReducer);
-  const { _id } = useSelector((state) => state.userCheckReducers.result);
   const [classInfo, setClassInfo] = useState([]);
+  const [memberInfo, setMemberInfo] = useState([]);
+  const [reloadState, setReloadState] = useState(false);
+  const joinStateRef = useRef();
 
   useEffect(() => {
     if (id) {
       axios.get(`/api/class/info/${id}`).then(({ data }) => {
         setClassInfo(data[0]);
-        console.log(data[0].location.split(' ')[1]);
+        joinStateRef.current = data[0].member.includes(_id);
+      });
+      axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
+        setMemberInfo(data);
       });
     }
-  }, [id]);
+  }, [id, _id]);
 
   const testMeetingDay = [
     { title: '얼굴 봅시다!', day: new Date(), location: '건대 (임시장소)', price: '엔빵' },
     { title: '얼굴 봅시다!', day: new Date(2022, 0, 5, 12, 31, 10), location: '건대 (임시장소)', price: '엔빵' },
     { title: '얼굴 봅시다!', day: new Date(2022, 0, 6, 12, 31, 10), location: '건대 (임시장소)', price: '엔빵' },
-    { title: '얼굴 봅시다!', day: new Date(2022, 0, 9, 12, 31, 10), location: '건대 (임시장소)', price: '엔빵' },
-  ];
-
-  const testMember = [
-    {
-      profileImg: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트1호',
-      mySelf: '안녕하세요? 잘 부탁드립니다',
-      classes: '모임장',
-    },
-    {
-      profileImg: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트1호',
-      mySelf: '안녕하세요? 잘 부탁드립니다',
-      classes: '운영진',
-    },
-    {
-      profileImg: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트1호',
-      mySelf: '안녕하세요? 잘 부탁드립니다',
-      classes: '회원',
-    },
   ];
 
   return (
@@ -68,8 +52,14 @@ const Class = () => {
           hashTag={classList[1].hasTag}
           category={classInfo.category}
         />
-        <ClassMeeting admin={_id === classInfo.makeUser} array={testMeetingDay} userId={_id} classId={id} />
-        <ClassMember array={classInfo} />
+        <ClassMeeting
+          admin={_id === classInfo.makeUser}
+          array={testMeetingDay}
+          userId={_id}
+          classId={id}
+          joinState={joinStateRef.current}
+        />
+        <ClassMember memberInfo={memberInfo} joinState={joinStateRef.current} userId={_id} classId={id} />
       </ClassContainer>
     </>
   );

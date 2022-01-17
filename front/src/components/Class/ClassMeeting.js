@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Modal from '../Modal/Modal';
 import MeetingMakeModal from '../Modal/MeetingMakeModal';
 import { BsPlusCircleDotted } from 'react-icons/bs';
@@ -10,6 +10,7 @@ import { AuthButton } from '../../css/FormStyle';
 import { Hr } from '../../css/SelectBoxStyle';
 import format from 'date-fns/format';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ClassMeetingContainer = styled.div`
   margin-bottom: 33px;
@@ -85,6 +86,8 @@ const MeetingAtendButton = styled.button`
   color: white;
   border-radius: 6px;
   background-color: #8dbad0;
+  cursor: ${(props) => (props.joinState ? 'pointer' : 'auto')};
+  opacity: ${(props) => (props.joinState ? 1 : 0)};
 `;
 
 const PlusButton = styled.div`
@@ -94,7 +97,7 @@ const PlusButton = styled.div`
 
 const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
-const ClassMeeting = ({ admin, array, userId, classId }) => {
+const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState }) => {
   const [modalState, setModalState] = useState(false);
 
   const ModalOpen = () => {
@@ -105,11 +108,14 @@ const ClassMeeting = ({ admin, array, userId, classId }) => {
     setModalState(false);
   };
 
-  const classJoinFunc = () => {
-    console.log('hi');
-    axios.post(`/api/class/info/join/member`, { userId, classId }).then(({ data }) => {
-      console.log(data);
+  const classJoinFunc = useCallback(() => {
+    axios.post(`/api/class/info/join/member`, { userId, classId }).then(() => {
+      setReloadState(false);
     });
+  }, [userId, classId, setReloadState]);
+
+  const meetingAttend = () => {
+    console.log('안녕?');
   };
 
   return (
@@ -150,7 +156,9 @@ const ClassMeeting = ({ admin, array, userId, classId }) => {
                     {v.price}
                   </MeetingInfoItem>
                 </MeetingInfo>
-                <MeetingAtendButton>참석</MeetingAtendButton>
+                <MeetingAtendButton onClick={meetingAttend} disabled={!joinState} joinState={joinState}>
+                  참석
+                </MeetingAtendButton>
               </MeetingInfoWrap>
             </div>
           ))}
@@ -169,12 +177,12 @@ const ClassMeeting = ({ admin, array, userId, classId }) => {
           </PlusButton>
           정모 만들기
         </AuthButton>
-      ) : (
+      ) : joinState ? null : (
         <AuthButton onClick={classJoinFunc} color="#00acee">
           가입하기
         </AuthButton>
       )}
-      <Hr />
+      <Hr style={{ marginTop: joinState ? '30px' : '0' }} />
       <Modal modalState={modalState}>
         <MeetingMakeModal modalState={modalState} ModalClose={ModalClose} />
       </Modal>

@@ -23,7 +23,6 @@ const BarTitle = styled.span`
   margin-right: 18px;
   cursor: pointer;
 `;
-const BarClassTitle = styled.span``;
 
 const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, id }) => {
   const navigate = useNavigate();
@@ -41,7 +40,6 @@ const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, id }) => {
       <BarWrap onClick={() => navigate(-1)}>
         <BarTitle>◀</BarTitle>
         <BarTitle>{title}</BarTitle>
-        {pathname.includes('/chat') && <BarClassTitle>" {classTitle} "</BarClassTitle>}
       </BarWrap>
 
       {clickCategory?.length > 0 && <BarTitle onClick={selectCategory}>{nextTitle}</BarTitle>}

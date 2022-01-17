@@ -1,6 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
 import ChatItem from '../components/Chat/ChatItem';
@@ -19,9 +17,6 @@ const ChatRoomWrap = styled.div`
 `;
 
 const ChatRoom = () => {
-  const classList = useSelector((state) => state.classListReducer);
-  const { id } = useParams();
-
   const testMember = [
     { img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240', nickName: '테스트1호', me: true },
     { img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240', nickName: '테스트4호', me: false },
@@ -38,8 +33,8 @@ const ChatRoom = () => {
   ];
   return (
     <ChatRoomContainer>
-      <BackBar title="채팅방" classTitle={classList[id].mainTitle} />
-      <MemberList testMember={testMember} />
+      <BackBar title="채팅방" />
+      <MemberList />
       <ChatRoomWrap>
         <ChatList testMember={testMember} />
         <ChatItem />

@@ -42,17 +42,17 @@ const ChatItem = () => {
   const socket = io('/test');
   const textRef = useRef();
 
-  useEffect(() => {
-    socket.on('test', (data) => {
-      console.log(data);
-    });
-  }, [socket]);
+  // useEffect(() => {
+  //   socket.on('test', (data) => {
+  //     console.log(data);
+  //   });
+  // }, [socket]);
 
   const onMessageSubmit = (e) => {
     e.preventDefault();
-    socket.emit('test', message);
-    textRef.current.focus();
-    setMessage('');
+    // socket.emit('test', message);
+    // textRef.current.focus();
+    // setMessage('');
   };
 
   return (

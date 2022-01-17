@@ -45,12 +45,24 @@ router.get('/info/member/:id', (req, res) => {
       console.log('멤버 가져오는데 클래스 에러', err);
     }
 
+    const makeMakeUser = doc[0].makeUser;
+
     User.find({ _id: { $in: doc[0].member } }, (err, doc) => {
       if (err) {
         console.log('멤버 가져오는데 멤버 에러', err);
       }
-      const obj = { profileImg: doc[0].profileimg, mySelf: doc[0].myself, nickName: doc[0].nickname };
-      res.status(200).send(obj);
+
+      const array = doc.map((v) => {
+        return {
+          profileImg: v.profileimg,
+          mySelf: v.myself,
+          nickName: v.nickname,
+          classes: v._id.toString() === makeMakeUser ? '모임장' : '회원',
+          _id: v._id,
+        };
+      });
+
+      res.status(200).send(array);
     });
   });
 });
@@ -59,11 +71,33 @@ router.get('/info/member/:id', (req, res) => {
 router.post('/info/join/member', (req, res) => {
   const { userId, classId } = req.body;
 
-  Class.findOneAndUpdate({ _id: classId }, { $push: { member: userId } }, (err, doc) => {
+  User.findOneAndUpdate({ _id: userId }, { $push: { myClass: classId } }, (err, doc) => {
     if (err) {
-      console.log('모임 가입하기 실패', err);
+      console.log('모임 가입하기 유저 myClass 실패', err);
     }
-    res.status(200).send(doc);
+    Class.findOneAndUpdate({ _id: classId }, { $push: { member: userId } }, (err, doc) => {
+      if (err) {
+        console.log('모임 가입하기 클래스 member 실패', err);
+      }
+      res.status(200).send(doc);
+    });
+  });
+});
+
+//모임 탈퇴하기
+router.post('/info/secession/member', (req, res) => {
+  const { userId, classId } = req.body;
+
+  Class.findOneAndUpdate({ _id: classId }, { $pull: { member: userId } }, (err, doc) => {
+    if (err) {
+      console.log('모임 탈퇴하기 클래스 member 실패', err);
+    }
+    User.findOneAndUpdate({ _id: userId }, { $pull: { myClass: classId } }, (err, doc) => {
+      if (err) {
+        console.log('모임 탈퇴하기 유저 myClass 실패', err);
+      }
+      res.status(200).send(doc);
+    });
   });
 });
 ////////////////////////////////////////////////////

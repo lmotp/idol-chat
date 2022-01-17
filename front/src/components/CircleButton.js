@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link, useLocation, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { AiOutlinePlus } from 'react-icons/ai';
 
 const CircleButtonContainer = styled.div`
@@ -28,6 +29,7 @@ const CircleButtonWrap = styled.button`
 `;
 
 const CircleButton = () => {
+  const { myClass } = useSelector((state) => state.userCheckReducers.result);
   const { pathname } = useLocation();
   const { id } = useParams();
 
