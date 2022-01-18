@@ -109,6 +109,7 @@ const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState
   };
 
   const classJoinFunc = useCallback(() => {
+    setReloadState(true);
     axios.post(`/api/class/info/join/member`, { userId, classId }).then(() => {
       setReloadState(false);
     });
@@ -171,18 +172,18 @@ const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState
       )}
 
       {admin ? (
-        <AuthButton color="rgb(180,180,180)" onClick={ModalOpen}>
+        <AuthButton color="rgb(180,180,180)" onClick={ModalOpen} margin="30px 0 ">
           <PlusButton>
             <BsPlusCircleDotted />
           </PlusButton>
           정모 만들기
         </AuthButton>
       ) : joinState ? null : (
-        <AuthButton onClick={classJoinFunc} color="#00acee">
+        <AuthButton onClick={classJoinFunc} color="#00acee" margin="30px 0 20px">
           가입하기
         </AuthButton>
       )}
-      <Hr style={{ marginTop: joinState ? '30px' : '0' }} />
+      <Hr style={{ marginTop: joinState ? '20px' : '0' }} />
       <Modal modalState={modalState}>
         <MeetingMakeModal modalState={modalState} ModalClose={ModalClose} />
       </Modal>

@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { AuthButton } from '../../css/FormStyle';
+import Loading from '../Loading';
 
 const ClassMemberContainer = styled.div``;
 const MemberTitle = styled.h3`
@@ -60,7 +61,9 @@ const ClassMember = ({ memberInfo, joinState, userId, classId, reloadState }) =>
 
   return (
     <>
-      {reloadState ? null : (
+      {reloadState ? (
+        <Loading />
+      ) : (
         <ClassMemberContainer>
           <MemberTitle>모임 멤버 ({memberInfo.length}명)</MemberTitle>
           {memberInfo.map((v, i) => (
@@ -76,7 +79,7 @@ const ClassMember = ({ memberInfo, joinState, userId, classId, reloadState }) =>
             </MemberInfoWrap>
           ))}
           {joinState && (
-            <AuthButton onClick={memberSecession} color="rgb(180,180,180)">
+            <AuthButton onClick={memberSecession} color="rgb(180,180,180)" margin="30px 0 0">
               모임나가기
             </AuthButton>
           )}

@@ -16,7 +16,6 @@ const ClassContainer = styled.div`
 const Class = () => {
   const { id } = useParams(); // 모임아이디
   const { _id } = useSelector((state) => state.userCheckReducers.result); //유저아이디
-  const classList = useSelector((state) => state.classListReducer);
   const [classInfo, setClassInfo] = useState([]);
   const [memberInfo, setMemberInfo] = useState([]);
   const [reloadState, setReloadState] = useState(false);
@@ -28,11 +27,12 @@ const Class = () => {
         setClassInfo(data[0]);
         joinStateRef.current = data[0].member.includes(_id);
       });
+
       axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
         setMemberInfo(data);
       });
     }
-  }, [id, _id]);
+  }, [id, _id, reloadState]);
 
   const testMeetingDay = [
     { title: '얼굴 봅시다!', day: new Date(), location: '건대 (임시장소)', price: '엔빵' },
@@ -42,15 +42,21 @@ const Class = () => {
 
   return (
     <>
-      <ClassMainImg img={classInfo.thumnail} title={classInfo.className} classTarget={classInfo.classTarget} />
+      <ClassMainImg
+        admin={_id === classInfo.makeUser}
+        img={classInfo.thumnail}
+        title={classInfo.className}
+        classTarget={classInfo.classTarget}
+      />
       <ClassContainer>
         <ClassInfo
           admin={_id === classInfo.makeUser}
           title={classInfo.className}
           classTarget={classInfo.classTarget}
           location={classInfo.location?.split(' ')[1]}
-          hashTag={classList[1].hasTag}
+          hashTag={classInfo.hashTag}
           category={classInfo.category}
+          img={classInfo.thumnail}
         />
         <ClassMeeting
           admin={_id === classInfo.makeUser}
@@ -58,8 +64,15 @@ const Class = () => {
           userId={_id}
           classId={id}
           joinState={joinStateRef.current}
+          setReloadState={setReloadState}
         />
-        <ClassMember memberInfo={memberInfo} joinState={joinStateRef.current} userId={_id} classId={id} />
+        <ClassMember
+          memberInfo={memberInfo}
+          joinState={joinStateRef.current}
+          userId={_id}
+          classId={id}
+          reloadState={reloadState}
+        />
       </ClassContainer>
     </>
   );

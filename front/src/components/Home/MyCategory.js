@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const MyCategoryWrap = styled.div`
-  width: 140px;
+  width: 116px;
   height: 100%;
   text-align: center;
   display: flex;
   align-items: center;
-  margin-right: 40px;
 `;
 
 const MyCategoryButton = styled.div`
@@ -16,12 +15,19 @@ const MyCategoryButton = styled.div`
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: url(${(props) => props.image}) center no-repeat;
+  background: ${(props) => (props.src ? 'url(' + props.src + ')' : 'white')} center no-repeat;
+  background-size: cover;
+  border: ${(props) => !props.src && '1px solid rgb(180,180,180)'};
+  border-style: ${(props) => !props.src && 'dashed'};
   background-size: cover;
 `;
 
 const MyCategoryClassName = styled.div`
+  width: 80px;
+  text-overflow: ellipsis;
+  overflow: hidden;
   font-size: 12px;
+  white-space: nowrap;
 `;
 
 const MyCategoryWrapBox = styled.div`
@@ -31,9 +37,9 @@ const MyCategoryWrapBox = styled.div`
   align-items: center;
 `;
 
-const id = 1;
+const MyCategory = ({ v }) => {
+  console.log(v.thumnail);
 
-const MyCategory = ({ v, i }) => {
   const startPostionRef = useRef(0);
   const stopPostionRef = useRef(0);
 
@@ -53,14 +59,16 @@ const MyCategory = ({ v, i }) => {
   }
 
   return (
-    <MyCategoryWrap onMouseDown={mouseDownFunc} onMouseUp={mouseUpFunc}>
-      <Link to={`/pages/class/${id}`}>
-        <MyCategoryWrapBox>
-          <MyCategoryButton image={v.thumnail} />
-          <MyCategoryClassName>{v.className}</MyCategoryClassName>
-        </MyCategoryWrapBox>
-      </Link>
-    </MyCategoryWrap>
+    <>
+      <MyCategoryWrap onMouseDown={mouseDownFunc} onMouseUp={mouseUpFunc}>
+        <Link to={`/pages/class/${v._id}`}>
+          <MyCategoryWrapBox>
+            <MyCategoryButton src={v.thumnail} />
+            <MyCategoryClassName>{v.className}</MyCategoryClassName>
+          </MyCategoryWrapBox>
+        </Link>
+      </MyCategoryWrap>
+    </>
   );
 };
 

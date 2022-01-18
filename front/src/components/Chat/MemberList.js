@@ -90,6 +90,7 @@ const MemberListMine = styled.div`
 
 const MemberList = () => {
   const [mebmerList, setMemberList] = useState([]);
+  const [myProfile, setMyProfile] = useState([]);
   const { _id } = useSelector((state) => state.userCheckReducers.result);
   const dispatch = useDispatch();
   const state = useSelector((state) => state.chatMemberReducer);
@@ -97,9 +98,12 @@ const MemberList = () => {
 
   useEffect(() => {
     axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
+      setMyProfile(data.filter((v) => v._id === _id));
       setMemberList(data);
     });
-  }, [id]);
+  }, [id, _id]);
+
+  console.log(myProfile);
 
   return (
     <>
@@ -109,17 +113,25 @@ const MemberList = () => {
           대화 참여자
         </MebmerListHeader>
         <MemberListInfoWrap>
-          {mebmerList.map((v, i) => {
-            return (
-              <MemberListInfoBox key={i}>
-                <MemberListImg src={v.profileImg} />
-                <MemberListNickName>
-                  {v.nickName}
-                  {v._id === _id && <MemberListMine>나</MemberListMine>}
-                </MemberListNickName>
-              </MemberListInfoBox>
-            );
-          })}
+          {myProfile.length && (
+            <MemberListInfoBox>
+              <MemberListImg src={myProfile[0].profileImg} />
+              <MemberListNickName>
+                {myProfile[0].nickName}
+                <MemberListMine>나</MemberListMine>
+              </MemberListNickName>
+            </MemberListInfoBox>
+          )}
+          {mebmerList
+            .filter((v) => v._id !== _id)
+            .map((v, i) => {
+              return (
+                <MemberListInfoBox key={i}>
+                  <MemberListImg src={v.profileImg} />
+                  <MemberListNickName>{v.nickName}</MemberListNickName>
+                </MemberListInfoBox>
+              );
+            })}
         </MemberListInfoWrap>
       </MemberListContainer>
     </>

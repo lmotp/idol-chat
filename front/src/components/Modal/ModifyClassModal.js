@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { ButtonWrap, ModifyButton, ModifyInfoInput, ModifyInfoTextArea } from '../../css/ModifyStyle';
 import styled from 'styled-components';
 import { AiOutlinePicture } from 'react-icons/ai';
 import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
+import axios from 'axios';
 
-const ModifyClassModalContainer = styled.div`
+const ModifyClassModalContainer = styled.form`
   width: 90%;
   margin: 0 auto;
   padding: 33px 0;
@@ -26,23 +27,76 @@ const ModifyMainImgLabel = styled.label`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   border: 1px solid rgb(200, 200, 200);
   border-radius: 4px;
   margin-bottom: 24px;
+  background-image: url(${(props) => props.src});
+  background-size: cover;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+
+  ::after {
+    position: absolute;
+    content: '';
+    display: ${(props) => (props.hover ? 'block' : 'none')};
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: inherit;
+    background: rgba(0, 0, 0, 0.3);
+  }
 `;
 
-const ModifyClassModal = ({ modalState, ModalClose, title, classTarget }) => {
+const ModifyClassModal = ({ ModalClose, title, classTarget, img }) => {
   const [classTargetValue, setClassTargetValue] = useState(classTarget);
   const [titleValue, setTitleValue] = useState(title);
+  const [hoverState, setHoverState] = useState(false);
+  const [mainImg, setMainImg] = useState(img);
+  const [fileName, setFileName] = useState('');
+
+  useEffect(() => {
+    setTitleValue(title);
+    setClassTargetValue(classTarget);
+  }, [title, classTarget]);
+
+  const imgChange = (e) => {
+    let theFile = e.target.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = (e) => {
+      setMainImg(e.target.result);
+      setFileName(theFile.name);
+    };
+
+    reader.readAsDataURL(theFile);
+  };
+
+  const ModifyFunc = () => {
+    axios.post('/api/class/info/admin/modify', { classTargetValue, titleValue });
+  };
 
   return (
     <>
       <ModifyClassModalContainer>
-        <ModifyMainImgInput id="img" type="file" />
-        <ModifyMainImgLabel htmlFor="img">
-          <AiOutlinePicture size="33px" color="rgb(100,100,100)" style={{ marginBottom: '6px' }} />
-          우리의 모임의 사진을 올려보세요
+        <ModifyMainImgInput id="img" type="file" onChange={imgChange} accept="image/*" />
+        <ModifyMainImgLabel
+          htmlFor="img"
+          src={mainImg}
+          hover={hoverState}
+          onMouseEnter={() => {
+            setHoverState(true);
+          }}
+          onMouseLeave={() => {
+            setHoverState(false);
+          }}
+        >
+          {!mainImg && (
+            <>
+              <AiOutlinePicture size="33px" color="rgb(100,100,100)" style={{ marginBottom: '6px' }} />
+              우리의 모임의 사진을 올려보세요
+            </>
+          )}
         </ModifyMainImgLabel>
 
         <ModifyInfoInput
@@ -70,7 +124,7 @@ const ModifyClassModal = ({ modalState, ModalClose, title, classTarget }) => {
         </ClassMemberCountWrap>
       </ModifyClassModalContainer>
       <ButtonWrap>
-        <ModifyButton>수정</ModifyButton>
+        <ModifyButton onClick={ModifyFunc}>수정</ModifyButton>
         <ModifyButton onClick={ModalClose}>취소</ModifyButton>
       </ButtonWrap>
     </>

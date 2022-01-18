@@ -10,6 +10,7 @@ const classSchema = new mongoose.Schema(
     memberCount: { type: Number, required: true },
     makeUser: { type: String, required: true },
     thumnail: { type: String, default: null },
+    hashTag: [{ type: String }],
   },
   { timestamps: true },
 );

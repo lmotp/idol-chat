@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
+import ClassMakeHashTag from '../components/MakeClass/ClassMakeHashTag';
 import LocationModal from '../components/Modal/LocationModal';
 import Modal from '../components/Modal/Modal';
 import { AuthButton, ClassMemberCount, ClassMemberCountWrap, LocationButton } from '../css/FormStyle';
@@ -34,7 +35,7 @@ const CategoryList = styled.li`
   width: 19%;
   margin-bottom: 24px;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   padding: 10px;
   border: 1px solid rgb(200, 200, 200);
@@ -53,8 +54,8 @@ const CategoryListLogo = styled.div`
   background-position: center;
   background-size: cover;
   box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
-  width: 33px;
-  height: 33px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
 `;
@@ -97,6 +98,7 @@ const MakeClass = () => {
   const [modalState, setModalState] = useState(false);
   const [nowLocation, setNowLocation] = useState('');
   const [categoryValue, setCategoryValue] = useState();
+  const [hashTag, setHashTag] = useState([]);
   const classNameRef = useRef('');
   const classTargetRef = useRef('');
   const memberCountRef = useRef(1);
@@ -143,6 +145,7 @@ const MakeClass = () => {
         classTarget: classTargetRef.current.value,
         memberCount: 20,
         makeUser: _id,
+        hashTag,
       })
       .then(({ data }) => {
         navigate(`/pages/class/${data}`);
@@ -203,6 +206,8 @@ const MakeClass = () => {
           </ClassMemberCount>
           <ModifyInfoInput al="center" width="10%" type="text" placeholder="20" ref={memberCountRef} readOnly />
         </ClassMemberCountWrap>
+
+        <ClassMakeHashTag hashTag={hashTag} setHashTag={setHashTag} />
 
         <AuthButton color="black" margin="48px 0" onClick={makeClassFunc}>
           개설하기

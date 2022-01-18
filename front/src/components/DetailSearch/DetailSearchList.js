@@ -16,7 +16,7 @@ const DetailLocation = styled.h2`
 
 const ClassListNothing = styled.div`
   width: 100%;
-  height: 66vh;
+  height: 70vh;
   background: white;
   display: flex;
   justify-content: center;
@@ -29,6 +29,16 @@ const ClassListNothing = styled.div`
 const PlusButton = styled.div`
   display: flex;
   margin-right: 4px;
+`;
+
+const ClassListWrap = styled.div`
+  height: 71vh;
+  padding-bottom: 90px;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
 `;
 
 const DetailSearchList = () => {
@@ -54,9 +64,11 @@ const DetailSearchList = () => {
       {classList.length > 0 ? (
         <>
           <DetailLocation>{mainLocation}</DetailLocation>
-          {classList.map((v, i) => {
-            return <ClassList on="true" v={v} key={i} />;
-          })}
+          <ClassListWrap>
+            {classList.map((v, i) => {
+              return <ClassList on="true" v={v} key={i} />;
+            })}
+          </ClassListWrap>
         </>
       ) : (
         <ClassListNothing>

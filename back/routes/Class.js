@@ -6,6 +6,8 @@ const router = express.Router();
 // 모임만들기
 router.post('/make', (req, res) => {
   const classMake = new Class(req.body);
+  console.log(req.body);
+
   classMake.save((err, doc) => {
     if (err) {
       console.log('모임만들기 실패', err);
@@ -100,6 +102,8 @@ router.post('/info/secession/member', (req, res) => {
     });
   });
 });
+
+router.post('/info/admin/modify');
 ////////////////////////////////////////////////////
 
 // 카테고리에 맞는 모임리스트

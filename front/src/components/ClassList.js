@@ -24,13 +24,12 @@ const ClassListContainer = styled.div`
 const ListThumbnailWrap = styled.div`
   width: 30%;
   border-radius: 6px;
-  background: ${(props) => (props.src ? `url(${props.src})` : 'white')} center no-repeat;
+  background: ${(props) => (props.src ? 'url(' + props.src + ')' : 'white')} center no-repeat;
   background-size: cover;
   border: ${(props) => !props.src && '1px solid rgb(180,180,180)'};
   border-style: ${(props) => !props.src && 'dashed'};
 
   position: relative;
-  order: ${(props) => props.order || '0'};
 `;
 
 const HeartWrap = styled.div`
@@ -48,18 +47,16 @@ const HeartWrap = styled.div`
 
 const ListInfoWrap = styled.div`
   width: ${(props) => props.width || '46%'};
-  margin-left: ${(props) => props.ml || '-12px'};
+  margin-left: -12px;
   display: flex;
   flex-direction: column;
-  justify-content: ${(props) => props.jc || 'space-between'};
-  align-items: ${(props) => props.al || 'flex-start'};
-  order: ${(props) => props.order || '0'};
+  justify-content: space-between;
+  align-items: flex-start;
 `;
 
 const InfoMember = styled.div`
   font-size: 14px;
   display: flex;
-  order: ${(props) => props.order || '0'};
 `;
 
 const InfoCounter = styled.div`
@@ -72,13 +69,19 @@ const InfoMainTitle = styled.h2`
 `;
 
 const InfoSubTitle = styled.div`
-  line-height: 1.5;
+  line-height: 1.3;
   font-size: 14px;
-  height: ${(props) => props.height || '90px'};
-  text-align: ${(props) => props.ta || 'auto'};
+  height: ${(props) => props.height || '54px'};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 `;
 
-const InfoHasTagWrap = styled.div`
+const InfoHashTagWrap = styled.div`
   display: flex;
   align-items: center;
   margin-top: ${(props) => props.mt || '0'};
@@ -86,6 +89,7 @@ const InfoHasTagWrap = styled.div`
 
 const InfoMainHasTag = styled.span`
   margin-right: 10px;
+  margin-top: 4px;
   font-size: 12px;
   background: #db7093;
   color: white;
@@ -94,7 +98,7 @@ const InfoMainHasTag = styled.span`
   border-radius: 3px;
 `;
 
-const InfoHasTag = styled.span`
+const InfoHashTag = styled.span`
   margin-right: 10px;
   font-size: 12px;
   color: black;
@@ -109,8 +113,6 @@ const InfoHasTag = styled.span`
 const InfoLocation = styled.div`
   display: flex;
   cursor: pointer;
-  margin-bottom: ${(props) => props.mb || '0'};
-  align-self: ${(props) => props.al || 'auto'};
 `;
 
 const InfoLocationWrap = styled.div`
@@ -124,17 +126,17 @@ const InfoLocationWrap = styled.div`
   border-radius: 6px;
 `;
 
-const ClassList = ({ v, on, od1, od2, od3, ml, al, ta }) => {
+const ClassList = ({ v, on }) => {
   const navigate = useNavigate();
 
   return (
     <ClassListContainer onClick={() => navigate(`/pages/class/${v._id}`)}>
-      <ListThumbnailWrap src={v.thumnail} order={od3}>
+      <ListThumbnailWrap src={v.thumnail}>
         <HeartWrap>
           <BsHeartFill color={on ? 'red' : 'black'} />
         </HeartWrap>
       </ListThumbnailWrap>
-      <ListInfoWrap width="54%" ml={ml} al={al} order={od2}>
+      <ListInfoWrap width="54%">
         <InfoLocation mb="4px">
           <InfoLocationWrap>
             <GrLocation />
@@ -142,17 +144,15 @@ const ClassList = ({ v, on, od1, od2, od3, ml, al, ta }) => {
           </InfoLocationWrap>
         </InfoLocation>
         <InfoMainTitle>{v.className}</InfoMainTitle>
-        <InfoSubTitle height="60px" ta={ta}>
-          {v.classTarget}
-        </InfoSubTitle>
-        <InfoHasTagWrap>
+        <InfoSubTitle height="54px">{v.classTarget}</InfoSubTitle>
+        <InfoHashTagWrap>
           <InfoMainHasTag>{v.category}</InfoMainHasTag>
-          {/* {v.hasTag.map((v, i) => {
-            return <InfoHasTag key={i}>#{v}</InfoHasTag>;
-          })} */}
-        </InfoHasTagWrap>
+          {v.hashTag.map((v, i) => {
+            return <InfoHashTag key={i}>#{v}</InfoHashTag>;
+          })}
+        </InfoHashTagWrap>
       </ListInfoWrap>
-      <InfoMember order={od1}>
+      <InfoMember>
         <HiUsers />
         <InfoCounter>{v.member.length}</InfoCounter>
       </InfoMember>

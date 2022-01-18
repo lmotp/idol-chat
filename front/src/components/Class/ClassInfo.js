@@ -67,7 +67,7 @@ const InfoContent = styled.p`
   white-space: pre-wrap;
 `;
 
-const ClassInfo = ({ title, classTarget, location, hashTag, category, admin }) => {
+const ClassInfo = ({ title, classTarget, location, hashTag, category, admin, img }) => {
   const [modalState, setModalState] = useState(false);
 
   const ModalOpen = () => {
@@ -94,13 +94,18 @@ const ClassInfo = ({ title, classTarget, location, hashTag, category, admin }) =
       </InfoHeader>
       <InfoTagWrap>
         <InfoMainTag>#{category}</InfoMainTag>
-        {/* {hashTag.map((v, i) => (
-          <InfoHashTag key={i}>#{v}</InfoHashTag>
-        ))} */}
+
+        {hashTag && hashTag.map((v, i) => <InfoHashTag key={i}>#{v}</InfoHashTag>)}
       </InfoTagWrap>
       <InfoContent>{classTarget}</InfoContent>
       <Modal modalState={modalState}>
-        <ModifyClassModal modalState={modalState} ModalClose={ModalClose} title={title} classTarget={classTarget} />
+        <ModifyClassModal
+          modalState={modalState}
+          ModalClose={ModalClose}
+          title={title}
+          classTarget={classTarget}
+          img={img}
+        />
       </Modal>
     </ClassInfoContainer>
   );

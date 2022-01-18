@@ -1,20 +1,40 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { BsPlusCircleDotted } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import ClassList from '../components/ClassList';
 import MyClassSchedule from '../components/MyClass/MyClassSchedule';
 import SelectCategory from '../components/SelectCategory';
+import { Hr } from '../css/SelectBoxStyle';
 
 const MyClassContainer = styled.div`
   width: 90%;
   margin: 0 auto;
-  padding-bottom: 90px;
 `;
 
 const MyClassTitle = styled.h2`
   font-size: 21px;
   padding-top: 36px;
+`;
+
+const ClassListWrap = styled.div`
+  height: 44vh;
+  padding-bottom: 90px;
+  overflow-y: scroll;
+  margin-top: 20px;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
+`;
+
+const MyClassListNone = styled.div`
+  width: 100%;
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const MyClass = () => {
@@ -35,9 +55,19 @@ const MyClass = () => {
       <MyClassTitle>가입한 모임</MyClassTitle>
       <SelectCategory />
       <MyClassSchedule />
-      {myClassList.map((v, i) => {
-        return <ClassList v={v} key={i} on="true" od1="1" od2="2" od3="3" ml="0" al="flex-end" ta="right" />;
-      })}
+      <Hr />
+      <ClassListWrap>
+        {myClassList.length > 0 ? (
+          myClassList.map((v, i) => {
+            return <ClassList v={v} key={i} on="true" />;
+          })
+        ) : (
+          <MyClassListNone>
+            지금 모임에 가입해보세요
+            <BsPlusCircleDotted style={{ marginLeft: '6px' }} />
+          </MyClassListNone>
+        )}
+      </ClassListWrap>
     </MyClassContainer>
   );
 };

@@ -27,7 +27,17 @@ const ClassMainImgWrap = styled.div`
   }
 `;
 
-const ClassMainImg = ({ img, title, classTarget }) => {
+const ClassMainImgWrapNoAdmin = styled.div`
+  width: 100%;
+  height: 30vh;
+  background: ${(props) => (props.src ? `url(${props.src})` : 'rgb(200,200,200)')} center no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ClassMainImg = ({ img, title, classTarget, admin }) => {
   const [hoverState, setHoverState] = useState(false);
   const [modalState, setModalState] = useState(false);
 
@@ -40,22 +50,36 @@ const ClassMainImg = ({ img, title, classTarget }) => {
 
   return (
     <>
-      <ClassMainImgWrap
-        src={img}
-        hover={hoverState}
-        onMouseEnter={() => {
-          setHoverState(true);
-        }}
-        onMouseLeave={() => {
-          setHoverState(false);
-        }}
-        onClick={ModalOpen}
-      >
-        {!img && <AiOutlinePicture size="33px" color="black" />}
-      </ClassMainImgWrap>
-      <Modal modalState={modalState}>
-        <ModifyClassModal modalState={modalState} ModalClose={ModalClose} title={title} classTarget={classTarget} />
-      </Modal>
+      {admin ? (
+        <>
+          <ClassMainImgWrap
+            src={img}
+            hover={hoverState}
+            onMouseEnter={() => {
+              setHoverState(true);
+            }}
+            onMouseLeave={() => {
+              setHoverState(false);
+            }}
+            onClick={ModalOpen}
+          >
+            {!img && <AiOutlinePicture size="33px" color="black" />}
+          </ClassMainImgWrap>
+          <Modal modalState={modalState}>
+            <ModifyClassModal
+              modalState={modalState}
+              ModalClose={ModalClose}
+              title={title}
+              classTarget={classTarget}
+              img={img}
+            />
+          </Modal>
+        </>
+      ) : (
+        <ClassMainImgWrapNoAdmin src={img}>
+          <AiOutlinePicture size="33px" color="black" />
+        </ClassMainImgWrapNoAdmin>
+      )}
     </>
   );
 };

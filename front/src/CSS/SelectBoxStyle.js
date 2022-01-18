@@ -20,5 +20,5 @@ export const Hr = styled.hr`
   border: none;
   background: rgb(200, 200, 200);
   border-radius: 4px;
-  height: 6px;
+  height: 4px;
 `;
