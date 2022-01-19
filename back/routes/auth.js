@@ -2,6 +2,18 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const isAuth = require('../middleware/isAuth');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 router.post('/signup', (req, res) => {
   const { email } = req.body;
@@ -73,6 +85,18 @@ router.get('/logout', isAuth, (req, res) => {
   User.findOneAndUpdate({ _id: req.user._id }, { token: '' }, (err, doc) => {
     if (err) return res.json({ err });
     return res.clearCookie('auth').status(200).send();
+  });
+});
+
+router.post('/modify', upload.single('image'), (req, res) => {
+  const img = req.file ? `/api/image/${req.file.filename}` : req.body.image;
+  const { id, gender, myself, nickname } = req.body;
+
+  User.findOneAndUpdate({ _id: id }, { gender, myself, nickname, profileimg: img }, (err, doc) => {
+    if (err) {
+      console.log('유저정보수정 에러', err);
+    }
+    res.status(200).send(doc);
   });
 });
 

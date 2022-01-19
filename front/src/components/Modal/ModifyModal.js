@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { BiCamera } from 'react-icons/bi';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { userCheckActions } from '../../modules/actions/UserActions';
 
 const ModifyModalContainer = styled.div`
   padding: 20px;
@@ -112,22 +114,63 @@ const ModifyButton = styled.button`
   }
 `;
 
-const ModifyModal = ({ ModalClose }) => {
-  const { profileimg, gender, nickname, myself } = useSelector((state) => state.userCheckReducers.result);
+const ModifyModal = ({ setLoadingState, ModalClose, id, img }) => {
+  const { gender, nickname, myself } = useSelector((state) => state.userCheckReducers.result);
   const [imgHoverState, setImgHoverState] = useState(false);
   const [radioSelect, setRadioSelect] = useState(gender);
   const [nickName, setNickName] = useState(nickname);
   const [mySelf, setMySelf] = useState(myself);
+  const [mainImg, setMainImg] = useState(img);
+  const [fileName, setFileName] = useState('');
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setMySelf(myself);
+    setMainImg(img);
+    setRadioSelect(gender);
+    setNickName(nickname);
+  }, [myself, img, gender, nickname]);
 
   const radioCheckChange = (e) => {
     setRadioSelect(e.target.id);
   };
 
+  const imgChange = (e) => {
+    let theFile = e.target.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = (e) => {
+      setMainImg(e.target.result);
+      setFileName(theFile);
+    };
+
+    reader.readAsDataURL(theFile);
+  };
+
+  const ModifyFunc = () => {
+    const formData = new FormData();
+    formData.append('image', fileName ? fileName : mainImg);
+    formData.append('myself', mySelf);
+    formData.append('nickname', nickName);
+    formData.append('gender', radioSelect);
+    formData.append('id', id);
+
+    setLoadingState(true);
+
+    axios.post('/api/auth/modify', formData).then(({ data }) => {
+      console.log(data);
+      ModalClose();
+      dispatch(userCheckActions());
+
+      setLoadingState(false);
+    });
+  };
+
   return (
     <>
       <ModifyModalContainer>
-        <ModifyInfoWrap>
-          <ModifyImg type="file" id="img"></ModifyImg>
+        <ModifyInfoWrap onSubmit={(e) => e.preventDefault()}>
+          <ModifyImg type="file" id="img" onChange={imgChange} accept="image/*" />
           <ModifyLabel
             onMouseEnter={() => {
               setImgHoverState(true);
@@ -136,7 +179,7 @@ const ModifyModal = ({ ModalClose }) => {
               setImgHoverState(false);
             }}
             htmlFor="img"
-            img={profileimg}
+            img={mainImg}
           >
             <ModifyCamerraWrap hover={imgHoverState}>
               <BiCamera size="33px" />
@@ -179,7 +222,7 @@ const ModifyModal = ({ ModalClose }) => {
         </ModifyInfoWrap>
       </ModifyModalContainer>
       <ButtonWrap>
-        <ModifyButton>실행</ModifyButton>
+        <ModifyButton onClick={ModifyFunc}>실행</ModifyButton>
         <ModifyButton onClick={ModalClose}>취소</ModifyButton>
       </ButtonWrap>
     </>

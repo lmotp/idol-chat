@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { AiOutlinePlus } from 'react-icons/ai';
+import axios from 'axios';
 
 const CircleButtonContainer = styled.div`
   margin: 0px auto;
@@ -29,13 +30,24 @@ const CircleButtonWrap = styled.button`
 `;
 
 const CircleButton = () => {
-  const { myClass } = useSelector((state) => state.userCheckReducers.result);
+  const [chatState, setChatState] = useState(false);
   const { pathname } = useLocation();
   const { id } = useParams();
+  const { _id } = useSelector((state) => state.userCheckReducers.result);
+
+  useEffect(() => {
+    if (pathname === `/pages/class/${id}`) {
+      axios.get(`/api/class/info/${id}`).then(({ data }) => {
+        setChatState(data[0].member.includes(_id));
+      });
+    }
+  }, [pathname, id, _id]);
 
   return (
     <>
-      {pathname === '/pages/home' || pathname === '/pages/my-class' || pathname === `/pages/class/${id}` ? (
+      {pathname === '/pages/home' ||
+      pathname === '/pages/my-class' ||
+      (pathname === `/pages/class/${id}` && chatState) ? (
         <Link to={id ? `/pages/class/${id}/chat` : '/pages/class/make'}>
           <CircleButtonContainer>
             <CircleButtonWrap>

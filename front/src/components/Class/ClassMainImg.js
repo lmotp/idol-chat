@@ -37,7 +37,7 @@ const ClassMainImgWrapNoAdmin = styled.div`
   align-items: center;
 `;
 
-const ClassMainImg = ({ img, title, classTarget, admin }) => {
+const ClassMainImg = ({ img, title, classTarget, admin, id, setReloadState }) => {
   const [hoverState, setHoverState] = useState(false);
   const [modalState, setModalState] = useState(false);
 
@@ -72,12 +72,14 @@ const ClassMainImg = ({ img, title, classTarget, admin }) => {
               title={title}
               classTarget={classTarget}
               img={img}
+              id={id}
+              setReloadState={setReloadState}
             />
           </Modal>
         </>
       ) : (
         <ClassMainImgWrapNoAdmin src={img}>
-          <AiOutlinePicture size="33px" color="black" />
+          {!img && <AiOutlinePicture size="33px" color="black" />}
         </ClassMainImgWrapNoAdmin>
       )}
     </>

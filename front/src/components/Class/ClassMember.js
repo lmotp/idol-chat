@@ -24,22 +24,27 @@ const MemberInfoWrap = styled.div`
 const MemberInfo = styled.div`
   display: flex;
   align-items: center;
+  width: 90%;
 `;
 
 const MemberProfileImg = styled.img.attrs((props) => ({
   src: props.src,
 }))`
-  width: 20%;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
 `;
 
 const MemberInfoValue = styled.div`
   margin-left: 14px;
+  width: 85%;
 `;
 
 const MemberNickName = styled.div`
   margin-bottom: 6px;
+  font-weight: bold;
 `;
 const MemberMySelf = styled.p`
   font-size: 14px;
@@ -50,7 +55,7 @@ const MemberClasses = styled.div`
   color: ${(props) => (props.classes ? '#6667ab' : 'black')};
 `;
 
-const ClassMember = ({ memberInfo, joinState, userId, classId, reloadState }) => {
+const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, reloadState }) => {
   const navigate = useNavigate();
 
   const memberSecession = () => {
@@ -66,18 +71,32 @@ const ClassMember = ({ memberInfo, joinState, userId, classId, reloadState }) =>
       ) : (
         <ClassMemberContainer>
           <MemberTitle>모임 멤버 ({memberInfo.length}명)</MemberTitle>
-          {memberInfo.map((v, i) => (
-            <MemberInfoWrap key={i}>
+          {adminMember && (
+            <MemberInfoWrap>
               <MemberInfo>
-                <MemberProfileImg src={v.profileImg} />
+                <MemberProfileImg src={adminMember[0].profileImg} />
                 <MemberInfoValue>
-                  <MemberNickName>{v.nickName}</MemberNickName>
-                  <MemberMySelf>{v.mySelf}</MemberMySelf>
+                  <MemberNickName>{adminMember[0].nickName}</MemberNickName>
+                  <MemberMySelf>{adminMember[0].mySelf}</MemberMySelf>
                 </MemberInfoValue>
               </MemberInfo>
-              <MemberClasses classes={v.classes !== '회원'}>{v.classes}</MemberClasses>
+              <MemberClasses classes={adminMember[0].classes !== '회원'}>{adminMember[0].classes}</MemberClasses>
             </MemberInfoWrap>
-          ))}
+          )}
+          {memberInfo
+            .filter((v) => v.classes === '회원')
+            .map((v, i) => (
+              <MemberInfoWrap key={i}>
+                <MemberInfo>
+                  <MemberProfileImg src={v.profileImg} />
+                  <MemberInfoValue>
+                    <MemberNickName>{v.nickName}</MemberNickName>
+                    <MemberMySelf>{v.mySelf}</MemberMySelf>
+                  </MemberInfoValue>
+                </MemberInfo>
+                <MemberClasses classes={v.classes !== '회원'}>{v.classes}</MemberClasses>
+              </MemberInfoWrap>
+            ))}
           {joinState && (
             <AuthButton onClick={memberSecession} color="rgb(180,180,180)" margin="30px 0 0">
               모임나가기

@@ -7,7 +7,7 @@ import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import axios from 'axios';
 
-const ModifyClassModalContainer = styled.form`
+const ModifyClassModalContainer = styled.div`
   width: 90%;
   margin: 0 auto;
   padding: 33px 0;
@@ -48,7 +48,7 @@ const ModifyMainImgLabel = styled.label`
   }
 `;
 
-const ModifyClassModal = ({ ModalClose, title, classTarget, img }) => {
+const ModifyClassModal = ({ ModalClose, title, classTarget, img, id, setReloadState }) => {
   const [classTargetValue, setClassTargetValue] = useState(classTarget);
   const [titleValue, setTitleValue] = useState(title);
   const [hoverState, setHoverState] = useState(false);
@@ -58,7 +58,8 @@ const ModifyClassModal = ({ ModalClose, title, classTarget, img }) => {
   useEffect(() => {
     setTitleValue(title);
     setClassTargetValue(classTarget);
-  }, [title, classTarget]);
+    setMainImg(img);
+  }, [title, classTarget, img]);
 
   const imgChange = (e) => {
     let theFile = e.target.files[0];
@@ -66,14 +67,24 @@ const ModifyClassModal = ({ ModalClose, title, classTarget, img }) => {
     const reader = new FileReader();
     reader.onloadend = (e) => {
       setMainImg(e.target.result);
-      setFileName(theFile.name);
+      setFileName(theFile);
     };
 
     reader.readAsDataURL(theFile);
   };
 
   const ModifyFunc = () => {
-    axios.post('/api/class/info/admin/modify', { classTargetValue, titleValue });
+    setReloadState(true);
+    const formData = new FormData();
+    formData.append('image', fileName ? fileName : mainImg);
+    formData.append('title', titleValue);
+    formData.append('classTarget', classTargetValue);
+    formData.append('id', id);
+
+    axios.post('/api/class/info/admin/modify', formData).then(() => {
+      ModalClose();
+      setReloadState(false);
+    });
   };
 
   return (

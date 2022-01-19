@@ -1,7 +1,19 @@
 const express = require('express');
 const Class = require('../models/Class');
 const User = require('../models/User');
+const multer = require('multer');
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // 모임만들기
 router.post('/make', (req, res) => {
@@ -103,7 +115,20 @@ router.post('/info/secession/member', (req, res) => {
   });
 });
 
-router.post('/info/admin/modify');
+//모임 수정하기
+router.post('/info/admin/modify', upload.single('image'), (req, res) => {
+  console.log(req.body.image);
+
+  const img = req.file ? `/api/image/${req.file.filename}` : req.body.image;
+  const { title, classTarget, id } = req.body;
+
+  Class.findOneAndUpdate({ _id: id }, { className: title, classTarget: classTarget, thumnail: img }, (err, doc) => {
+    if (err) {
+      console.log('모임수정 에러', err);
+    }
+    res.status(200).send(doc);
+  });
+});
 ////////////////////////////////////////////////////
 
 // 카테고리에 맞는 모임리스트

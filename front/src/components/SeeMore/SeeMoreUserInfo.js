@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GrLocation } from 'react-icons/gr';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import Loading from '../Loading';
 import Modal from '../Modal/Modal';
 import ModifyModal from '../Modal/ModifyModal';
 import ProfileImg from '../ProfileImg';
@@ -47,6 +48,7 @@ const InfoMySelf = styled.p`
   line-height: 1.5;
   font-size: 14px;
   width: 60%;
+  white-space: pre-wrap;
 `;
 
 const ModifyButton = styled.span`
@@ -65,7 +67,10 @@ const Hr = styled.hr`
 `;
 
 const SeeMoreUserInfo = () => {
-  const { gender, location, nickname, profileimg, myself } = useSelector((state) => state.userCheckReducers.result);
+  const { gender, location, nickname, profileimg, myself, _id } = useSelector(
+    (state) => state.userCheckReducers.result,
+  );
+  const [loadingState, setLoadingState] = useState(false);
   const [modalState, setModalState] = useState(false);
 
   // 모달창 함수
@@ -78,27 +83,33 @@ const SeeMoreUserInfo = () => {
   };
 
   return (
-    <SeeMoreUserInfoWrap>
-      <ProfileImg profileimg={profileimg} />
-      <InfoWrap>
-        <InfoFirstWrap>
-          <InfoFirst>
-            <InfoNickName>{nickname}</InfoNickName>
-            <InfoGender>{gender !== 'nothing' ? (gender === 'men' ? '남자' : '여성') : '성별미선택'}</InfoGender>
-          </InfoFirst>
-          <ModifyButton onClick={ModalOpen}>수정</ModifyButton>
-        </InfoFirstWrap>
-        <InfoLocation>
-          <GrLocation size="16px" />
-          {location}
-        </InfoLocation>
-        <Hr />
-        <InfoMySelf>{myself}</InfoMySelf>
-      </InfoWrap>
-      <Modal modalState={modalState}>
-        <ModifyModal ModalClose={ModalClose} ModalOpen={ModalOpen} />
-      </Modal>
-    </SeeMoreUserInfoWrap>
+    <>
+      {!loadingState ? (
+        <SeeMoreUserInfoWrap>
+          <ProfileImg profileimg={profileimg} />
+          <InfoWrap>
+            <InfoFirstWrap>
+              <InfoFirst>
+                <InfoNickName>{nickname}</InfoNickName>
+                <InfoGender>{gender !== 'nothing' ? (gender === 'men' ? '남자' : '여성') : '성별미선택'}</InfoGender>
+              </InfoFirst>
+              <ModifyButton onClick={ModalOpen}>수정</ModifyButton>
+            </InfoFirstWrap>
+            <InfoLocation>
+              <GrLocation size="16px" />
+              {location}
+            </InfoLocation>
+            <Hr />
+            <InfoMySelf>{myself}</InfoMySelf>
+          </InfoWrap>
+          <Modal modalState={modalState}>
+            <ModifyModal setLoadingState={setLoadingState} ModalClose={ModalClose} id={_id} img={profileimg} />
+          </Modal>
+        </SeeMoreUserInfoWrap>
+      ) : (
+        <Loading />
+      )}
+    </>
   );
 };
 

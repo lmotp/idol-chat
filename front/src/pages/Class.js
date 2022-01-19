@@ -7,6 +7,7 @@ import ClassInfo from '../components/Class/ClassInfo';
 import ClassMainImg from '../components/Class/ClassMainImg';
 import ClassMeeting from '../components/Class/ClassMeeting';
 import ClassMember from '../components/Class/ClassMember';
+import Loading from '../components/Loading';
 const ClassContainer = styled.div`
   width: 90%;
   padding-bottom: 90px;
@@ -19,6 +20,7 @@ const Class = () => {
   const [classInfo, setClassInfo] = useState([]);
   const [memberInfo, setMemberInfo] = useState([]);
   const [reloadState, setReloadState] = useState(false);
+  const [adminMember, setAdminMember] = useState('');
   const joinStateRef = useRef();
 
   useEffect(() => {
@@ -30,6 +32,7 @@ const Class = () => {
 
       axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
         setMemberInfo(data);
+        setAdminMember(data.filter((v) => v.classes === '모임장'));
       });
     }
   }, [id, _id, reloadState]);
@@ -42,38 +45,51 @@ const Class = () => {
 
   return (
     <>
-      <ClassMainImg
-        admin={_id === classInfo.makeUser}
-        img={classInfo.thumnail}
-        title={classInfo.className}
-        classTarget={classInfo.classTarget}
-      />
-      <ClassContainer>
-        <ClassInfo
-          admin={_id === classInfo.makeUser}
-          title={classInfo.className}
-          classTarget={classInfo.classTarget}
-          location={classInfo.location?.split(' ')[1]}
-          hashTag={classInfo.hashTag}
-          category={classInfo.category}
-          img={classInfo.thumnail}
-        />
-        <ClassMeeting
-          admin={_id === classInfo.makeUser}
-          array={testMeetingDay}
-          userId={_id}
-          classId={id}
-          joinState={joinStateRef.current}
-          setReloadState={setReloadState}
-        />
-        <ClassMember
-          memberInfo={memberInfo}
-          joinState={joinStateRef.current}
-          userId={_id}
-          classId={id}
-          reloadState={reloadState}
-        />
-      </ClassContainer>
+      {!reloadState ? (
+        <>
+          <ClassMainImg
+            admin={_id === classInfo.makeUser}
+            img={classInfo.thumnail}
+            title={classInfo.className}
+            classTarget={classInfo.classTarget}
+            id={id}
+            setReloadState={setReloadState}
+          />
+          <ClassContainer>
+            <ClassInfo
+              admin={_id === classInfo.makeUser}
+              title={classInfo.className}
+              classTarget={classInfo.classTarget}
+              location={classInfo.location?.split(' ')[1]}
+              hashTag={classInfo.hashTag}
+              category={classInfo.category}
+              img={classInfo.thumnail}
+              id={id}
+              setReloadState={setReloadState}
+            />
+            <ClassMeeting
+              admin={_id === classInfo.makeUser}
+              array={testMeetingDay}
+              userId={_id}
+              classId={id}
+              joinState={joinStateRef.current}
+              setReloadState={setReloadState}
+            />
+            <ClassMember
+              memberInfo={memberInfo}
+              adminMember={adminMember}
+              joinState={joinStateRef.current}
+              userId={_id}
+              classId={id}
+              reloadState={reloadState}
+            />
+          </ClassContainer>
+        </>
+      ) : (
+        <ClassContainer>
+          <Loading />
+        </ClassContainer>
+      )}
     </>
   );
 };

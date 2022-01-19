@@ -31,7 +31,7 @@ const ClassListWrap = styled.div`
 
 const MyClassListNone = styled.div`
   width: 100%;
-  height: 40vh;
+  height: 34vh;
   display: flex;
   align-items: center;
   justify-content: center;
