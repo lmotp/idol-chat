@@ -1,5 +1,5 @@
 import format from 'date-fns/format';
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 const ChatListContainer = styled.div`
   padding-top: 33px;
@@ -64,7 +64,7 @@ const ChatMeesage = styled.p`
   white-space: pre-wrap;
 `;
 
-const ChatList = () => {
+const ChatList = ({ chat, _id }) => {
   const chatTest = [
     {
       img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
@@ -160,4 +160,4 @@ const ChatList = () => {
   );
 };
 
-export default ChatList;
+export default memo(ChatList);

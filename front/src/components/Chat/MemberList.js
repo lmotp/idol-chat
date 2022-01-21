@@ -88,10 +88,9 @@ const MemberListMine = styled.div`
   color: white;
 `;
 
-const MemberList = () => {
+const MemberList = ({ _id }) => {
   const [mebmerList, setMemberList] = useState([]);
   const [myProfile, setMyProfile] = useState([]);
-  const { _id } = useSelector((state) => state.userCheckReducers.result);
   const dispatch = useDispatch();
   const state = useSelector((state) => state.chatMemberReducer);
   const { id } = useParams();
@@ -102,8 +101,6 @@ const MemberList = () => {
       setMemberList(data);
     });
   }, [id, _id]);
-
-  console.log(myProfile);
 
   return (
     <>

@@ -90,13 +90,13 @@ const MeetingMakeModal = ({ ModalClose }) => {
           <MeetingDayValueWrap>
             <MeetingWrap>
               <AiOutlineCalendar size="18px" style={{ marginRight: '8px' }} />
-              <ModifyInfoInput value={meetingDayValue} type="text" placeholder="모일 날을 적어주세요." />
+              <ModifyInfoInput value={meetingDayValue} type="text" placeholder="모일 날을 적어주세요." readOnly />
             </MeetingWrap>
 
             {/* 정모시간 */}
             <MeetingWrap>
               <AiOutlineClockCircle size="18px" style={{ marginRight: '8px' }} />
-              <ModifyInfoInput value={meetingTimeValue} type="text" placeholder="모일 시간을 적어주세요." />
+              <ModifyInfoInput value={meetingTimeValue} type="text" placeholder="모일 시간을 적어주세요." readOnly />
             </MeetingWrap>
           </MeetingDayValueWrap>
 

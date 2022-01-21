@@ -112,7 +112,7 @@ const InviteMessageBox = () => {
     <InviteMessageBoxContianer>
       {classList.map((v, i) => {
         return (
-          <InviteMessageListWrap>
+          <InviteMessageListWrap key={i}>
             <ListtHumbnail src={v.thumnail} width="16%" />
             <ListInfoWrap width="80%" ml="12px" jc="center">
               <InfoMainTitle>{v.mainTitle}</InfoMainTitle>

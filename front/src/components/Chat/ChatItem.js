@@ -2,6 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import styled from 'styled-components';
 import { FaPaperPlane } from 'react-icons/fa';
+import ChatList from './ChatList';
+import { useLocation, useParams } from 'react-router-dom';
+import axios from 'axios';
+
+const ChatRoomWrap = styled.div`
+  width: 100%;
+  height: 93.2vh;
+`;
 
 const FormBox = styled.form`
   width: 100%;
@@ -35,33 +43,59 @@ const ButtonBox = styled.button`
   justify-content: flex-end;
   align-items: center;
 `;
+const socket = io('http://localhost:5000', { transports: ['websocket'] });
 
-const ChatItem = () => {
+const ChatItem = ({ _id }) => {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
-  const socket = io('/test');
+  const { pathname } = useLocation();
+  const { id } = useParams();
   const textRef = useRef();
 
-  // useEffect(() => {
-  //   socket.on('test', (data) => {
-  //     console.log(data);
-  //   });
-  // }, [socket]);
+  useEffect(() => {
+    console.log(socket);
+    socket.on('messageList', (data) => {
+      console.log(data);
+    });
+
+    return socket.off('messageList', (data) => {
+      setChat([...chat, { data }]);
+    });
+  }, [chat]);
 
   const onMessageSubmit = (e) => {
     e.preventDefault();
-    // socket.emit('test', message);
-    // textRef.current.focus();
-    // setMessage('');
+    if (message) {
+      axios.post('/api/chat/message', { userId: _id, classId: id, message: message }).then(() => {});
+      textRef.current.focus();
+      setMessage('');
+    }
+  };
+
+  const onKeydownChat = (e) => {
+    if (e.key === 'Enter') {
+      if (!e.shiftKey) {
+        e.preventDefault();
+        onMessageSubmit(e);
+      }
+    }
   };
 
   return (
-    <FormBox onSubmit={onMessageSubmit}>
-      <TextBox ref={textRef} value={message} onChange={(e) => setMessage(e.target.value)}></TextBox>
-      <ButtonBox>
-        <FaPaperPlane size="18px" color="rgb(200,200,200)" />
-      </ButtonBox>
-    </FormBox>
+    <ChatRoomWrap>
+      <ChatList chat={chat} _id={_id} />
+      <FormBox onSubmit={onMessageSubmit}>
+        <TextBox
+          ref={textRef}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={onKeydownChat}
+        ></TextBox>
+        <ButtonBox>
+          <FaPaperPlane size="18px" color="rgb(200,200,200)" />
+        </ButtonBox>
+      </FormBox>
+    </ChatRoomWrap>
   );
 };
 

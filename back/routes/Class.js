@@ -171,4 +171,9 @@ router.get('/list/my/:id', (req, res) => {
   });
 });
 
+router.get('/test', (req, res) => {
+  const io = req.app.get('io');
+  console.log('나이스', io);
+  res.send('성공');
+});
 module.exports = router;
