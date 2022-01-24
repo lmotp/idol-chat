@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const SocketIo = require('socket.io');
+const Chat = require('./models/Chat');
 const io = new SocketIo.Server(server, {
   cors: {
     origin: '*',
@@ -42,12 +43,20 @@ app.use('/api/category', require('./routes/category'));
 app.use('/api/class', require('./routes/Class'));
 app.use('/api/chat', require('./routes/Chat'));
 
-app.set('io', io);
+io.of('/test').on('connection', (socket) => {
+  socket.on('Message', (msg) => {
+    let chat = new Chat({ message: msg.message, userId: msg.userId, classId: msg.classId });
 
-io.on('connection', (socket) => {
-  socket.on('message', (data) => {
-    console.log(data);
-    socket.emit('message', data);
+    chat.save((err, doc) => {
+      console.log(doc);
+      if (err) return res.json({ success: false, err });
+
+      Chat.find({ _id: doc._id })
+        .populate({ path: 'userId', select: ['profileimg', 'nickname'] })
+        .exec((err, doc) => {
+          return io.emit('Message', doc);
+        });
+    });
   });
 });
 

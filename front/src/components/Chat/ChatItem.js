@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import styled from 'styled-components';
 import { FaPaperPlane } from 'react-icons/fa';
 import ChatList from './ChatList';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const ChatRoomWrap = styled.div`
@@ -43,30 +43,39 @@ const ButtonBox = styled.button`
   justify-content: flex-end;
   align-items: center;
 `;
-const socket = io('http://localhost:5000', { transports: ['websocket'] });
+const socket = io('http://localhost:5000/test', { transports: ['websocket'] });
 
 const ChatItem = ({ _id }) => {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
-  const { pathname } = useLocation();
   const { id } = useParams();
   const textRef = useRef();
+  const scrollRef = useRef();
+
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
 
   useEffect(() => {
     console.log(socket);
-    socket.on('messageList', (data) => {
-      console.log(data);
-    });
-
-    return socket.off('messageList', (data) => {
-      setChat([...chat, { data }]);
+    socket.on('Message', (data) => {
+      setChat([...chat, data[0]]);
+      scrollToBottom();
     });
   }, [chat]);
+
+  useEffect(() => {
+    axios.get(`/api/chat/message/${id}`).then(({ data }) => {
+      setChat(data);
+    });
+  }, [id]);
 
   const onMessageSubmit = (e) => {
     e.preventDefault();
     if (message) {
-      axios.post('/api/chat/message', { userId: _id, classId: id, message: message }).then(() => {});
+      socket.emit('Message', { userId: _id, classId: id, message: message });
       textRef.current.focus();
       setMessage('');
     }
@@ -83,7 +92,7 @@ const ChatItem = ({ _id }) => {
 
   return (
     <ChatRoomWrap>
-      <ChatList chat={chat} _id={_id} />
+      <ChatList chat={chat} _id={_id} scrollRef={scrollRef} />
       <FormBox onSubmit={onMessageSubmit}>
         <TextBox
           ref={textRef}
