@@ -57,98 +57,26 @@ const ChatTime = styled.div`
   font-size: 14px;
 `;
 const ChatMeesage = styled.p`
-  padding: 10px;
+  padding: 10px 10px 10px 12px;
   width: 100%;
   border: 1px solid rgb(200, 200, 200);
   border-radius: 4px;
   white-space: pre-wrap;
 `;
 
-const ChatList = ({ chat, _id }) => {
-  const chatTest = [
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message:
-        '안녕하세요 저는 정글의법칙에서 온 김병만입니다.안녕하세요 저는 정글의법칙에서 온 김병만입니다.안녕하세요 저는 정글의법칙에서 온 김병만입니다.안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: true,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-    {
-      img: 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240',
-      nickName: '테스트2호',
-      me: false,
-      message: '안녕하세요 저는 정글의법칙에서 온 김병만입니다.',
-      time: format(new Date(), 'hh시mm분'),
-    },
-  ];
+const ChatList = ({ chat, _id, scrollRef }) => {
   return (
-    <ChatListContainer>
+    <ChatListContainer ref={scrollRef}>
       <ChatWrap>
-        {chatTest.map((v, i) => {
+        {chat.map((v) => {
+          const me = v.userId._id === _id;
           return (
-            <ChatBox me={v.me}>
-              <ChatImg src={v.img} me={v.me} />
+            <ChatBox me={me} key={v._id}>
+              <ChatImg src={v.userId.profileimg} me={me} />
               <ChatText>
-                <ChatUser me={v.me}>
-                  <ChatNickName me={v.me}>{v.me ? '나' : v.nickName}</ChatNickName>
-                  <ChatTime>{v.time}</ChatTime>
+                <ChatUser me={me}>
+                  <ChatNickName me={me}>{me ? '나' : v.userId.nickname}</ChatNickName>
+                  <ChatTime>{format(new Date(v.createdAt), 'HH시mm분')}</ChatTime>
                 </ChatUser>
                 <ChatMeesage>{v.message}</ChatMeesage>
               </ChatText>
