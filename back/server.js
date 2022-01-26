@@ -43,18 +43,35 @@ app.use('/api/category', require('./routes/category'));
 app.use('/api/class', require('./routes/Class'));
 app.use('/api/chat', require('./routes/Chat'));
 
-io.of('/test').on('connection', (socket) => {
-  socket.on('Message', (msg) => {
+io.on('connection', (socket) => {
+  socket.on('joinRoom', (classId) => {
+    console.log(socket.rooms);
+    socket.join(classId);
+    console.log(socket.rooms);
+    io.to(classId).emit('join', `${classId}조인 되었습니다!!!!`);
+  });
+
+  socket.on('leaveRoom', (classId) => {
+    socket.leave(classId);
+    console.log(socket.rooms);
+    io.to(classId).emit('leave', `${classId} 리브 되었스빈다!!!`);
+  });
+
+  socket.on('message', (msg) => {
     let chat = new Chat({ message: msg.message, userId: msg.userId, classId: msg.classId });
 
     chat.save((err, doc) => {
-      console.log(doc);
       if (err) return res.json({ success: false, err });
 
       Chat.find({ _id: doc._id })
         .populate({ path: 'userId', select: ['profileimg', 'nickname'] })
         .exec((err, doc) => {
-          return io.emit('Message', doc);
+          if (err) {
+            console.log('err', err);
+          }
+          console.log(socket.rooms);
+
+          io.to(msg.classId).emit('message', doc);
         });
     });
   });

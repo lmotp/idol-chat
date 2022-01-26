@@ -1,10 +1,11 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { menuToggle } from '../modules/actions/MemberListAction';
 import axios from 'axios';
+import useSocket from '../hooks/useSocket';
 
 const BarContainer = styled.div`
   width: 100%;
@@ -24,20 +25,35 @@ const BarTitle = styled.span`
   cursor: pointer;
 `;
 
-const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, id }) => {
+const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, _id }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { id } = useParams();
   const dispatch = useDispatch();
+  const [socket, disconnect] = useSocket(id);
 
   const selectCategory = () => {
-    axios.post('/api/auth/select-category', { clickCategory, id }).then((data) => {
+    axios.post('/api/auth/select-category', { clickCategory, _id }).then((data) => {
       navigate(page);
     });
   };
 
+  const back = useCallback(() => {
+    if (id) {
+      console.log('안녕?');
+
+      socket.emit('leaveRoom', id);
+      socket.on('leave', (data) => {
+        console.log('나 실행됭?', data);
+      });
+      disconnect();
+      navigate(-1);
+    }
+  }, [id, socket, disconnect, navigate]);
+
   return (
     <BarContainer>
-      <BarWrap onClick={() => navigate(-1)}>
+      <BarWrap onClick={back}>
         <BarTitle>◀</BarTitle>
         <BarTitle>{title}</BarTitle>
       </BarWrap>

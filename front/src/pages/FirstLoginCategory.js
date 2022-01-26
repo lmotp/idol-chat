@@ -72,7 +72,7 @@ const FirstLoginCategory = () => {
 
   return (
     <FirstLoginContainer>
-      <BackBar title="관심사 선택" nextTitle="선택" clickCategory={clickCategory} page="/pages/home" id={_id} />
+      <BackBar title="관심사 선택" nextTitle="선택" clickCategory={clickCategory} page="/pages/home" _id={_id} />
       <CategoryListWrap>
         {category.map((v, i) => {
           return (

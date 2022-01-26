@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 import { useCallback } from 'react';
 
-const BACK_URL = 'http://localhost:5000';
+const backUrl = 'http://localhost:5000';
 
 const sockets = {};
 const useSocket = (classId) => {
@@ -11,13 +11,13 @@ const useSocket = (classId) => {
       delete sockets[classId];
     }
   }, [classId]);
-  if (!classId) {
-    return [undefined, disconnect];
-  }
+
   if (!sockets[classId]) {
-    console.log('연결');
-    sockets[classId] = io(`${BACK_URL}/test`, {
+    console.log('나 몇번 실행됭?');
+
+    sockets[classId] = io(`${backUrl}`, {
       transports: ['websocket'],
+      path: '/socket.io',
     });
   }
 

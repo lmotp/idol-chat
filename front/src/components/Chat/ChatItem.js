@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
 import styled from 'styled-components';
+import useSocket from '../../hooks/useSocket';
 import { FaPaperPlane } from 'react-icons/fa';
 import ChatList from './ChatList';
 import { useParams } from 'react-router-dom';
@@ -43,41 +43,56 @@ const ButtonBox = styled.button`
   justify-content: flex-end;
   align-items: center;
 `;
-const socket = io('http://localhost:5000/test', { transports: ['websocket'] });
 
 const ChatItem = ({ _id }) => {
-  const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const { id } = useParams();
   const textRef = useRef();
   const scrollRef = useRef();
-
-  const scrollToBottom = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  };
+  const [socket] = useSocket(id);
 
   useEffect(() => {
-    console.log(socket);
-    socket.on('Message', (data) => {
-      setChat([...chat, data[0]]);
-      scrollToBottom();
+    socket.emit('joinRoom', id);
+    socket.on('join', (data) => {
+      console.log(data);
     });
-  }, [chat]);
-
-  useEffect(() => {
     axios.get(`/api/chat/message/${id}`).then(({ data }) => {
       setChat(data);
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
     });
-  }, [id]);
+  }, [id, socket]);
+
+  useEffect(() => {
+    console.log('랜더링횟수');
+    socket.on('message', (data) => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+      setChat([...chat, data[0]]);
+    });
+    return () => {
+      socket.off();
+    };
+  }, [chat, socket]);
+
+  // useEffect(() => {
+  //   console.log('렌더링횟수');
+  //   socket.on('message', (data) => {
+  //     setChat([...chat, data[0]]);
+  //   });
+  //   return () => {
+  //     socket.off('message');
+  //   };
+  // }, [chat, socket]);
 
   const onMessageSubmit = (e) => {
     e.preventDefault();
-    if (message) {
-      socket.emit('Message', { userId: _id, classId: id, message: message });
+    if (textRef.current.value) {
+      socket.emit('message', { userId: _id, classId: id, message: textRef.current.value });
       textRef.current.focus();
-      setMessage('');
+      textRef.current.value = '';
     }
   };
 
@@ -94,12 +109,7 @@ const ChatItem = ({ _id }) => {
     <ChatRoomWrap>
       <ChatList chat={chat} _id={_id} scrollRef={scrollRef} />
       <FormBox onSubmit={onMessageSubmit}>
-        <TextBox
-          ref={textRef}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={onKeydownChat}
-        ></TextBox>
+        <TextBox ref={textRef} onKeyDown={onKeydownChat}></TextBox>
         <ButtonBox>
           <FaPaperPlane size="18px" color="rgb(200,200,200)" />
         </ButtonBox>

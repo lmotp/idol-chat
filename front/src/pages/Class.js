@@ -16,7 +16,7 @@ const ClassContainer = styled.div`
 
 const Class = () => {
   const { id } = useParams(); // 모임아이디
-  const { _id } = useSelector((state) => state.userCheckReducers.result); //유저아이디
+  const user = useSelector((state) => state.userCheckReducers.result); //유저아이디
   const [classInfo, setClassInfo] = useState([]);
   const [memberInfo, setMemberInfo] = useState([]);
   const [reloadState, setReloadState] = useState(false);
@@ -27,7 +27,7 @@ const Class = () => {
     if (id) {
       axios.get(`/api/class/info/${id}`).then(({ data }) => {
         setClassInfo(data[0]);
-        joinStateRef.current = data[0].member.includes(_id);
+        joinStateRef.current = data[0].member.includes(user?._id);
       });
 
       axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
@@ -35,7 +35,7 @@ const Class = () => {
         setAdminMember(data.filter((v) => v.classes === '모임장'));
       });
     }
-  }, [id, _id, reloadState]);
+  }, [id, user?._id, reloadState]);
 
   const testMeetingDay = [
     { title: '얼굴 봅시다!', day: new Date(), location: '건대 (임시장소)', price: '엔빵' },
@@ -48,7 +48,7 @@ const Class = () => {
       {!reloadState ? (
         <>
           <ClassMainImg
-            admin={_id === classInfo.makeUser}
+            admin={user?._id === classInfo.makeUser}
             img={classInfo.thumnail}
             title={classInfo.className}
             classTarget={classInfo.classTarget}
@@ -57,7 +57,7 @@ const Class = () => {
           />
           <ClassContainer>
             <ClassInfo
-              admin={_id === classInfo.makeUser}
+              admin={user?._id === classInfo.makeUser}
               title={classInfo.className}
               classTarget={classInfo.classTarget}
               location={classInfo.location?.split(' ')[1]}
@@ -68,9 +68,9 @@ const Class = () => {
               setReloadState={setReloadState}
             />
             <ClassMeeting
-              admin={_id === classInfo.makeUser}
+              admin={user?._id === classInfo.makeUser}
               array={testMeetingDay}
-              userId={_id}
+              userId={user?._id}
               classId={id}
               joinState={joinStateRef.current}
               setReloadState={setReloadState}
@@ -79,7 +79,7 @@ const Class = () => {
               memberInfo={memberInfo}
               adminMember={adminMember}
               joinState={joinStateRef.current}
-              userId={_id}
+              userId={user?._id}
               classId={id}
               reloadState={reloadState}
             />
