@@ -41,13 +41,15 @@ router.post('/make', (req, res) => {
 // 모임자세히보기 부분
 // 모임 정보
 router.get('/info/:id', (req, res) => {
-  Class.find({ _id: req.params.id }, (err, doc) => {
-    if (err) {
-      console.log('클래스찾기에러', err);
-    }
-    console.log(doc);
-    res.status(200).send(doc);
-  });
+  Class.find({ _id: req.params.id })
+    .populate('meetingDay')
+    .exec((err, doc) => {
+      if (err) {
+        console.log('클래스찾기에러', err);
+      }
+
+      res.status(200).send(doc);
+    });
 });
 
 // 모임 멤버리스트
@@ -129,6 +131,7 @@ router.post('/info/admin/modify', upload.single('image'), (req, res) => {
     res.status(200).send(doc);
   });
 });
+
 ////////////////////////////////////////////////////
 
 // 카테고리에 맞는 모임리스트

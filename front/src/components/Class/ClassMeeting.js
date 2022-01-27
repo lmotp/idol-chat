@@ -10,7 +10,6 @@ import { AuthButton } from '../../css/FormStyle';
 import { Hr } from '../../css/SelectBoxStyle';
 import format from 'date-fns/format';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const ClassMeetingContainer = styled.div`
   margin-bottom: 33px;
@@ -146,7 +145,7 @@ const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState
                     <AiOutlineCalendar size="16px" style={{ marginRight: '4px' }} />
                     {format(v.day, 'MM월 dd일 ')}
                     {dayArray[v.day.getDay()]}
-                    {format(v.day, ` ${'aaa' === 'pm' ? ' 오후 ' : ' 오전 '} hh시mm분`)}
+                    {format(v.day, ` ${'aaa' !== 'pm' ? ' 오후 ' : ' 오전 '} hh시mm분`)}
                   </MeetingInfoItem>
                   <MeetingInfoItem>
                     <GrLocation size="16px" style={{ marginRight: '4px' }} />
@@ -185,7 +184,7 @@ const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState
       )}
       <Hr style={{ marginTop: joinState ? '20px' : '0' }} />
       <Modal modalState={modalState}>
-        <MeetingMakeModal modalState={modalState} ModalClose={ModalClose} />
+        <MeetingMakeModal classId={classId} ModalClose={ModalClose} />
       </Modal>
     </ClassMeetingContainer>
   );

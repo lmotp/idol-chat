@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ButtonWrap, ModifyButton, ModifyInfoInput } from '../../css/ModifyStyle';
 import format from 'date-fns/format';
@@ -7,6 +7,8 @@ import { GrLocation } from 'react-icons/gr';
 import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai';
 import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
+import axios from 'axios';
+import DatePickerWrap from '../DatePickerWrap';
 
 const MeetingMakeModalContainer = styled.div`
   width: 90%;
@@ -73,16 +75,41 @@ const MeetingInfoTime = styled.div`
 const daysArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 const now = new Date();
 
-const MeetingMakeModal = ({ ModalClose }) => {
+const MeetingMakeModal = ({ ModalClose, classId }) => {
+  const meetingNameRef = useRef();
+  const meetingPlaceRef = useRef();
+  const meetingPriceRef = useRef();
+  const meetingMemberCountRef = useRef(20);
   const [meetingDayValue, setMeetingDayValue] = useState(format(now, `MM월 dd일 ${daysArray[now.getDay()]}`));
-  const [meetingTimeValue, setMeetingTimeValue] = useState(format(now, `${'aaa' === 'pm' ? '오후 ' : '오전 '} hh:mm`));
+  const [meetingTimeValue, setMeetingTimeValue] = useState(format(now, `${'aaa' !== 'pm' ? '오후 ' : '오전 '} hh:mm`));
+  const [dayModalState, setDayModalState] = useState(false);
+  const [timeModalState, setTimeModalState] = useState(false);
+  const [date, setDate] = useState(new Date());
+
+  const MakeMeetingFunc = () => {
+    const meetingValueObj = {
+      name: meetingNameRef.current.value,
+      place: meetingPlaceRef.current.value,
+      price: meetingPriceRef.current.value,
+      memberCount: meetingMemberCountRef.current,
+      day: meetingDayValue,
+      time: meetingTimeValue,
+      classId,
+    };
+
+    console.log(meetingMemberCountRef.current);
+
+    axios.post('/api/meeting/make', meetingValueObj).then((data) => {
+      console.log('정모데이터', data);
+    });
+  };
 
   return (
     <>
       <MeetingMakeModalContainer>
         {/* 정모이름 */}
         <MeetingWrap>
-          <ModifyInfoInput type="text" placeholder="정모 이름을 적어주세요." />
+          <ModifyInfoInput ref={meetingNameRef} type="text" placeholder="정모 이름을 적어주세요." />
         </MeetingWrap>
 
         {/* 정모날짜 */}
@@ -90,13 +117,19 @@ const MeetingMakeModal = ({ ModalClose }) => {
           <MeetingDayValueWrap>
             <MeetingWrap>
               <AiOutlineCalendar size="18px" style={{ marginRight: '8px' }} />
-              <ModifyInfoInput value={meetingDayValue} type="text" placeholder="모일 날을 적어주세요." readOnly />
+              {/* <ModifyInfoInput
+                // value={meetingDayValue}
+                type="date"
+                placeholder="모일 날을 적어주세요."
+                style={{ cursor: 'pointer' }}
+              /> */}
+              <DatePickerWrap />
             </MeetingWrap>
 
             {/* 정모시간 */}
             <MeetingWrap>
               <AiOutlineClockCircle size="18px" style={{ marginRight: '8px' }} />
-              <ModifyInfoInput value={meetingTimeValue} type="text" placeholder="모일 시간을 적어주세요." readOnly />
+              <ModifyInfoInput style={{ cursor: 'pointer' }} type="time" placeholder="모일 시간을 적어주세요." />
             </MeetingWrap>
           </MeetingDayValueWrap>
 
@@ -118,24 +151,32 @@ const MeetingMakeModal = ({ ModalClose }) => {
         {/* 정모장소 */}
         <MeetingWrap>
           <GrLocation size="18px" style={{ marginRight: '8px' }} />
-          <ModifyInfoInput type="text" placeholder="모일 곳을 적어주세요." />
+          <ModifyInfoInput ref={meetingPlaceRef} type="text" placeholder="모일 곳을 적어주세요." />
         </MeetingWrap>
 
         {/* 정모비용 */}
         <MeetingWrap>
           <BiWon size="18px" style={{ marginRight: '8px' }} />
-          <ModifyInfoInput type="text" placeholder="정모 비용을 적어주세요." />
+          <ModifyInfoInput ref={meetingPriceRef} type="text" placeholder="정모 비용을 적어주세요." />
         </MeetingWrap>
+
         <ClassMemberCountWrap mt="0">
           <ClassMemberCount>
             <BsFillPersonPlusFill size="18px" style={{ marginRight: '10px' }} />
             정원 (20 ~ 20명)
           </ClassMemberCount>
-          <ModifyInfoInput al="center" width="10%" type="text" placeholder="20" />
+          <ModifyInfoInput
+            meetingMemberCountRef={meetingMemberCountRef}
+            al="center"
+            width="10%"
+            type="text"
+            placeholder="20"
+          />
         </ClassMemberCountWrap>
       </MeetingMakeModalContainer>
+
       <ButtonWrap>
-        <ModifyButton>만들기</ModifyButton>
+        <ModifyButton onClick={MakeMeetingFunc}>만들기</ModifyButton>
         <ModifyButton onClick={ModalClose}>취소</ModifyButton>
       </ButtonWrap>
     </>

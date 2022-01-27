@@ -28,6 +28,8 @@ const Class = () => {
       axios.get(`/api/class/info/${id}`).then(({ data }) => {
         setClassInfo(data[0]);
         joinStateRef.current = data[0].member.includes(user?._id);
+
+        console.log(data);
       });
 
       axios.get(`/api/class/info/member/${id}`).then(({ data }) => {

@@ -77,16 +77,6 @@ const ChatItem = ({ _id }) => {
     };
   }, [chat, socket]);
 
-  // useEffect(() => {
-  //   console.log('렌더링횟수');
-  //   socket.on('message', (data) => {
-  //     setChat([...chat, data[0]]);
-  //   });
-  //   return () => {
-  //     socket.off('message');
-  //   };
-  // }, [chat, socket]);
-
   const onMessageSubmit = (e) => {
     e.preventDefault();
     if (textRef.current.value) {

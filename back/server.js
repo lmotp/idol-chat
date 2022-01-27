@@ -42,6 +42,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/category', require('./routes/category'));
 app.use('/api/class', require('./routes/Class'));
 app.use('/api/chat', require('./routes/Chat'));
+app.use('/api/meeting', require('./routes/Meeting'));
 
 io.on('connection', (socket) => {
   socket.on('joinRoom', (classId) => {

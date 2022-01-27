@@ -12,13 +12,13 @@ const MyCategoryWrap = styled.div`
 
 const MyCategoryButton = styled.div`
   margin-bottom: 10px;
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background: ${(props) => (props.src ? 'url(' + props.src + ')' : 'white')} center no-repeat;
   background-size: cover;
-  border: ${(props) => !props.src && '1px solid rgb(180,180,180)'};
-  border-style: ${(props) => !props.src && 'dashed'};
+  border: 1px dashed rgb(180, 180, 180);
+  border-style: ${(props) => (props.src ? 'solid' : 'dashed')};
   background-size: cover;
 `;
 
