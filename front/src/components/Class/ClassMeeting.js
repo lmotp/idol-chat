@@ -10,6 +10,7 @@ import { AuthButton } from '../../css/FormStyle';
 import { Hr } from '../../css/SelectBoxStyle';
 import format from 'date-fns/format';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 const ClassMeetingContainer = styled.div`
   margin-bottom: 33px;
@@ -96,8 +97,9 @@ const PlusButton = styled.div`
 
 const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
-const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState }) => {
+const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMeetingList, meetingList }) => {
   const [modalState, setModalState] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const ModalOpen = () => {
     setModalState(true);
@@ -106,6 +108,15 @@ const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState
   const ModalClose = () => {
     setModalState(false);
   };
+
+  useEffect(() => {
+    if (loading) {
+      axios.get(`/api/meeting/list/${classId}`).then(({ data }) => {
+        setMeetingList(data);
+        setLoading(false);
+      });
+    }
+  }, [loading, classId, setMeetingList]);
 
   const classJoinFunc = useCallback(() => {
     setReloadState(true);
@@ -118,19 +129,21 @@ const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState
     console.log('안녕?');
   };
 
+  console.log(meetingList[0].day);
+
   return (
     <ClassMeetingContainer>
       <ClassMeetingTitle>모임 정모</ClassMeetingTitle>
 
-      {array !== [] ? (
+      {meetingList?.length > 0 ? (
         <ClassMeetingDay>
-          {array.map((v, i) => (
+          {meetingList.map((v, i) => (
             <div key={i}>
-              <MeetingInfoTitle>{v.title}</MeetingInfoTitle>
+              <MeetingInfoTitle>{v.name}</MeetingInfoTitle>
               <MeetingInfoWrap>
                 <MeetingInfoThumnail>
-                  <MeetingInfoDay>{dayArray[v.day.getDay()]}</MeetingInfoDay>
-                  <MeetingInfoDate>
+                  {/* <MeetingInfoDay>{dayArray[v.day.getDay()]}</MeetingInfoDay> */}
+                  {/* <MeetingInfoDate>
                     {format(v.day, 'dd') - format(new Date(), 'dd') === 0
                       ? '오늘'
                       : format(v.day, 'dd') - format(new Date(), 'dd') === 1
@@ -138,18 +151,18 @@ const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState
                       : format(v.day, 'dd') - format(new Date(), 'dd') === 2
                       ? '모레'
                       : format(v.day, 'dd')}
-                  </MeetingInfoDate>
+                  </MeetingInfoDate> */}
                 </MeetingInfoThumnail>
                 <MeetingInfo>
                   <MeetingInfoItem>
                     <AiOutlineCalendar size="16px" style={{ marginRight: '4px' }} />
-                    {format(v.day, 'MM월 dd일 ')}
-                    {dayArray[v.day.getDay()]}
-                    {format(v.day, ` ${'aaa' !== 'pm' ? ' 오후 ' : ' 오전 '} hh시mm분`)}
+                    {/* {format(v.day, 'MM월 dd일 ')}
+                    {dayArray[v.day.getDay()]} */}
+                    {`${v.time.split(':')[0] > 12 ? '오후' : '오전'} ${v.time}`}
                   </MeetingInfoItem>
                   <MeetingInfoItem>
                     <GrLocation size="16px" style={{ marginRight: '4px' }} />
-                    {v.location}
+                    {v.place}
                   </MeetingInfoItem>
                   <MeetingInfoItem>
                     <BiWon size="16px" style={{ marginRight: '4px' }} />
@@ -184,7 +197,7 @@ const ClassMeeting = ({ admin, array, userId, classId, joinState, setReloadState
       )}
       <Hr style={{ marginTop: joinState ? '20px' : '0' }} />
       <Modal modalState={modalState}>
-        <MeetingMakeModal classId={classId} ModalClose={ModalClose} />
+        <MeetingMakeModal classId={classId} ModalClose={ModalClose} setLoading={setLoading} />
       </Modal>
     </ClassMeetingContainer>
   );

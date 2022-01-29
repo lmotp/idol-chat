@@ -18,15 +18,29 @@ export const ModifyInfoTextArea = styled.textarea`
 
 export const ModifyInfoInput = styled.input`
   border-radius: 4px;
-  padding: 7px 10px !important;
+  padding: ${(props) => props.pd || '7px 10px !important'};
   width: ${(props) => props.width || '100%'};
   outline: none;
   border: 1px solid rgb(200, 200, 200) !important;
   text-align: ${(props) => props.al || 'left'};
+  position: relative;
 
   &:last-child {
     border: none;
     padding: 0;
+  }
+
+  ::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
   }
 `;
 

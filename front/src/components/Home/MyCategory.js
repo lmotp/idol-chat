@@ -38,8 +38,6 @@ const MyCategoryWrapBox = styled.div`
 `;
 
 const MyCategory = ({ v }) => {
-  console.log(v.thumnail);
-
   const startPostionRef = useRef(0);
   const stopPostionRef = useRef(0);
 

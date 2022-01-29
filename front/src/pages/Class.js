@@ -21,15 +21,15 @@ const Class = () => {
   const [memberInfo, setMemberInfo] = useState([]);
   const [reloadState, setReloadState] = useState(false);
   const [adminMember, setAdminMember] = useState('');
+  const [meetingList, setMeetingList] = useState([]);
   const joinStateRef = useRef();
 
   useEffect(() => {
     if (id) {
       axios.get(`/api/class/info/${id}`).then(({ data }) => {
         setClassInfo(data[0]);
+        setMeetingList(data[0].meetingDay);
         joinStateRef.current = data[0].member.includes(user?._id);
-
-        console.log(data);
       });
 
       axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
@@ -76,6 +76,8 @@ const Class = () => {
               classId={id}
               joinState={joinStateRef.current}
               setReloadState={setReloadState}
+              meetingList={meetingList}
+              setMeetingList={setMeetingList}
             />
             <ClassMember
               memberInfo={memberInfo}

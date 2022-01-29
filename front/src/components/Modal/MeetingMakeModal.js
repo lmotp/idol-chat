@@ -8,7 +8,7 @@ import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai';
 import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import axios from 'axios';
-import DatePickerWrap from '../DatePickerWrap';
+import DatePickerWrap from '../Pickers/DatePickerWrap';
 
 const MeetingMakeModalContainer = styled.div`
   width: 90%;
@@ -75,16 +75,14 @@ const MeetingInfoTime = styled.div`
 const daysArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 const now = new Date();
 
-const MeetingMakeModal = ({ ModalClose, classId }) => {
+const MeetingMakeModal = ({ ModalClose, classId, setLoading }) => {
   const meetingNameRef = useRef();
   const meetingPlaceRef = useRef();
   const meetingPriceRef = useRef();
   const meetingMemberCountRef = useRef(20);
-  const [meetingDayValue, setMeetingDayValue] = useState(format(now, `MM월 dd일 ${daysArray[now.getDay()]}`));
-  const [meetingTimeValue, setMeetingTimeValue] = useState(format(now, `${'aaa' !== 'pm' ? '오후 ' : '오전 '} hh:mm`));
-  const [dayModalState, setDayModalState] = useState(false);
-  const [timeModalState, setTimeModalState] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const timeRef = useRef();
+  const [meetingDayValue, setMeetingDayValue] = useState(new Date());
+  const [meetingTimeValue, setMeetingTimeValue] = useState(format(new Date(), 'HH:mm'));
 
   const MakeMeetingFunc = () => {
     const meetingValueObj = {
@@ -97,10 +95,10 @@ const MeetingMakeModal = ({ ModalClose, classId }) => {
       classId,
     };
 
-    console.log(meetingMemberCountRef.current);
-
     axios.post('/api/meeting/make', meetingValueObj).then((data) => {
       console.log('정모데이터', data);
+      setLoading(true);
+      ModalClose();
     });
   };
 
@@ -117,19 +115,23 @@ const MeetingMakeModal = ({ ModalClose, classId }) => {
           <MeetingDayValueWrap>
             <MeetingWrap>
               <AiOutlineCalendar size="18px" style={{ marginRight: '8px' }} />
-              {/* <ModifyInfoInput
-                // value={meetingDayValue}
-                type="date"
-                placeholder="모일 날을 적어주세요."
-                style={{ cursor: 'pointer' }}
-              /> */}
-              <DatePickerWrap />
+              <DatePickerWrap meetingDayValue={meetingDayValue} setMeetingDayValue={setMeetingDayValue} />
             </MeetingWrap>
 
             {/* 정모시간 */}
             <MeetingWrap>
               <AiOutlineClockCircle size="18px" style={{ marginRight: '8px' }} />
-              <ModifyInfoInput style={{ cursor: 'pointer' }} type="time" placeholder="모일 시간을 적어주세요." />
+              <ModifyInfoInput
+                style={{ cursor: 'pointer' }}
+                type="time"
+                placeholder="모일 시간을 적어주세요."
+                onChange={(e) => {
+                  setMeetingTimeValue(e.target.value);
+                }}
+                value={meetingTimeValue}
+                ref={timeRef}
+                pd="6px 9px !important;"
+              />
             </MeetingWrap>
           </MeetingDayValueWrap>
 
@@ -144,7 +146,9 @@ const MeetingMakeModal = ({ ModalClose, classId }) => {
                 ? '모레'
                 : format(now, 'dd')}
             </MeetingInfoDate>
-            <MeetingInfoTime>{meetingTimeValue}</MeetingInfoTime>
+            <MeetingInfoTime>{`${
+              meetingTimeValue.split(':')[0] > 12 ? '오후' : '오전'
+            } ${meetingTimeValue}`}</MeetingInfoTime>
           </MeetingInfoThumnail>
         </MeetingDayWrap>
 

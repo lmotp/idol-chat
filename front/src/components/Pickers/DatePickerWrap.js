@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/esm/locale';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import styled from 'styled-components';
-
-// CSS Modules, react-datepicker-cssmodules.css
-// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
 const SDatePicker = styled(DatePicker)`
   border-radius: 4px;
@@ -17,15 +14,13 @@ const SDatePicker = styled(DatePicker)`
   cursor: pointer;
 `;
 
-const DatePickerWrap = () => {
-  const [startDate, setStartDate] = useState(new Date());
-
+const DatePickerWrap = ({ meetingDayValue, setMeetingDayValue }) => {
   return (
     <SDatePicker
-      dateFormat="yyyy년 MM월 dd일"
-      selected={startDate}
+      dateFormat="MM월 dd일 eee요일"
+      selected={meetingDayValue}
       minDate={new Date()}
-      onChange={(date) => setStartDate(date)}
+      onChange={(date) => setMeetingDayValue(date)}
       locale={ko}
       showPreviousMonths={true}
     />
