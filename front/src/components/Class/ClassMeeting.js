@@ -8,7 +8,7 @@ import { GrLocation } from 'react-icons/gr';
 import styled from 'styled-components';
 import { AuthButton } from '../../css/FormStyle';
 import { Hr } from '../../css/SelectBoxStyle';
-import format from 'date-fns/format';
+import { format, parseISO } from 'date-fns';
 import axios from 'axios';
 import { useEffect } from 'react';
 
@@ -129,7 +129,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
     console.log('안녕?');
   };
 
-  console.log(meetingList[0].day);
+  console.log(meetingList);
 
   return (
     <ClassMeetingContainer>
@@ -142,23 +142,23 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
               <MeetingInfoTitle>{v.name}</MeetingInfoTitle>
               <MeetingInfoWrap>
                 <MeetingInfoThumnail>
-                  {/* <MeetingInfoDay>{dayArray[v.day.getDay()]}</MeetingInfoDay> */}
-                  {/* <MeetingInfoDate>
-                    {format(v.day, 'dd') - format(new Date(), 'dd') === 0
+                  <MeetingInfoDay>{dayArray[parseISO(v.day).getDay()]}</MeetingInfoDay>
+                  <MeetingInfoDate>
+                    {format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 0
                       ? '오늘'
-                      : format(v.day, 'dd') - format(new Date(), 'dd') === 1
+                      : format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 1
                       ? '내일'
-                      : format(v.day, 'dd') - format(new Date(), 'dd') === 2
+                      : format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 2
                       ? '모레'
-                      : format(v.day, 'dd')}
-                  </MeetingInfoDate> */}
+                      : format(parseISO(v.day), 'dd')}
+                  </MeetingInfoDate>
                 </MeetingInfoThumnail>
                 <MeetingInfo>
                   <MeetingInfoItem>
                     <AiOutlineCalendar size="16px" style={{ marginRight: '4px' }} />
-                    {/* {format(v.day, 'MM월 dd일 ')}
-                    {dayArray[v.day.getDay()]} */}
-                    {`${v.time.split(':')[0] > 12 ? '오후' : '오전'} ${v.time}`}
+                    {format(parseISO(v.day), 'MM월 dd일 ')}
+                    {dayArray[parseISO(v.day).getDay()]}
+                    {`${v.time.split(':')[0] > 12 ? ' 오후' : ' 오전'} ${v.time}`}
                   </MeetingInfoItem>
                   <MeetingInfoItem>
                     <GrLocation size="16px" style={{ marginRight: '4px' }} />

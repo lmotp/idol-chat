@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import Calendars from '../Calendars';
 import { format, getDay } from 'date-fns';
 import { GrLocation } from 'react-icons/gr';
 import { BiTimeFive } from 'react-icons/bi';
+import Calendars from '../Pickers/Calendars';
 
 const MyClassScheduleContainer = styled.div`
   width: 100%;
@@ -101,6 +101,7 @@ const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일
 const MyClassSchedule = () => {
   const [date, setDate] = useState(new Date());
   const [fnsDay, setFnsDay] = useState(getDay(date));
+  const [meetingDayValue, setMeetingDayValue] = useState(new Date());
 
   const SchedulList = [
     {
@@ -135,7 +136,7 @@ const MyClassSchedule = () => {
 
   return (
     <MyClassScheduleContainer>
-      <Calendars date={date} setDate={setDate} setFnsDay={setFnsDay} />
+      <Calendars />
       <ScheduleWrap>
         <ScheduleDayWrap>
           <ScheduleDate>{format(date, 'yyyy년 MM월 dd일 ')}</ScheduleDate>
