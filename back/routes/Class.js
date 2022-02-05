@@ -165,12 +165,14 @@ router.get('/list/my/:id', (req, res) => {
       console.log('마이클래스 유저아이템가져오기 실패', err);
     }
 
-    Class.find({ _id: { $in: doc[0].myClass } }, (err, doc) => {
-      if (err) {
-        console.log('마이리스트 내 클래스 가져오기 실패', err);
-      }
-      res.status(200).send(doc);
-    });
+    Class.find({ _id: { $in: doc[0].myClass } })
+      .populate('meetingDay')
+      .exec((err, doc) => {
+        if (err) {
+          console.log('마이리스트 내 클래스 가져오기 실패', err);
+        }
+        res.status(200).send(doc);
+      });
   });
 });
 

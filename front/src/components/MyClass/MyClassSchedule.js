@@ -98,7 +98,7 @@ const ListLocation = styled.span`
 
 const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
-const MyClassSchedule = () => {
+const MyClassSchedule = ({ myMeetinsList }) => {
   const [date, setDate] = useState(new Date());
   const [fnsDay, setFnsDay] = useState(getDay(date));
   const [meetingDayValue, setMeetingDayValue] = useState(new Date());
@@ -136,7 +136,7 @@ const MyClassSchedule = () => {
 
   return (
     <MyClassScheduleContainer>
-      <Calendars />
+      <Calendars myMeetinsList={myMeetinsList} />
       <ScheduleWrap>
         <ScheduleDayWrap>
           <ScheduleDate>{format(date, 'yyyy년 MM월 dd일 ')}</ScheduleDate>

@@ -3,7 +3,7 @@ const router = express.Router();
 const Meeting = require('../models/Meeting');
 const Class = require('../models/Class');
 
-//정모 생성하기
+// 정모 리시트 보기
 router.get('/list/:id', (req, res) => {
   const { id } = req.params;
 
@@ -15,6 +15,7 @@ router.get('/list/:id', (req, res) => {
   });
 });
 
+//정모 생성하기
 router.post('/make', (req, res) => {
   const meetingMake = new Meeting(req.body);
 

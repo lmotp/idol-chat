@@ -109,6 +109,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
     setModalState(false);
   };
 
+  //정모 만들었을때 다시 받아오는 API
   useEffect(() => {
     if (loading) {
       axios.get(`/api/meeting/list/${classId}`).then(({ data }) => {
@@ -118,6 +119,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
     }
   }, [loading, classId, setMeetingList]);
 
+  // 모임에 가입했을때 리렌더링해주는 API
   const classJoinFunc = useCallback(() => {
     setReloadState(true);
     axios.post(`/api/class/info/join/member`, { userId, classId }).then(() => {
@@ -128,8 +130,6 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
   const meetingAttend = () => {
     console.log('안녕?');
   };
-
-  console.log(meetingList);
 
   return (
     <ClassMeetingContainer>

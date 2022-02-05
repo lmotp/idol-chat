@@ -7,6 +7,7 @@ import ClassList from '../components/ClassList';
 import MyClassSchedule from '../components/MyClass/MyClassSchedule';
 import SelectCategory from '../components/SelectCategory';
 import { Hr } from '../css/SelectBoxStyle';
+import { format, parseISO } from 'date-fns';
 
 const MyClassContainer = styled.div`
   width: 90%;
@@ -40,21 +41,25 @@ const MyClassListNone = styled.div`
 const MyClass = () => {
   const { _id } = useSelector((state) => state.userCheckReducers.result);
   const [myClassList, setMyClassList] = useState([]);
+  const [myMeetinsList, setMyMeetingList] = useState([]);
 
   useEffect(() => {
     axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
-      console.log(data);
+      const meetingDayList = data
+        .map((v) => v.meetingDay)
+        .flat()
+        .map((v) => format(parseISO(v.day), 'dd-MM-yyyy'));
+
+      setMyMeetingList(meetingDayList);
       setMyClassList(data);
     });
   }, [_id]);
-
-  console.log(myClassList);
 
   return (
     <MyClassContainer>
       <MyClassTitle>가입한 모임</MyClassTitle>
       <SelectCategory />
-      <MyClassSchedule />
+      <MyClassSchedule myMeetinsList={myMeetinsList} />
       <Hr />
       <ClassListWrap>
         {myClassList.length > 0 ? (

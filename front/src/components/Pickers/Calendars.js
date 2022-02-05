@@ -3,12 +3,8 @@ import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-function Calendars() {
+function Calendars({ myMeetinsList }) {
   const [value, onChange] = useState(new Date());
-
-  console.log(value);
-
-  const mark = ['04-03-2020', '03-03-2020', '05-03-2020'];
 
   return (
     <div>
@@ -16,7 +12,11 @@ function Calendars() {
         onChange={onChange}
         value={value}
         tileClassName={({ date, view }) => {
-          if (mark.find((x) => x === format(date, 'DD-MM-YYYY'))) {
+          if (myMeetinsList.find((x) => x === format(date, 'dd-MM-yyyy'))) {
+            console.log(
+              myMeetinsList.find((x) => x === format(date, 'dd-MM-yyyy')),
+              '안녕?',
+            );
             return 'highlight';
           }
         }}
