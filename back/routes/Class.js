@@ -166,7 +166,7 @@ router.get('/list/my/:id', (req, res) => {
     }
 
     Class.find({ _id: { $in: doc[0].myClass } })
-      .populate('meetingDay')
+      .populate({ path: 'meetingDay', populate: { path: 'classId', select: 'className' } })
       .exec((err, doc) => {
         if (err) {
           console.log('마이리스트 내 클래스 가져오기 실패', err);

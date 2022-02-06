@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { format, getDay } from 'date-fns';
+import { format, getDay, parseISO } from 'date-fns';
 import { GrLocation } from 'react-icons/gr';
-import { BiTimeFive } from 'react-icons/bi';
+import { BiTimeFive, BiWon } from 'react-icons/bi';
 import Calendars from '../Pickers/Calendars';
 
 const MyClassScheduleContainer = styled.div`
@@ -45,8 +45,8 @@ const SchedulListWrap = styled.ul`
   overflow-y: scroll;
   height: 240px;
   &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 0;
+    height: 0;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.4);
   }
@@ -56,7 +56,7 @@ const SchedulListWrap = styled.ul`
   }
 `;
 const List = styled.li`
-  font-size: 14px;
+  font-size: 15px;
   margin-bottom: 24px;
 
   &:last-child {
@@ -65,16 +65,22 @@ const List = styled.li`
 `;
 
 const ListClassName = styled.h3`
+  width: 100%;
   font-size: 18px;
   cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 const ListTitle = styled.div`
-  margin-top: 3px;
+  margin-top: 6px;
   cursor: pointer;
 `;
 
 const ListInfoWrap = styled.div`
   display: flex;
+  margin-top: 3px;
+  font-size: 13px;
 `;
 
 const ListTimeWrap = styled.div`
@@ -99,69 +105,46 @@ const ListLocation = styled.span`
 const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
 const MyClassSchedule = ({ myMeetinsList }) => {
-  const [date, setDate] = useState(new Date());
-  const [fnsDay, setFnsDay] = useState(getDay(date));
   const [meetingDayValue, setMeetingDayValue] = useState(new Date());
-
-  const SchedulList = [
-    {
-      className: '휘인과 딩가딩가',
-      title: '오늘 한번 봅시다!',
-      day: '12월 30일',
-      time: format(new Date(), 'HH시 mm분'),
-      location: '용산구',
-    },
-    {
-      className: '휘인과 딩가딩가',
-      title: '오늘 한번 봅시다!',
-      day: '12월 30일',
-      time: format(new Date(), 'HH시 mm분'),
-      location: '용산구',
-    },
-    {
-      className: '휘인과 딩가딩가',
-      title: '오늘 한번 봅시다!',
-      day: '12월 30일',
-      time: format(new Date(), 'HH시 mm분'),
-      location: '용산구',
-    },
-    {
-      className: '휘인과 딩가딩가',
-      title: '오늘 한번 봅시다!',
-      day: '12월 30일',
-      time: format(new Date(), 'HH시 mm분'),
-      location: '용산구',
-    },
-  ];
 
   return (
     <MyClassScheduleContainer>
-      <Calendars myMeetinsList={myMeetinsList} />
+      <Calendars
+        myMeetinsList={myMeetinsList}
+        meetingDayValue={meetingDayValue}
+        setMeetingDayValue={setMeetingDayValue}
+      />
       <ScheduleWrap>
         <ScheduleDayWrap>
-          <ScheduleDate>{format(date, 'yyyy년 MM월 dd일 ')}</ScheduleDate>
-          <ScheduleDay day={fnsDay}>{dayArray[fnsDay]}</ScheduleDay>
+          <ScheduleDate>{format(meetingDayValue, 'yyyy년 MM월 dd일 ')}</ScheduleDate>
+          <ScheduleDay day={getDay(meetingDayValue)}>{dayArray[getDay(meetingDayValue)]}</ScheduleDay>
         </ScheduleDayWrap>
         <SchedulListWrap>
-          {SchedulList.filter((v) => v.day === format(date, 'MM월 dd일')).map((v, i) => {
-            return (
-              <List key={i}>
-                <ListClassName>{v.className}</ListClassName>
-                <ListTitle>{v.title}</ListTitle>
+          {myMeetinsList
+            .filter((v) => format(parseISO(v.day), 'MM월 dd일') === format(meetingDayValue, 'MM월 dd일'))
+            .map((v, i) => {
+              return (
+                <List key={i}>
+                  <ListClassName>{v.classId.className}</ListClassName>
+                  <ListTitle>{v.name}</ListTitle>
 
-                <ListInfoWrap>
-                  <ListTimeWrap>
-                    <BiTimeFive />
-                    <ListTime>{v.time}</ListTime>
-                  </ListTimeWrap>
-                  <ListLocationWrap>
-                    <GrLocation />
-                    <ListLocation>{v.location}</ListLocation>
-                  </ListLocationWrap>
-                </ListInfoWrap>
-              </List>
-            );
-          })}
+                  <ListInfoWrap>
+                    <ListTimeWrap>
+                      <BiTimeFive />
+                      <ListTime>{v.time}</ListTime>
+                    </ListTimeWrap>
+                    <ListLocationWrap>
+                      <GrLocation />
+                      <ListLocation>{v.place}</ListLocation>
+                    </ListLocationWrap>
+                    <ListLocationWrap>
+                      <BiWon />
+                      {v.price}
+                    </ListLocationWrap>
+                  </ListInfoWrap>
+                </List>
+              );
+            })}
         </SchedulListWrap>
       </ScheduleWrap>
     </MyClassScheduleContainer>

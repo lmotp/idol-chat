@@ -39,14 +39,12 @@ router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   User.findOne({ email, password }, (err, user) => {
-    console.log(user);
-
     if (err) {
       return console.log('로그인에러', err);
     }
 
     if (!user) {
-      return res.json({
+      return res.status(403).json({
         loginSuccess: false,
         message: '로그인에 실패하셨습니다.',
       });

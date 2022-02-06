@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const meetingSchema = new mongoose.Schema(
   {
-    classId: { type: String, required: true },
+    classId: { type: String, required: true, ref: 'Class' },
     name: { type: String, required: true },
     place: { type: String, required: true },
     price: { type: String, required: true },

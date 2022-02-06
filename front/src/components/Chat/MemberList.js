@@ -70,6 +70,8 @@ const MemberListImg = styled.img.attrs((props) => ({
   height: 56px;
   border-radius: 50%;
   overflow: hidden;
+  object-fit: cover;
+  border: 1px solid rgb(200, 200, 200);
 `;
 const MemberListNickName = styled.div`
   display: flex;

@@ -1,25 +1,20 @@
-import { format } from 'date-fns';
-import React, { useState } from 'react';
+import { format, parseISO } from 'date-fns';
+import React from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-function Calendars({ myMeetinsList }) {
-  const [value, onChange] = useState(new Date());
-
+function Calendars({ myMeetinsList, setMeetingDayValue, meetingDayValue }) {
   return (
     <div>
       <Calendar
-        onChange={onChange}
-        value={value}
+        onChange={setMeetingDayValue}
+        value={meetingDayValue}
         tileClassName={({ date, view }) => {
-          if (myMeetinsList.find((x) => x === format(date, 'dd-MM-yyyy'))) {
-            console.log(
-              myMeetinsList.find((x) => x === format(date, 'dd-MM-yyyy')),
-              '안녕?',
-            );
+          if (myMeetinsList.find((x) => format(parseISO(x.day), 'dd-MM-yyyy') === format(date, 'dd-MM-yyyy'))) {
             return 'highlight';
           }
         }}
+        showFixedNumberOfWeeks={true}
       />
     </div>
   );

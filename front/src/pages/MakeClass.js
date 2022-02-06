@@ -60,9 +60,7 @@ const CategoryListLogo = styled.div`
   cursor: pointer;
 `;
 
-const CategoryListValue = styled.div`
-  margin-left: 10px;
-`;
+const CategoryListValue = styled.div``;
 
 const MakeClassWrap = styled.div`
   width: 100%;
@@ -85,10 +83,10 @@ const MakeClassNameLogoWrap = styled.div`
 const MakeClassNameLogo = styled.img.attrs((props) => ({
   src: props.src,
 }))`
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: blue;
+  border: 1px solid rgb(200, 200, 200);
   object-fit: cover;
 `;
 
@@ -97,7 +95,8 @@ const ModifyInfoSubTitleWrap = styled.div``;
 const MakeClass = () => {
   const [modalState, setModalState] = useState(false);
   const [nowLocation, setNowLocation] = useState('');
-  const [categoryValue, setCategoryValue] = useState();
+  const [categoryValue, setCategoryValue] = useState('');
+  const [categorySrc, setCategorySrc] = useState('');
   const [hashTag, setHashTag] = useState([]);
   const classNameRef = useRef('');
   const classTargetRef = useRef('');
@@ -160,7 +159,14 @@ const MakeClass = () => {
         <MakeCategoryWrap>
           {category.map((v, i) => {
             return (
-              <CategoryList key={i} onClick={() => setCategoryValue(v.category)} select={categoryValue === v.category}>
+              <CategoryList
+                key={i}
+                onClick={() => {
+                  setCategoryValue(v.category);
+                  setCategorySrc(v.img);
+                }}
+                select={categoryValue === v.category}
+              >
                 <CategoryListLogo src={v.img} />
                 <CategoryListValue>{v.category}</CategoryListValue>
               </CategoryList>
@@ -191,7 +197,7 @@ const MakeClass = () => {
 
         <MakeClassWrap>
           <MakeClassNameLogoWrap>
-            <MakeClassNameLogo src={category[0].img} />
+            <MakeClassNameLogo src={categorySrc ? categorySrc : category[0].img} />
           </MakeClassNameLogoWrap>
           <ModifyInfoInput type="text" placeholder="모임 이름" ref={classNameRef} />
         </MakeClassWrap>

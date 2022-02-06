@@ -34,6 +34,7 @@ const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, _id }) => 
 
   const selectCategory = () => {
     axios.post('/api/auth/select-category', { clickCategory, _id }).then((data) => {
+      console.log(data);
       navigate(page);
     });
   };

@@ -7,7 +7,6 @@ import ClassList from '../components/ClassList';
 import MyClassSchedule from '../components/MyClass/MyClassSchedule';
 import SelectCategory from '../components/SelectCategory';
 import { Hr } from '../css/SelectBoxStyle';
-import { format, parseISO } from 'date-fns';
 
 const MyClassContainer = styled.div`
   width: 90%;
@@ -45,11 +44,7 @@ const MyClass = () => {
 
   useEffect(() => {
     axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
-      const meetingDayList = data
-        .map((v) => v.meetingDay)
-        .flat()
-        .map((v) => format(parseISO(v.day), 'dd-MM-yyyy'));
-
+      const meetingDayList = data.map((v) => v.meetingDay).flat();
       setMyMeetingList(meetingDayList);
       setMyClassList(data);
     });

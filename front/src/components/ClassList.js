@@ -64,8 +64,12 @@ const InfoCounter = styled.div`
 `;
 
 const InfoMainTitle = styled.h2`
-  font-weight: bold;
+  width: 100%;
+
   font-size: 30px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 const InfoSubTitle = styled.div`
@@ -84,12 +88,11 @@ const InfoSubTitle = styled.div`
 const InfoHashTagWrap = styled.div`
   display: flex;
   align-items: center;
-  margin-top: ${(props) => props.mt || '0'};
+  margin-top: ${(props) => props.mt || '4px'};
 `;
 
 const InfoMainHasTag = styled.span`
   margin-right: 10px;
-  margin-top: 4px;
   font-size: 12px;
   background: #db7093;
   color: white;

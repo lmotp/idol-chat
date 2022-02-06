@@ -54,16 +54,21 @@ const Login = () => {
       return errorFunc(1, '비밀번호를 입력해주세요');
     }
 
-    axios.post('/api/auth/login', info, { withCredentials: true }).then(({ data }) => {
-      if (data.loginSuccess) {
-        dispatch(userCheckActions());
-        if (!data.firstCategory) {
-          navigate('/category');
-        } else {
-          navigate('/');
+    axios
+      .post('/api/auth/login', info, { withCredentials: true })
+      .then(({ data }) => {
+        if (data.loginSuccess) {
+          dispatch(userCheckActions());
+          if (!data.firstCategory) {
+            navigate('/category');
+          } else {
+            navigate('/');
+          }
         }
-      }
-    });
+      })
+      .catch(({ response: { data } }) => {
+        console.log(data.message);
+      });
   };
 
   return (
