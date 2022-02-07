@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema(
     firstCategory: { type: Boolean, default: false },
     category: [String],
     myClass: [String],
+    inviteMessage: [{ type: String, ref: 'Class' }],
   },
   { timestamps: true },
 );

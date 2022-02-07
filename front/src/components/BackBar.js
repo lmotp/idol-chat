@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import styled from 'styled-components';
@@ -34,20 +34,20 @@ const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, _id }) => 
 
   const selectCategory = () => {
     axios.post('/api/auth/select-category', { clickCategory, _id }).then((data) => {
-      console.log(data);
       navigate(page);
     });
   };
 
   const back = useCallback(() => {
     if (id) {
-      console.log('안녕?');
-
       socket.emit('leaveRoom', id);
       socket.on('leave', (data) => {
         console.log('나 실행됭?', data);
       });
       disconnect();
+      navigate(-1);
+      console.log('안녕?');
+    } else {
       navigate(-1);
     }
   }, [id, socket, disconnect, navigate]);

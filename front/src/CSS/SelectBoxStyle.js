@@ -2,19 +2,18 @@ import styled from 'styled-components';
 
 export const SelectCategoryText = styled.span`
   margin-right: 12px;
-  background: #db7093;
+  border: 1px solid #db7093;
   cursor: pointer;
   padding: 6px;
   border-radius: 3px;
-
+  background-color: ${(props) => (props.select ? '#db7093' : 'white')};
+  color: ${(props) => (props.select ? 'white' : '#db7093')};
   &:last-child {
     margin-right: 0;
   }
 `;
 
-export const SelectCategoryTextBox = styled.div`
-  color: white;
-`;
+export const SelectCategoryTextBox = styled.div``;
 
 export const Hr = styled.hr`
   border: none;

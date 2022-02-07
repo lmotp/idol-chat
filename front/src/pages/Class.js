@@ -33,6 +33,7 @@ const Class = () => {
       });
 
       axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
+        console.log(data);
         setMemberInfo(data);
         setAdminMember(data.filter((v) => v.classes === '모임장'));
       });
@@ -86,6 +87,8 @@ const Class = () => {
               userId={user?._id}
               classId={id}
               reloadState={reloadState}
+              classInfo={classInfo}
+              admin={user?._id === classInfo.makeUser}
             />
           </ClassContainer>
         </>

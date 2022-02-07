@@ -83,6 +83,35 @@ router.get('/info/member/:id', (req, res) => {
   });
 });
 
+//모임 멤버초대 리스트
+router.get('/invite/member/:category/:location/:classId', (req, res) => {
+  const { category, location, classId } = req.params;
+
+  User.find({ category: { $in: category }, location: { $regex: location, $options: 'i' }, myClass: { $nin: classId } })
+    .select('nickname profileimg myself location')
+    .exec((err, doc) => {
+      if (err) {
+        console.log('멤버초대리스트 에러', err);
+      }
+      console.log(doc);
+      res.send(doc);
+    });
+});
+
+//모임 멤버초대하기
+router.post('/invite/send', (req, res) => {
+  const { checkList, classId } = req.body;
+  console.log(checkList, classId);
+  for (let i = 0; i < checkList.length; i++) {
+    User.findOneAndUpdate({ _id: checkList[0]._id }, { $push: { inviteMessage: classId } }, (err, doc) => {
+      if (err) {
+        console.log('유저 모임초대에러', err);
+      }
+      res.send('굿');
+    });
+  }
+});
+
 // 모임 가입하기
 router.post('/info/join/member', (req, res) => {
   const { userId, classId } = req.body;
@@ -135,23 +164,23 @@ router.post('/info/admin/modify', upload.single('image'), (req, res) => {
 ////////////////////////////////////////////////////
 
 // 카테고리에 맞는 모임리스트
-router.get('/list/:category', (req, res) => {
-  const { category } = req.params;
+router.post('/list', (req, res) => {
+  const { selectCategory } = req.body;
 
-  if (category === 'all') {
+  console.log(selectCategory);
+
+  if (selectCategory === '전체') {
     Class.find((err, doc) => {
       if (err) {
         console.log('전체카테고리 찾는데 에러', err);
       }
-      console.log(doc);
       res.send(doc);
     });
   } else {
-    Class.find({ category }, (err, doc) => {
+    Class.find({ category: selectCategory }, (err, doc) => {
       if (err) {
         console.log('클래스 카테고리 리스티 찾기 에러', err);
       }
-      console.log('굿');
       res.send(doc);
     });
   }
@@ -176,9 +205,4 @@ router.get('/list/my/:id', (req, res) => {
   });
 });
 
-router.get('/test', (req, res) => {
-  const io = req.app.get('io');
-  console.log('나이스', io);
-  res.send('성공');
-});
 module.exports = router;

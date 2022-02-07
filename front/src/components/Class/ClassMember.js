@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { AuthButton } from '../../css/FormStyle';
 import Loading from '../Loading';
+import ClassInvite from './ClassInvite';
 
 const ClassMemberContainer = styled.div``;
 const MemberTitle = styled.h3`
@@ -14,7 +15,7 @@ const MemberInfoWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: ${(props) => (props.admin ? '36px' : '20px')};
 
   &:last-child {
     margin-bottom: 0;
@@ -55,7 +56,7 @@ const MemberClasses = styled.div`
   color: ${(props) => (props.classes ? '#6667ab' : 'black')};
 `;
 
-const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, reloadState }) => {
+const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, reloadState, classInfo, admin }) => {
   const navigate = useNavigate();
 
   const memberSecession = () => {
@@ -72,7 +73,7 @@ const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, relo
         <ClassMemberContainer>
           <MemberTitle>모임 멤버 ({memberInfo.length}명)</MemberTitle>
           {adminMember && (
-            <MemberInfoWrap>
+            <MemberInfoWrap admin={admin}>
               <MemberInfo>
                 <MemberProfileImg src={adminMember[0].profileImg} />
                 <MemberInfoValue>
@@ -97,6 +98,9 @@ const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, relo
                 <MemberClasses classes={v.classes !== '회원'}>{v.classes}</MemberClasses>
               </MemberInfoWrap>
             ))}
+          {admin && (
+            <ClassInvite category={classInfo.category} location={classInfo.location.split(' ')[1]} classId={classId} />
+          )}
           {joinState && (
             <AuthButton onClick={memberSecession} color="rgb(180,180,180)" margin="30px 0 0">
               모임나가기

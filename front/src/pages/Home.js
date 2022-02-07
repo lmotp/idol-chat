@@ -40,18 +40,33 @@ const ClassListWrap = styled.div`
   }
 `;
 
+const ClassListNothing = styled.div`
+  width: 100%;
+  height: 70vh;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 21px;
+  font-weight: bold;
+  flex-direction: column;
+`;
+
 const Home = () => {
   const { _id } = useSelector((state) => state.userCheckReducers.result);
+  const selectCategory = useSelector((state) => state.userCategoryReducer);
   const [classList, setClassList] = useState([]);
-  const [category, useCategory] = useState('all');
   const [myClassList, setMyClassList] = useState([]);
 
   useEffect(() => {
-    axios.get(`/api/class/list/${category}`).then(({ data }) => setClassList(data));
+    axios.post(`/api/class/list`, { selectCategory }).then(({ data }) => setClassList(data));
+  }, [selectCategory, _id]);
+
+  useEffect(() => {
     axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
       setMyClassList(data);
     });
-  }, [category, _id]);
+  }, [_id]);
 
   return (
     <HomeContainer>
@@ -71,9 +86,15 @@ const Home = () => {
       <HomeClassListBox>
         <SelectCategory />
         <ClassListWrap>
-          {classList.map((v) => {
-            return <ClassList v={v} key={v._id} on={myClassList.map((v) => v.className).includes(v.className)} />;
-          })}
+          {classList.length > 0 ? (
+            <>
+              {classList.map((v) => {
+                return <ClassList v={v} key={v._id} on={myClassList.map((v) => v.className).includes(v.className)} />;
+              })}
+            </>
+          ) : (
+            <ClassListNothing>해당 검색어의 모임이 없습니다.</ClassListNothing>
+          )}
         </ClassListWrap>
       </HomeClassListBox>
     </HomeContainer>

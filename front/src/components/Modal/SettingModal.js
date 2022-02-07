@@ -1,7 +1,7 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { mainCategoryAdd } from '../../modules/actions/UserCategoryActions';
 
 const SettingModalBox = styled.div`
   width: 30%;
@@ -54,11 +54,7 @@ const CategoryList = styled.li`
 
 const SettingModal = ({ modalState, testTag }) => {
   const mainCategory = useSelector((state) => state.mainCategoryReducer);
-  const dispatch = useDispatch();
-
-  const addCategory = (value) => {
-    dispatch(mainCategoryAdd(value));
-  };
+  const { pathname } = useLocation();
 
   return (
     <SettingModalBox modalState={modalState}>
@@ -66,7 +62,7 @@ const SettingModal = ({ modalState, testTag }) => {
       <SettingModalCategory>
         {mainCategory.map((v, i) => {
           return (
-            <CategoryList onClick={() => addCategory(v.category)} select={testTag.includes(v.category)} key={i}>
+            <CategoryList select={testTag.includes(v.category)} key={i}>
               {v.category}
             </CategoryList>
           );

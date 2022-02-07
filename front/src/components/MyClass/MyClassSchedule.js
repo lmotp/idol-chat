@@ -10,7 +10,7 @@ const MyClassScheduleContainer = styled.div`
   display: flex;
   justify-content: space-between;
   border: 1px solid rgb(200, 200, 200);
-  padding: 20px;
+  padding: 10px 16px;
   margin-bottom: 24px;
   border-radius: 5px;
 `;

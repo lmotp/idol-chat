@@ -68,13 +68,16 @@ router.get('/auth-check', isAuth, (req, res) => {
 });
 
 router.post('/select-category', (req, res) => {
-  const { clickCategory, id } = req.body;
+  const { clickCategory, _id } = req.body;
+  console.log(_id);
 
-  User.findOneAndUpdate({ _id: id }, { firstCategory: true, $push: { category: clickCategory } }, (err, doc) => {
+  const category = ['전체', ...clickCategory];
+
+  User.findOneAndUpdate({ _id }, { firstCategory: true, $push: { category } }, (err, doc) => {
     if (err) {
       console.log(err);
     }
-
+    console.log(doc, '나 뜨냐?');
     return res.status(200).send('굿');
   });
 });

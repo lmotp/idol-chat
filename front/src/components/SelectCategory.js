@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { IoIosMore } from 'react-icons/io';
 import SettingModal from './Modal/SettingModal';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SelectCategoryText, SelectCategoryTextBox } from '../css/SelectBoxStyle';
+import { mainCategoryChange } from '../modules/actions/UserCategoryActions';
+import { useLocation } from 'react-router-dom';
 
 const SelectCategoryContainer = styled.div`
   width: 100%;
@@ -19,6 +21,13 @@ const SelectCategoryContainer = styled.div`
 const SelectCategory = () => {
   const [modalState, setModalState] = useState(false);
   const { category } = useSelector((state) => state.userCheckReducers?.result);
+  const selectCategory = useSelector((state) => state.userCategoryReducer);
+  const dispatch = useDispatch();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    dispatch(mainCategoryChange('전체'));
+  }, [pathname, dispatch]);
 
   const settingModalOpen = () => {
     setModalState(!modalState);
@@ -28,7 +37,15 @@ const SelectCategory = () => {
     <SelectCategoryContainer>
       <SelectCategoryTextBox>
         {category.map((v, i) => (
-          <SelectCategoryText key={i}>{v}</SelectCategoryText>
+          <SelectCategoryText
+            select={v === selectCategory}
+            onClick={() => {
+              dispatch(mainCategoryChange(v));
+            }}
+            key={i}
+          >
+            {v}
+          </SelectCategoryText>
         ))}
       </SelectCategoryTextBox>
       <IoIosMore style={{ cursor: 'pointer' }} size="24px" onClick={settingModalOpen} />

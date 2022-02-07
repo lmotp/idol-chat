@@ -96,7 +96,7 @@ const Login = () => {
         <AuthButtonWrap>
           <AuthButton color="black">로그인하기</AuthButton>
           <Line>또는</Line>
-          <AuthButton color="#00acee ">
+          <AuthButton color="#00acee">
             <FaTwitter size="20px" />
             &nbsp; 트위터 로그인하기
           </AuthButton>
