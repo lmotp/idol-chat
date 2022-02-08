@@ -1,20 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GrLocation } from 'react-icons/gr';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { MdOutlineLocalPostOffice } from 'react-icons/md';
+import axios from 'axios';
+import { format, parseISO } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 const InviteMessageBoxContianer = styled.ul`
+  height: 52vh;
+  overflow-y: scroll;
   margin-bottom: 20px;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
 `;
 
-const ListtHumbnail = styled.img.attrs((props) => ({
-  src: props.src,
-}))`
+const ListtHumbnail = styled.div`
   width: ${(props) => props.width || '40%'};
   height: auto;
   border-radius: 10px;
-  object-fit: cover;
+  background: ${(props) => (props.src ? 'url(' + props.src + ')' : 'white')} center no-repeat;
+  background-size: cover;
+  border: ${(props) => !props.src && '1px solid rgb(180,180,180)'};
+  border-style: ${(props) => !props.src && 'dashed'};
   order: ${(props) => props.order || '0'};
 `;
 
@@ -40,7 +50,7 @@ const InfoHasTagWrap = styled.div`
 `;
 
 const InfoMainHasTag = styled.span`
-  margin-right: 10px;
+  margin-right: 6px;
   font-size: 12px;
   background: #db7093;
   color: white;
@@ -50,7 +60,7 @@ const InfoMainHasTag = styled.span`
 `;
 
 const InfoHasTag = styled.span`
-  margin-right: 10px;
+  margin-right: 6px;
   font-size: 12px;
   color: black;
   cursor: pointer;
@@ -105,38 +115,62 @@ const InviteMessageTime = styled.div`
   font-size: 13px;
 `;
 
+const InvitedNotMessage = styled.div`
+  height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const InviteMessageBox = () => {
-  const classList = useSelector((state) => state.classListReducer);
+  const { _id } = useSelector((state) => state.userCheckReducers.result);
+  const [classLists, setClassList] = useState([]);
+
+  useEffect(() => {
+    axios.get(`/api/class/${_id}/invite/message`).then(({ data }) => {
+      setClassList(data.inviteMessage);
+    });
+  }, [_id]);
 
   return (
     <InviteMessageBoxContianer>
-      {classList.map((v, i) => {
-        return (
-          <InviteMessageListWrap key={i}>
-            <ListtHumbnail src={v.thumnail} width="16%" />
-            <ListInfoWrap width="80%" ml="12px" jc="center">
-              <InfoMainTitle>{v.mainTitle}</InfoMainTitle>
-              <InfoHasTagWrap mt="4px">
-                <InfoMainHasTag>{v.mainTag}</InfoMainHasTag>
-                {v.hasTag.map((v, i) => {
-                  return <InfoHasTag key={i}>#{v}</InfoHasTag>;
-                })}
-              </InfoHasTagWrap>
-              <InviteMessageTimeWrap>
-                <MdOutlineLocalPostOffice size="15px" />
-                <InviteMessageDay>12월 27일</InviteMessageDay>
-                <InviteMessageTime>오후10시47분</InviteMessageTime>
-              </InviteMessageTimeWrap>
-            </ListInfoWrap>
-            <InfoLocation al="flex-start">
-              <InfoLocationWrap>
-                <GrLocation />
-                {v.location}
-              </InfoLocationWrap>
-            </InfoLocation>
-          </InviteMessageListWrap>
-        );
-      })}
+      {classLists.length > 0 ? (
+        <>
+          {classLists.map((v) => {
+            return (
+              <Link to={`/pages/class/${v.info._id}`}>
+                <InviteMessageListWrap key={v._id}>
+                  <ListtHumbnail src={v.info.thumnail} width="16%" />
+                  <ListInfoWrap width="80%" ml="16px" jc="center">
+                    <InfoMainTitle>{v.info.className}</InfoMainTitle>
+                    <InfoHasTagWrap mt="4px">
+                      <InfoMainHasTag>{v.info.category}</InfoMainHasTag>
+                      {v.info.hashTag.map((v, i) => {
+                        return <InfoHasTag key={i}>#{v}</InfoHasTag>;
+                      })}
+                    </InfoHasTagWrap>
+                    <InviteMessageTimeWrap>
+                      <MdOutlineLocalPostOffice size="15px" />
+                      <InviteMessageDay>{format(parseISO(v.createdTime), 'MM월 dd일')}</InviteMessageDay>
+                      <InviteMessageTime>
+                        {format(parseISO(v.createdTime), `${'a' !== 'PM' ? '오후' : '오전'} hh시 mm분`)}
+                      </InviteMessageTime>
+                    </InviteMessageTimeWrap>
+                  </ListInfoWrap>
+                  <InfoLocation al="flex-start">
+                    <InfoLocationWrap>
+                      <GrLocation />
+                      {v.info.location.split(' ')[1]}
+                    </InfoLocationWrap>
+                  </InfoLocation>
+                </InviteMessageListWrap>
+              </Link>
+            );
+          })}
+        </>
+      ) : (
+        <InvitedNotMessage>초대받은 모임이 없습니다.</InvitedNotMessage>
+      )}
     </InviteMessageBoxContianer>
   );
 };

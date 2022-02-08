@@ -26,8 +26,8 @@ const ListThumbnailWrap = styled.div`
   border-radius: 6px;
   background: ${(props) => (props.src ? 'url(' + props.src + ')' : 'white')} center no-repeat;
   background-size: cover;
-  border: ${(props) => !props.src && '1px solid rgb(180,180,180)'};
-  border-style: ${(props) => !props.src && 'dashed'};
+  border: 1px dashed rgb(180, 180, 180);
+  border-style: ${(props) => (props.src ? 'solid' : 'dashed')};
 
   position: relative;
 `;
@@ -42,7 +42,7 @@ const HeartWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
+  background: rgba(255, 255, 255, 0.5);
 `;
 
 const ListInfoWrap = styled.div`
@@ -136,7 +136,7 @@ const ClassList = ({ v, on }) => {
     <ClassListContainer onClick={() => navigate(`/pages/class/${v._id}`)}>
       <ListThumbnailWrap src={v.thumnail}>
         <HeartWrap>
-          <BsHeartFill color={on ? 'red' : 'black'} />
+          <BsHeartFill color={on ? 'red' : 'rgba(200,200,200,0.8)'} />
         </HeartWrap>
       </ListThumbnailWrap>
       <ListInfoWrap width="54%">

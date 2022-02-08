@@ -102,11 +102,13 @@ router.get('/invite/member/:category/:location/:classId', (req, res) => {
 router.post('/invite/send', (req, res) => {
   const { checkList, classId } = req.body;
   console.log(checkList, classId);
+  const pushData = { info: classId, createdTime: new Date() };
   for (let i = 0; i < checkList.length; i++) {
-    User.findOneAndUpdate({ _id: checkList[0]._id }, { $push: { inviteMessage: classId } }, (err, doc) => {
+    User.findOneAndUpdate({ _id: checkList[i] }, { $push: { inviteMessage: pushData } }, (err, doc) => {
       if (err) {
         console.log('유저 모임초대에러', err);
       }
+      console.log(doc);
       res.send('굿');
     });
   }
@@ -116,10 +118,20 @@ router.post('/invite/send', (req, res) => {
 router.post('/info/join/member', (req, res) => {
   const { userId, classId } = req.body;
 
-  User.findOneAndUpdate({ _id: userId }, { $push: { myClass: classId } }, (err, doc) => {
+  User.findOneAndUpdate({ _id: userId }, { $push: { myClass: classId } }, (err, userinfo) => {
     if (err) {
       console.log('모임 가입하기 유저 myClass 실패', err);
     }
+
+    if (userinfo.inviteMessage.filter((v) => v.info === classId)) {
+      User.updateOne({ _id: userinfo._id }, { $pull: { inviteMessage: { info: classId } } }, (err, info) => {
+        if (err) {
+          console.log('초대리스트에서 뺴기 실패', err);
+        }
+        console.log(info, '나느빠진 유저정보야');
+      });
+    }
+
     Class.findOneAndUpdate({ _id: classId }, { $push: { member: userId } }, (err, doc) => {
       if (err) {
         console.log('모임 가입하기 클래스 member 실패', err);
@@ -203,6 +215,21 @@ router.get('/list/my/:id', (req, res) => {
         res.status(200).send(doc);
       });
   });
+});
+
+//더보기란 초대모임 리스트
+router.get('/:id/invite/message', (req, res) => {
+  const { id } = req.params;
+
+  User.findOne({ _id: id })
+    .populate('inviteMessage.info')
+    .select('inviteMessage')
+    .exec((err, doc) => {
+      if (err) {
+        console.log('초대모임 리스트가져오기 실패', err);
+      }
+      res.send(doc);
+    });
 });
 
 module.exports = router;

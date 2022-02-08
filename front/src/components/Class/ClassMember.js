@@ -15,7 +15,7 @@ const MemberInfoWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${(props) => (props.admin ? '36px' : '20px')};
+  margin-bottom: 21px;
 
   &:last-child {
     margin-bottom: 0;

@@ -38,8 +38,6 @@ const InfoGender = styled.div`
 const InfoLocation = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 32%;
   margin: 4px 0 6px;
   font-size: 15px;
 `;
@@ -96,7 +94,7 @@ const SeeMoreUserInfo = () => {
               <ModifyButton onClick={ModalOpen}>수정</ModifyButton>
             </InfoFirstWrap>
             <InfoLocation>
-              <GrLocation size="16px" />
+              <GrLocation size="16px" style={{ marginRight: '2px' }} />
               {location}
             </InfoLocation>
             <Hr />
