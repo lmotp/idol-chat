@@ -15,7 +15,7 @@ const MyClassContainer = styled.div`
 
 const MyClassTitle = styled.h2`
   font-size: 21px;
-  padding-top: 36px;
+  padding-top: 34px;
 `;
 
 const ClassListWrap = styled.div`

@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { GrLocation } from 'react-icons/gr';
 import styled from 'styled-components';
 import { AuthButton } from '../../css/FormStyle';
-const ClassInviteWrap = styled.div``;
+const ClassInviteWrap = styled.div`
+  margin-top: 36px;
+`;
 
 const InviteTitle = styled.h3`
   margin-bottom: 16px;
@@ -49,7 +51,7 @@ const UserButtonBox = styled.div`
 const UserInfo = styled.div`
   display: flex;
   align-items: center;
-  width: 80%;
+  width: 82%;
 `;
 
 const UserProfileImg = styled.img.attrs((props) => ({
@@ -93,7 +95,7 @@ const ClassInvite = ({ category, location, classId }) => {
 
   const inviteMeesageSend = () => {
     axios.post(`/api/class/invite/send`, { checkList, classId }).then(({ data }) => {
-      console.log(data);
+      setCheckList([]);
     });
   };
 

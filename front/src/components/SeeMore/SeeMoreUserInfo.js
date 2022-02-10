@@ -76,10 +76,6 @@ const SeeMoreUserInfo = () => {
     setModalState(true);
   };
 
-  const ModalClose = () => {
-    setModalState(false);
-  };
-
   return (
     <>
       {!loadingState ? (
@@ -101,7 +97,7 @@ const SeeMoreUserInfo = () => {
             <InfoMySelf>{myself}</InfoMySelf>
           </InfoWrap>
           <Modal modalState={modalState}>
-            <ModifyModal setLoadingState={setLoadingState} ModalClose={ModalClose} id={_id} img={profileimg} />
+            <ModifyModal setLoadingState={setLoadingState} setModalState={setModalState} id={_id} img={profileimg} />
           </Modal>
         </SeeMoreUserInfoWrap>
       ) : (

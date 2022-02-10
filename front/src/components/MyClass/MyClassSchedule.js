@@ -4,6 +4,7 @@ import { format, getDay, parseISO } from 'date-fns';
 import { GrLocation } from 'react-icons/gr';
 import { BiTimeFive, BiWon } from 'react-icons/bi';
 import Calendars from '../Pickers/Calendars';
+import { useNavigate } from 'react-router-dom';
 
 const MyClassScheduleContainer = styled.div`
   width: 100%;
@@ -106,6 +107,8 @@ const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일
 
 const MyClassSchedule = ({ myMeetinsList }) => {
   const [meetingDayValue, setMeetingDayValue] = useState(new Date());
+  const navigate = useNavigate();
+  console.log(myMeetinsList);
 
   return (
     <MyClassScheduleContainer>
@@ -122,9 +125,14 @@ const MyClassSchedule = ({ myMeetinsList }) => {
         <SchedulListWrap>
           {myMeetinsList
             .filter((v) => format(parseISO(v.day), 'MM월 dd일') === format(meetingDayValue, 'MM월 dd일'))
-            .map((v, i) => {
+            .map((v) => {
               return (
-                <List key={i}>
+                <List
+                  key={v.classId._id}
+                  onClick={() => {
+                    navigate(`/pages/class/${v.classId._id}`);
+                  }}
+                >
                   <ListClassName>{v.classId.className}</ListClassName>
                   <ListTitle>{v.name}</ListTitle>
 

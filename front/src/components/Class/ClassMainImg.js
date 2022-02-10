@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AiOutlinePicture } from 'react-icons/ai';
 import styled from 'styled-components';
 import Modal from '../Modal/Modal';
-import ModifyClassModal from '../Modal/ModifyClassModal';
+import ModifyClassImg from '../Modal/ModifyClassImg';
 
 const ClassMainImgWrap = styled.div`
   width: 100%;
@@ -37,15 +37,12 @@ const ClassMainImgWrapNoAdmin = styled.div`
   align-items: center;
 `;
 
-const ClassMainImg = ({ img, title, classTarget, admin, id, setReloadState }) => {
+const ClassMainImg = ({ img, admin, id, setReloadState }) => {
   const [hoverState, setHoverState] = useState(false);
   const [modalState, setModalState] = useState(false);
 
   const ModalOpen = () => {
     setModalState(true);
-  };
-  const ModalClose = () => {
-    setModalState(false);
   };
 
   return (
@@ -66,13 +63,11 @@ const ClassMainImg = ({ img, title, classTarget, admin, id, setReloadState }) =>
             {!img && <AiOutlinePicture size="33px" color="black" />}
           </ClassMainImgWrap>
           <Modal modalState={modalState}>
-            <ModifyClassModal
+            <ModifyClassImg
               modalState={modalState}
-              ModalClose={ModalClose}
-              title={title}
-              classTarget={classTarget}
               img={img}
               id={id}
+              setModalState={setModalState}
               setReloadState={setReloadState}
             />
           </Modal>

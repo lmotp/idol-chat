@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { BsPlusCircleDotted } from 'react-icons/bs';
+import { BsEmojiNeutralFill, BsPlusCircleDotted } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { AuthButton } from '../../css/FormStyle';
 import ClassList from '../ClassList';
@@ -16,7 +16,7 @@ const DetailLocation = styled.h2`
 
 const ClassListNothing = styled.div`
   width: 100%;
-  height: 70vh;
+  height: ${(props) => (props.height ? '70vh' : '74vh')};
   background: white;
   display: flex;
   justify-content: center;
@@ -41,23 +41,34 @@ const ClassListWrap = styled.div`
   }
 `;
 
-const DetailSearchList = () => {
+const DetailSearchList = ({ category }) => {
   const { location } = useSelector((state) => state.userCheckReducers.result);
   const [classList, setClassList] = useState([]);
   const [mainLocation, setMainLocation] = useState('');
+  const useSearchCategory = useLocation().state?.searchCategory;
+  const example = useLocation().state?.example;
   const navigate = useNavigate();
-  const { category } = useParams();
+
+  console.log(example);
 
   useEffect(() => {
-    axios.get(`/api/class/list/${category}`).then(({ data }) => {
-      setClassList(data);
-    });
-  }, [category]);
+    if (!useSearchCategory) {
+      axios.post(`/api/class/list`, { selectCategory: category }).then(({ data }) => {
+        setClassList(data);
+      });
+    } else {
+      axios.post(`/api/class/list`, { useSearchCategory }).then(({ data }) => {
+        setClassList(data);
+      });
+    }
+  }, [category, useSearchCategory]);
 
   useEffect(() => {
     const locationArray = location.split(' ');
-    setMainLocation(locationArray[0]);
+    setMainLocation(locationArray[1]);
   }, [location]);
+
+  console.log(example);
 
   return (
     <DetailSearchListContainer>
@@ -71,7 +82,7 @@ const DetailSearchList = () => {
           </ClassListWrap>
         </>
       ) : (
-        <ClassListNothing>
+        <ClassListNothing height={example !== null}>
           해당 검색어의 모임이 없습니다.
           <AuthButton color="rgb(180,180,180)" onClick={() => navigate('/pages/class/make')}>
             <PlusButton>

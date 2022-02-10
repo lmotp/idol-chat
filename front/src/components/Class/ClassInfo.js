@@ -3,7 +3,8 @@ import { GrLocation } from 'react-icons/gr';
 import { IoIosMore } from 'react-icons/io';
 import styled from 'styled-components';
 import Modal from '../Modal/Modal';
-import ModifyClassModal from '../Modal/ModifyClassModal';
+import ModifyClassInfo from '../Modal/ModifyClassInfo';
+
 const ClassInfoContainer = styled.div`
   margin-bottom: 54px;
 `;
@@ -73,11 +74,6 @@ const ClassInfo = ({ title, classTarget, location, hashTag, category, admin, img
   const ModalOpen = () => {
     setModalState(true);
   };
-
-  const ModalClose = () => {
-    setModalState(false);
-  };
-
   return (
     <ClassInfoContainer>
       <InfoHeader>
@@ -99,13 +95,12 @@ const ClassInfo = ({ title, classTarget, location, hashTag, category, admin, img
       </InfoTagWrap>
       <InfoContent>{classTarget}</InfoContent>
       <Modal modalState={modalState}>
-        <ModifyClassModal
+        <ModifyClassInfo
           modalState={modalState}
-          ModalClose={ModalClose}
           title={title}
           classTarget={classTarget}
-          img={img}
           id={id}
+          setModalState={setModalState}
           setReloadState={setReloadState}
         />
       </Modal>

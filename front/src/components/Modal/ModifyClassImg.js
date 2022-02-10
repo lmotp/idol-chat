@@ -1,20 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { useState } from 'react';
-import { ButtonWrap, ModifyButton, ModifyInfoInput, ModifyInfoTextArea } from '../../css/ModifyStyle';
+import { ButtonWrap, ModifyButton } from '../../css/ModifyStyle';
 import styled from 'styled-components';
 import { AiOutlinePicture } from 'react-icons/ai';
-import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
-import { BsFillPersonPlusFill } from 'react-icons/bs';
 import axios from 'axios';
 
 const ModifyClassModalContainer = styled.div`
   width: 90%;
   margin: 0 auto;
-  padding: 33px 0;
-`;
-
-const ModifyInfoSubTitleWrap = styled.div`
-  margin-top: 24px;
+  padding: 20px 0;
 `;
 
 const ModifyMainImgInput = styled.input`
@@ -29,7 +23,7 @@ const ModifyMainImgLabel = styled.label`
   justify-content: center;
   border: 1px solid rgb(200, 200, 200);
   border-radius: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   background-image: url(${(props) => props.src});
   background-size: cover;
   position: relative;
@@ -48,18 +42,18 @@ const ModifyMainImgLabel = styled.label`
   }
 `;
 
-const ModifyClassModal = ({ ModalClose, title, classTarget, img, id, setReloadState }) => {
-  const [classTargetValue, setClassTargetValue] = useState(classTarget);
-  const [titleValue, setTitleValue] = useState(title);
-  const [hoverState, setHoverState] = useState(false);
+const ModifyMaingValue = styled.h3`
+  text-align: center;
+`;
+
+const ModifyClassImg = ({ setModalState, img, id, setReloadState }) => {
   const [mainImg, setMainImg] = useState(img);
+  const [hoverState, setHoverState] = useState(false);
   const [fileName, setFileName] = useState('');
 
   useEffect(() => {
-    setTitleValue(title);
-    setClassTargetValue(classTarget);
     setMainImg(img);
-  }, [title, classTarget, img]);
+  }, [img]);
 
   const imgChange = (e) => {
     let theFile = e.target.files[0];
@@ -73,12 +67,15 @@ const ModifyClassModal = ({ ModalClose, title, classTarget, img, id, setReloadSt
     reader.readAsDataURL(theFile);
   };
 
+  const ModalClose = () => {
+    setMainImg(img);
+    setModalState(false);
+  };
+
   const ModifyFunc = () => {
     setReloadState(true);
     const formData = new FormData();
     formData.append('image', fileName ? fileName : mainImg);
-    formData.append('title', titleValue);
-    formData.append('classTarget', classTargetValue);
     formData.append('id', id);
 
     axios.post('/api/class/info/admin/modify', formData).then(() => {
@@ -109,30 +106,7 @@ const ModifyClassModal = ({ ModalClose, title, classTarget, img, id, setReloadSt
             </>
           )}
         </ModifyMainImgLabel>
-
-        <ModifyInfoInput
-          value={titleValue}
-          onChange={(e) => setTitleValue(e.target.value)}
-          type="text"
-          placeholder="모임 이름"
-        />
-
-        <ModifyInfoSubTitleWrap>
-          <ModifyInfoTextArea
-            value={classTargetValue}
-            onChange={(e) => setClassTargetValue(e.target.value)}
-            type="text"
-            placeholder="모임 폭표를 설명해주세요."
-            height="180px"
-          />
-        </ModifyInfoSubTitleWrap>
-        <ClassMemberCountWrap>
-          <ClassMemberCount>
-            <BsFillPersonPlusFill size="18px" style={{ marginRight: '10px' }} />
-            정원 (20 ~ 20명)
-          </ClassMemberCount>
-          <ModifyInfoInput al="center" width="10%" type="text" placeholder="20" />
-        </ClassMemberCountWrap>
+        <ModifyMaingValue>모임에 원하시는 사진으로 변경해보세요!</ModifyMaingValue>
       </ModifyClassModalContainer>
       <ButtonWrap>
         <ModifyButton onClick={ModifyFunc}>수정</ModifyButton>
@@ -142,4 +116,4 @@ const ModifyClassModal = ({ ModalClose, title, classTarget, img, id, setReloadSt
   );
 };
 
-export default ModifyClassModal;
+export default memo(ModifyClassImg);

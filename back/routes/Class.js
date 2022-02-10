@@ -18,7 +18,6 @@ const upload = multer({ storage: storage });
 // 모임만들기
 router.post('/make', (req, res) => {
   const classMake = new Class(req.body);
-  console.log(req.body);
 
   classMake.save((err, doc) => {
     if (err) {
@@ -101,17 +100,30 @@ router.get('/invite/member/:category/:location/:classId', (req, res) => {
 //모임 멤버초대하기
 router.post('/invite/send', (req, res) => {
   const { checkList, classId } = req.body;
-  console.log(checkList, classId);
   const pushData = { info: classId, createdTime: new Date() };
   for (let i = 0; i < checkList.length; i++) {
     User.findOneAndUpdate({ _id: checkList[i] }, { $push: { inviteMessage: pushData } }, (err, doc) => {
       if (err) {
         console.log('유저 모임초대에러', err);
       }
-      console.log(doc);
       res.send('굿');
     });
   }
+});
+
+//더보기란 초대모임 리스트
+router.get('/:id/invite/message', (req, res) => {
+  const { id } = req.params;
+
+  User.findOne({ _id: id })
+    .populate('inviteMessage.info')
+    .select('inviteMessage')
+    .exec((err, doc) => {
+      if (err) {
+        console.log('초대모임 리스트가져오기 실패', err);
+      }
+      res.send(doc);
+    });
 });
 
 // 모임 가입하기
@@ -124,7 +136,7 @@ router.post('/info/join/member', (req, res) => {
     }
 
     if (userinfo.inviteMessage.filter((v) => v.info === classId)) {
-      User.updateOne({ _id: userinfo._id }, { $pull: { inviteMessage: { info: classId } } }, (err, info) => {
+      User.updateOne({ _id: userinfo._id }, { $pullAll: { inviteMessage: { info: classId } } }, (err, info) => {
         if (err) {
           console.log('초대리스트에서 뺴기 실패', err);
         }
@@ -160,41 +172,65 @@ router.post('/info/secession/member', (req, res) => {
 
 //모임 수정하기
 router.post('/info/admin/modify', upload.single('image'), (req, res) => {
-  console.log(req.body.image);
-
   const img = req.file ? `/api/image/${req.file.filename}` : req.body.image;
-  const { title, classTarget, id } = req.body;
+  const { classTarget, className, id } = req.body;
 
-  Class.findOneAndUpdate({ _id: id }, { className: title, classTarget: classTarget, thumnail: img }, (err, doc) => {
-    if (err) {
-      console.log('모임수정 에러', err);
-    }
-    res.status(200).send(doc);
-  });
+  if (img) {
+    Class.findOneAndUpdate({ _id: id }, { thumnail: img }, (err, doc) => {
+      if (err) {
+        console.log('모임수정 에러 이미지 오류', err);
+      }
+      res.status(200).send(doc);
+    });
+  } else {
+    Class.findOneAndUpdate({ _id: id }, { className, classTarget }, (err, doc) => {
+      if (err) {
+        console.log('모임수정 에러 정보 오류', err);
+      }
+
+      res.status(200).send(doc);
+    });
+  }
 });
 
 ////////////////////////////////////////////////////
 
 // 카테고리에 맞는 모임리스트
 router.post('/list', (req, res) => {
-  const { selectCategory } = req.body;
+  const { selectCategory, useSearchCategory } = req.body;
 
-  console.log(selectCategory);
-
-  if (selectCategory === '전체') {
-    Class.find((err, doc) => {
+  if (useSearchCategory) {
+    Class.find({ hashTag: { $in: useSearchCategory } }, (err, searchCategory) => {
       if (err) {
-        console.log('전체카테고리 찾는데 에러', err);
+        console.log('검색해서 카테고리찾는거에서 에러', err);
       }
-      res.send(doc);
+      if (!searchCategory.length) {
+        Class.find({ category: useSearchCategory }, (err, category) => {
+          if (err) {
+            console.log('검색해서 카테고리찾는거에서 에러', err);
+          }
+          res.send(category);
+        });
+      } else {
+        res.send(searchCategory);
+      }
     });
   } else {
-    Class.find({ category: selectCategory }, (err, doc) => {
-      if (err) {
-        console.log('클래스 카테고리 리스티 찾기 에러', err);
-      }
-      res.send(doc);
-    });
+    if (selectCategory === '전체') {
+      Class.find((err, doc) => {
+        if (err) {
+          console.log('전체카테고리 찾는데 에러', err);
+        }
+        res.send(doc);
+      });
+    } else {
+      Class.find({ category: selectCategory }, (err, doc) => {
+        if (err) {
+          console.log('클래스 카테고리 리스티 찾기 에러', err);
+        }
+        res.send(doc);
+      });
+    }
   }
 });
 
@@ -215,21 +251,6 @@ router.get('/list/my/:id', (req, res) => {
         res.status(200).send(doc);
       });
   });
-});
-
-//더보기란 초대모임 리스트
-router.get('/:id/invite/message', (req, res) => {
-  const { id } = req.params;
-
-  User.findOne({ _id: id })
-    .populate('inviteMessage.info')
-    .select('inviteMessage')
-    .exec((err, doc) => {
-      if (err) {
-        console.log('초대모임 리스트가져오기 실패', err);
-      }
-      res.send(doc);
-    });
 });
 
 module.exports = router;

@@ -20,7 +20,7 @@ const DetailSearch = () => {
       <DetailSearchContainer>
         <ClassSearch pd="30px 0" />
         <DetailSelectCategory mainCategory={category} />
-        <DetailSearchList />
+        <DetailSearchList category={category} />
       </DetailSearchContainer>
     </>
   );

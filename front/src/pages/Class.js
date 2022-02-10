@@ -30,6 +30,7 @@ const Class = () => {
         setClassInfo(data[0]);
         setMeetingList(data[0].meetingDay);
         joinStateRef.current = data[0].member.includes(user?._id);
+        console.log(data);
       });
 
       axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
@@ -39,12 +40,6 @@ const Class = () => {
       });
     }
   }, [id, user?._id, reloadState]);
-
-  const testMeetingDay = [
-    { title: '얼굴 봅시다!', day: new Date(), location: '건대 (임시장소)', price: '엔빵' },
-    { title: '얼굴 봅시다!', day: new Date(2022, 0, 5, 12, 31, 10), location: '건대 (임시장소)', price: '엔빵' },
-    { title: '얼굴 봅시다!', day: new Date(2022, 0, 6, 12, 31, 10), location: '건대 (임시장소)', price: '엔빵' },
-  ];
 
   return (
     <>
@@ -66,13 +61,11 @@ const Class = () => {
               location={classInfo.location?.split(' ')[1]}
               hashTag={classInfo.hashTag}
               category={classInfo.category}
-              img={classInfo.thumnail}
               id={id}
               setReloadState={setReloadState}
             />
             <ClassMeeting
               admin={user?._id === classInfo.makeUser}
-              array={testMeetingDay}
               userId={user?._id}
               classId={id}
               joinState={joinStateRef.current}

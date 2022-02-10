@@ -95,7 +95,7 @@ const ModifyInfoSubTitleWrap = styled.div``;
 const MakeClass = () => {
   const [modalState, setModalState] = useState(false);
   const [nowLocation, setNowLocation] = useState('');
-  const [categoryValue, setCategoryValue] = useState('');
+  const [categoryValue, setCategoryValue] = useState('여자아이돌');
   const [categorySrc, setCategorySrc] = useState('');
   const [hashTag, setHashTag] = useState([]);
   const classNameRef = useRef('');

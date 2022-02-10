@@ -114,7 +114,7 @@ const ModifyButton = styled.button`
   }
 `;
 
-const ModifyModal = ({ setLoadingState, ModalClose, id, img }) => {
+const ModifyModal = ({ setLoadingState, setModalState, id, img }) => {
   const { gender, nickname, myself } = useSelector((state) => state.userCheckReducers.result);
   const [imgHoverState, setImgHoverState] = useState(false);
   const [radioSelect, setRadioSelect] = useState(gender);
@@ -133,6 +133,14 @@ const ModifyModal = ({ setLoadingState, ModalClose, id, img }) => {
 
   const radioCheckChange = (e) => {
     setRadioSelect(e.target.id);
+  };
+
+  const ModalClose = () => {
+    setMySelf(myself);
+    setMainImg(img);
+    setRadioSelect(gender);
+    setNickName(nickname);
+    setModalState(false);
   };
 
   const imgChange = (e) => {

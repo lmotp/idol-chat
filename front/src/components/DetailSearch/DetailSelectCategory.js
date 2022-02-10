@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const ExampleCategory = styled.div`
@@ -20,22 +21,30 @@ const ExampleCategory = styled.div`
 const DetailSelectCategory = ({ mainCategory }) => {
   const subCategory = useSelector((state) => state.mainCategoryReducer);
   const [example, setExample] = useState([]);
-  const [select, setSelect] = useState('전체');
+  const [select, setSelect] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const example = subCategory
       .filter((v) => v.category === mainCategory)
       .map((v) => v.example)
       .flat();
-
-    setExample(['전체', ...example]);
+    setSelect('');
+    setExample(example);
   }, [mainCategory, subCategory]);
 
   return (
     <>
       {example.map((v, i) => {
         return (
-          <ExampleCategory selectState={v === select} onClick={() => setSelect(v)} key={i}>
+          <ExampleCategory
+            selectState={v === select}
+            onClick={() => {
+              setSelect(v);
+              navigate(`/pages/search/${v}`, { state: { searchCategory: v, example: null } });
+            }}
+            key={i}
+          >
             {v}
           </ExampleCategory>
         );
