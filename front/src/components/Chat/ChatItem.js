@@ -65,7 +65,6 @@ const ChatItem = ({ _id }) => {
   }, [id, socket]);
 
   useEffect(() => {
-    console.log('랜더링횟수');
     socket.on('message', (data) => {
       if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;

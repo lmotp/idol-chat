@@ -49,8 +49,6 @@ const DetailSearchList = ({ category }) => {
   const example = useLocation().state?.example;
   const navigate = useNavigate();
 
-  console.log(example);
-
   useEffect(() => {
     if (!useSearchCategory) {
       axios.post(`/api/class/list`, { selectCategory: category }).then(({ data }) => {
@@ -67,8 +65,6 @@ const DetailSearchList = ({ category }) => {
     const locationArray = location.split(' ');
     setMainLocation(locationArray[1]);
   }, [location]);
-
-  console.log(example);
 
   return (
     <DetailSearchListContainer>

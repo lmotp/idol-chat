@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const MyCategoryWrap = styled.div`
   width: 116px;
@@ -35,11 +36,25 @@ const MyCategoryWrapBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+`;
+
+const MyCateogryCount = styled.div`
+  position: absolute;
+  left: 0px;
+  top: 10px;
+  background: #db7093;
+  width: 21px;
+  border-radius: 50%;
+  height: 21px;
+  line-height: 21px;
+  color: white;
 `;
 
 const MyCategory = ({ v }) => {
   const startPostionRef = useRef(0);
   const stopPostionRef = useRef(0);
+  const [count, setCount] = useState(0);
 
   const [moveValue, setMoveValue] = useState(0);
   const mouseDownFunc = (e) => {
@@ -56,6 +71,14 @@ const MyCategory = ({ v }) => {
     console.log('hi');
   }
 
+  useEffect(() => {
+    const date = localStorage.getItem(`chat-${v._id}`) || new Date();
+    axios.get(`/api/chat/${v._id}/unreads/${date}`).then(({ data: { count } }) => {
+      console.log(count);
+      setCount(count);
+    });
+  }, [v._id]);
+
   return (
     <>
       <MyCategoryWrap onMouseDown={mouseDownFunc} onMouseUp={mouseUpFunc}>
@@ -63,6 +86,7 @@ const MyCategory = ({ v }) => {
           <MyCategoryWrapBox>
             <MyCategoryButton src={v.thumnail} />
             <MyCategoryClassName>{v.className}</MyCategoryClassName>
+            <MyCateogryCount>{count}</MyCateogryCount>
           </MyCategoryWrapBox>
         </Link>
       </MyCategoryWrap>

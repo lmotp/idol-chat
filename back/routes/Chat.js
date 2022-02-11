@@ -16,4 +16,18 @@ router.get('/message/:classId', (req, res) => {
     });
 });
 
+router.get('/:classId/unreads/:time', (req, res) => {
+  const { classId, time } = req.params;
+  const newTime = new Date(+time).toString() === 'Invalid Date' ? new Date(time) : new Date(+time);
+
+  Chat.countDocuments({ classId, unreadsTime: { $gt: new Date(+newTime) } }, (err, count) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(new Date(+newTime), new Date(+new Date().getTime().toString()), time - new Date().getTime().toString());
+    console.log(count);
+    res.json({ count });
+  });
+});
+
 module.exports = router;

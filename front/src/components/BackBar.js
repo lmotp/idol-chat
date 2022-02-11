@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import styled from 'styled-components';
@@ -25,7 +25,7 @@ const BarTitle = styled.span`
   cursor: pointer;
 `;
 
-const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, _id }) => {
+const BackBar = ({ title, nextTitle, clickCategory, page, _id }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { id } = useParams();
@@ -39,18 +39,18 @@ const BackBar = ({ title, classTitle, nextTitle, clickCategory, page, _id }) => 
   };
 
   const back = useCallback(() => {
-    if (id) {
+    if (id && pathname.includes('/chat')) {
+      localStorage.setItem(`chat-${id}`, new Date().getTime().toString());
       socket.emit('leaveRoom', id);
       socket.on('leave', (data) => {
         console.log('나 실행됭?', data);
       });
       disconnect();
       navigate(-1);
-      console.log('안녕?');
     } else {
       navigate(-1);
     }
-  }, [id, socket, disconnect, navigate]);
+  }, [id, socket, disconnect, navigate, pathname]);
 
   return (
     <BarContainer>
