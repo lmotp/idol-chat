@@ -22,10 +22,15 @@ const LocationSearchInput = styled.input`
   border: 1px solid black;
   outline: none;
 `;
+const ErrorValue = styled.div`
+  font-size: 14px;
+  margin-top: 6px;
+  color: red;
+`;
 
 const LocationItemBox = styled.ul`
   height:400px;
-  margin-top:40px;
+  margin-top:30px;
   border-top 1px solid black;
   overflow-y:scroll;
 `;
@@ -61,19 +66,28 @@ const ModalButton = styled.button`
 
 const LocationModal = ({ setNowLocation, ModalClose }) => {
   const locationSearchRef = useRef();
+  const [error, setError] = useState(false);
   const [locationItem, setLocationItem] = useState([]);
 
   const LocationSearchSubmit = (e) => {
     e.preventDefault();
+    const checkRgx = /[구동]/gm;
     if (!locationSearchRef.current.value) {
       return;
     }
+    if (!checkRgx.test(locationSearchRef.current.value)) {
+      locationSearchRef.current.focus();
+      locationSearchRef.current.value = '';
+      setError(true);
+      return;
+    }
+
     axios
       .get(`https://dapi.kakao.com/v2/local/search/address.json?size=30&query=${locationSearchRef.current.value}`, {
         headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_API}` },
       })
       .then(({ data }) => {
-        console.log(data);
+        setError(false);
         locationSearchRef.current.value = '';
         setLocationItem(data.documents);
       });
@@ -83,6 +97,7 @@ const LocationModal = ({ setNowLocation, ModalClose }) => {
     <>
       <LocationForm onSubmit={LocationSearchSubmit}>
         <LocationSearchInput type="text" ref={locationSearchRef} placeholder="동,구로 검색하세요. 예시)자양동" />
+        {error && <ErrorValue>검색어에 (구,둥)이 들어간 주소로 다시 입력해주세요.</ErrorValue>}
       </LocationForm>
       <LocationModalContainer>
         <LocationItemBox>

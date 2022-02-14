@@ -1,6 +1,8 @@
 const express = require('express');
 const Class = require('../models/Class');
 const User = require('../models/User');
+const Chat = require('../models/Chat');
+const Meeting = require('../models/Meeting');
 const multer = require('multer');
 const router = express.Router();
 
@@ -85,22 +87,35 @@ router.get('/info/member/:id', (req, res) => {
 //모임 멤버초대 리스트
 router.get('/invite/member/:category/:location/:classId', (req, res) => {
   const { category, location, classId } = req.params;
-
-  User.find({ category: { $in: category }, location: { $regex: location, $options: 'i' }, myClass: { $nin: classId } })
-    .select('nickname profileimg myself location')
-    .exec((err, doc) => {
-      if (err) {
-        console.log('멤버초대리스트 에러', err);
-      }
-      console.log(doc);
-      res.send(doc);
-    });
+  Class.findOne({ _id: classId }, (err, classInfo) => {
+    User.find({
+      category: { $in: category },
+      location: { $regex: location, $options: 'i' },
+      myClass: { $nin: classId },
+    })
+      .select('nickname profileimg myself location')
+      .exec((err, doc) => {
+        if (err) {
+          console.log('멤버초대리스트 에러', err);
+        }
+        const userArray = doc.filter((v) => !classInfo.inviteMember.includes(v._id.toString()));
+        res.send(userArray);
+      });
+  });
 });
 
 //모임 멤버초대하기
 router.post('/invite/send', (req, res) => {
   const { checkList, classId } = req.body;
   const pushData = { info: classId, createdTime: new Date() };
+
+  Class.updateOne({ _id: classId }, { $push: { inviteMember: checkList } }, (err, doc) => {
+    if (err) {
+      console.log('모임초대 클래스 에러 문제', err);
+    }
+    console.log('성공');
+  });
+
   for (let i = 0; i < checkList.length; i++) {
     User.findOneAndUpdate({ _id: checkList[i] }, { $push: { inviteMessage: pushData } }, (err, doc) => {
       if (err) {
@@ -122,6 +137,7 @@ router.get('/:id/invite/message', (req, res) => {
       if (err) {
         console.log('초대모임 리스트가져오기 실패', err);
       }
+      console.log(doc);
       res.send(doc);
     });
 });
@@ -134,9 +150,8 @@ router.post('/info/join/member', (req, res) => {
     if (err) {
       console.log('모임 가입하기 유저 myClass 실패', err);
     }
-
-    if (userinfo.inviteMessage.filter((v) => v.info === classId)) {
-      User.updateOne({ _id: userinfo._id }, { $pullAll: { inviteMessage: { info: classId } } }, (err, info) => {
+    if (userinfo.inviteMessage.filter((v) => v.info === classId).length) {
+      User.updateOne({ _id: userinfo._id }, { $pull: { inviteMessage: { info: classId } } }, (err, info) => {
         if (err) {
           console.log('초대리스트에서 뺴기 실패', err);
         }
@@ -157,16 +172,63 @@ router.post('/info/join/member', (req, res) => {
 router.post('/info/secession/member', (req, res) => {
   const { userId, classId } = req.body;
 
-  Class.findOneAndUpdate({ _id: classId }, { $pull: { member: userId } }, (err, doc) => {
-    if (err) {
-      console.log('모임 탈퇴하기 클래스 member 실패', err);
-    }
-    User.findOneAndUpdate({ _id: userId }, { $pull: { myClass: classId } }, (err, doc) => {
-      if (err) {
-        console.log('모임 탈퇴하기 유저 myClass 실패', err);
+  Class.findOne({ _id: classId }, (err, findClass) => {
+    if (findClass.makeUser === userId) {
+      Class.deleteOne({ _id: classId }, (err, doc) => {
+        if (err) {
+          console.log('모임지우는거에서 에러발생', err);
+        }
+      });
+
+      for (let i = 0; i < findClass.member.length; i++) {
+        User.findOneAndUpdate({ _id: findClass.member[i] }, { $pull: { myClass: classId } }, (err, userinfo) => {
+          if (err) {
+            console.log('멤버한명씩 하는거에서 삭제 에러', err);
+          }
+          console.log(userinfo);
+        });
       }
-      res.status(200).send(doc);
-    });
+
+      if (findClass.inviteMember.length) {
+        for (let i = 0; i < findClass.inviteMember.length; i++) {
+          User.updateOne(
+            { _id: findClass.inviteMember[i] },
+            { $pull: { inviteMessage: { info: classId } } },
+            (err, info) => {
+              if (err) {
+                console.log('초대리스트에서 뺴기 실패', err);
+              }
+              console.log(info, '나느빠진 유저정보야');
+            },
+          );
+        }
+      }
+
+      Chat.deleteMany({ classId }, (err, doc) => {
+        if (err) {
+          console.log('클래스삭제하면서 채팅지우는 부분에서 에러', err);
+        }
+      });
+
+      Meeting.deleteMany({ classId }, (err, doc) => {
+        if (err) {
+          console.log('클래스삭제하면서 채팅지우는 부분에서 에러', err);
+        }
+      });
+      res.send('성공');
+    } else {
+      Class.findOneAndUpdate({ _id: classId }, { $pull: { member: userId } }, (err, secessionClass) => {
+        if (err) {
+          console.log('모임 탈퇴하기 클래스 member 실패', err);
+        }
+        User.findOneAndUpdate({ _id: userId }, { $pull: { myClass: classId } }, (err, doc) => {
+          if (err) {
+            console.log('모임 탈퇴하기 유저 myClass 실패', err);
+          }
+          res.status(200).send(doc);
+        });
+      });
+    }
   });
 });
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { AiOutlinePlus } from 'react-icons/ai';
 import axios from 'axios';
@@ -12,7 +12,7 @@ const CircleButtonContainer = styled.div`
   max-width: 768px;
   position: fixed;
   bottom: 105px;
-  z-index: 2;
+  pointer-events: none;
 `;
 const CircleButtonWrap = styled.button`
   position: absolute;
@@ -27,6 +27,11 @@ const CircleButtonWrap = styled.button`
   flex-direction: column;
   color: white;
   box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+
+  &:hover {
+    background: red;
+  }
 `;
 
 const CircleButton = () => {
@@ -34,6 +39,7 @@ const CircleButton = () => {
   const { pathname } = useLocation();
   const { id } = useParams();
   const { _id } = useSelector((state) => state.userCheckReducers.result);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (pathname === `/pages/class/${id}`) {
@@ -48,14 +54,12 @@ const CircleButton = () => {
       {pathname === '/pages/home' ||
       pathname === '/pages/my-class' ||
       (pathname === `/pages/class/${id}` && chatState) ? (
-        <Link to={id ? `/pages/class/${id}/chat` : '/pages/class/make'}>
-          <CircleButtonContainer>
-            <CircleButtonWrap>
-              <AiOutlinePlus size="16px" style={{ marginBottom: '2px' }} />
-              {id ? '채팅' : '개설'}
-            </CircleButtonWrap>
-          </CircleButtonContainer>
-        </Link>
+        <CircleButtonContainer>
+          <CircleButtonWrap onClick={() => navigate(id ? `/pages/class/${id}/chat` : '/pages/class/make')}>
+            <AiOutlinePlus size="16px" style={{ marginBottom: '2px' }} />
+            {id ? '채팅' : '개설'}
+          </CircleButtonWrap>
+        </CircleButtonContainer>
       ) : null}
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import useSocket from '../../hooks/useSocket';
 import { FaPaperPlane } from 'react-icons/fa';

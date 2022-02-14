@@ -132,13 +132,15 @@ const InviteMessageBox = () => {
     });
   }, [_id]);
 
+  console.log(classLists);
+
   return (
     <InviteMessageBoxContianer>
       {classLists.length > 0 ? (
         <>
           {classLists.map((v) => {
             return (
-              <Link to={`/pages/class/${v.info._id}`}>
+              <Link to={`/pages/class/${v.info?._id}`}>
                 <InviteMessageListWrap key={v._id}>
                   <ListtHumbnail src={v.info.thumnail} width="16%" />
                   <ListInfoWrap width="80%" ml="16px" jc="center">

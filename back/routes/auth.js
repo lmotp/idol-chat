@@ -69,7 +69,6 @@ router.get('/auth-check', isAuth, (req, res) => {
 
 router.post('/select-category', (req, res) => {
   const { clickCategory, _id } = req.body;
-  console.log(_id);
 
   const category = ['전체', ...clickCategory];
 

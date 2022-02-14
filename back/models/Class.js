@@ -12,6 +12,7 @@ const classSchema = new mongoose.Schema(
     thumnail: { type: String, default: null },
     hashTag: [{ type: String }],
     meetingDay: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meeting', validate: [meetingDayArrayLimit] }],
+    inviteMember: [{ type: String }],
   },
   { timestamps: true },
 );

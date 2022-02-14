@@ -60,7 +60,8 @@ const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, relo
   const navigate = useNavigate();
 
   const memberSecession = () => {
-    axios.post('/api/class/info/secession/member', { userId, classId }).then(() => {
+    axios.post('/api/class/info/secession/member', { userId, classId }).then(({ data }) => {
+      console.log(data);
       navigate('/pages/home');
     });
   };

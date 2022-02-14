@@ -26,7 +26,6 @@ router.get('/:classId/unreads/:time', (req, res) => {
     if (err) {
       console.log(err);
     }
-
     res.json({ count });
   });
 });
