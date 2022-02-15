@@ -1,13 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { memo, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 
-const MyCategoryWrap = styled.div`
-  width: 116px;
-  height: 100%;
+const MyCategoryWrapBox = styled.div`
+  width: 130px;
+  position: relative;
+  display: inline-flex;
   text-align: center;
-  display: flex;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  flex-direction: column;
   align-items: center;
 `;
 
@@ -24,24 +28,16 @@ const MyCategoryButton = styled.div`
 `;
 
 const MyCategoryClassName = styled.div`
-  width: 80px;
+  width: 90px;
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 12px;
   white-space: nowrap;
 `;
 
-const MyCategoryWrapBox = styled.div`
-  height: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-`;
-
 const MyCateogryCount = styled.div`
   position: absolute;
-  left: 0px;
+  left: 16px;
   top: 10px;
   background: #db7093;
   width: 21px;
@@ -52,46 +48,29 @@ const MyCateogryCount = styled.div`
 `;
 
 const MyCategory = ({ v }) => {
-  const startPostionRef = useRef(0);
-  const stopPostionRef = useRef(0);
+  const naviagte = useNavigate();
   const [count, setCount] = useState(0);
-
-  const [moveValue, setMoveValue] = useState(0);
-  const mouseDownFunc = (e) => {
-    startPostionRef.current = e.clientX;
-    console.log('나 눌렸어');
-  };
-
-  const mouseUpFunc = (e) => {
-    stopPostionRef.current = e.clientX;
-    console.log('나는 뗏어');
-  };
-
-  if (startPostionRef.current - stopPostionRef.current > 0) {
-    console.log('hi');
-  }
 
   useEffect(() => {
     const date = localStorage.getItem(`chat-${v._id}`) || new Date();
     axios.get(`/api/chat/${v._id}/unreads/${date}`).then(({ data: { count } }) => {
-      console.log(count);
       setCount(count);
     });
   }, [v._id]);
 
   return (
     <>
-      <MyCategoryWrap onMouseDown={mouseDownFunc} onMouseUp={mouseUpFunc}>
-        <Link to={`/pages/class/${v._id}`}>
-          <MyCategoryWrapBox>
-            <MyCategoryButton src={v.thumnail} />
-            <MyCategoryClassName>{v.className}</MyCategoryClassName>
-            <MyCateogryCount>{count}</MyCateogryCount>
-          </MyCategoryWrapBox>
-        </Link>
-      </MyCategoryWrap>
+      <MyCategoryWrapBox
+        onClick={() => {
+          naviagte(`/pages/class/${v._id}`);
+        }}
+      >
+        <MyCategoryButton src={v.thumnail} />
+        <MyCategoryClassName>{v.className}</MyCategoryClassName>
+        <MyCateogryCount>{count}</MyCateogryCount>
+      </MyCategoryWrapBox>
     </>
   );
 };
 
-export default MyCategory;
+export default memo(MyCategory);

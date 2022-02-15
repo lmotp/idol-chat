@@ -87,21 +87,20 @@ router.get('/info/member/:id', (req, res) => {
 //모임 멤버초대 리스트
 router.get('/invite/member/:category/:location/:classId', (req, res) => {
   const { category, location, classId } = req.params;
-  Class.findOne({ _id: classId }, (err, classInfo) => {
-    User.find({
-      category: { $in: category },
-      location: { $regex: location, $options: 'i' },
-      myClass: { $nin: classId },
-    })
-      .select('nickname profileimg myself location')
-      .exec((err, doc) => {
-        if (err) {
-          console.log('멤버초대리스트 에러', err);
-        }
-        const userArray = doc.filter((v) => !classInfo.inviteMember.includes(v._id.toString()));
-        res.send(userArray);
-      });
-  });
+
+  User.find({
+    category: { $in: category },
+    location: { $regex: location, $options: 'i' },
+    myClass: { $nin: classId },
+  })
+    .select('nickname profileimg myself location')
+    .exec((err, doc) => {
+      if (err) {
+        console.log('멤버초대리스트 에러', err);
+      }
+
+      res.send(doc);
+    });
 });
 
 //모임 멤버초대하기

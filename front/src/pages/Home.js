@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import ClassList from '../components/ClassList';
@@ -6,6 +6,7 @@ import MyCategory from '../components/Home/MyCategory';
 import SelectCategory from '../components/SelectCategory';
 import { useSelector } from 'react-redux';
 import { BsPlusCircleDotted } from 'react-icons/bs';
+import { motion } from 'framer-motion';
 
 const HomeContainer = styled.div``;
 
@@ -13,9 +14,14 @@ const MyCategroyBox = styled.div`
   width: 100%;
   height: 160px;
   border-bottom: 1px solid rgb(200, 200, 200);
-  display: flex;
   padding-left: 5%;
-  overflow-x: hidden;
+  overflow: hidden;
+`;
+
+const MyCategoryWrap = styled(motion.div)`
+  width: 100%;
+  height: inherit;
+  white-space: nowrap;
 `;
 
 const HomeClassListBox = styled.div`
@@ -28,6 +34,7 @@ const MyCategoryNone = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 160px;
 `;
 
 const ClassListWrap = styled.div`
@@ -57,6 +64,8 @@ const Home = () => {
   const selectCategory = useSelector((state) => state.userCategoryReducer);
   const [classList, setClassList] = useState([]);
   const [myClassList, setMyClassList] = useState([]);
+  const [width, setWidth] = useState(0);
+  const carouselRef = useRef();
 
   useEffect(() => {
     axios.post(`/api/class/list`, { selectCategory }).then(({ data }) => setClassList(data));
@@ -68,13 +77,23 @@ const Home = () => {
     });
   }, [_id]);
 
+  useEffect(() => {
+    if (myClassList.length) {
+      setWidth(carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
+    }
+  }, [myClassList]);
+
+  console.log(width);
+
   return (
     <HomeContainer>
       <MyCategroyBox>
         {myClassList.length ? (
-          myClassList.map((v, i) => {
-            return <MyCategory v={v} key={i} />;
-          })
+          <MyCategoryWrap ref={carouselRef} drag="x" dragConstraints={{ right: 0, left: -width }}>
+            {myClassList.map((v, i) => {
+              return <MyCategory v={v} key={i} />;
+            })}
+          </MyCategoryWrap>
         ) : (
           <MyCategoryNone>
             지금 모임에 가입해보세요
