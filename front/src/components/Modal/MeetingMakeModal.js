@@ -96,7 +96,6 @@ const MeetingMakeModal = ({ ModalClose, classId, setLoading }) => {
     };
 
     axios.post('/api/meeting/make', meetingValueObj).then((data) => {
-      console.log('정모데이터', data);
       setLoading(true);
       ModalClose();
     });

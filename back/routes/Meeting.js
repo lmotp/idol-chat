@@ -32,4 +32,15 @@ router.post('/make', (req, res) => {
   });
 });
 
+router.post('/attend', (req, res) => {
+  const { userId, classId } = req.body;
+
+  Meeting.findOneAndUpdate({ classId }, { $addToSet: { attendMember: userId } }, (err, doc) => {
+    if (err) {
+      console.log('정모 참여 오류!', err);
+    }
+    res.send(doc);
+  });
+});
+
 module.exports = router;

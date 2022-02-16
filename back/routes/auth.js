@@ -62,9 +62,20 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/auth-check', isAuth, (req, res) => {
-  const { gender, location, nickname, profileimg, myself, firstCategory, category, _id } = req.user;
+  const { gender, location, nickname, profileimg, myself, firstCategory, category, _id, loginTime } = req.user;
 
-  res.json({ gender, location, nickname, profileimg, myself, _id, category, firstCategory, loginSuccess: true });
+  res.json({
+    gender,
+    location,
+    nickname,
+    profileimg,
+    myself,
+    _id,
+    category,
+    firstCategory,
+    loginTime,
+    loginSuccess: true,
+  });
 });
 
 router.post('/select-category', (req, res) => {
@@ -82,7 +93,7 @@ router.post('/select-category', (req, res) => {
 });
 
 router.get('/logout', isAuth, (req, res) => {
-  User.findOneAndUpdate({ _id: req.user._id }, { token: '' }, (err, doc) => {
+  User.findOneAndUpdate({ _id: req.user._id }, { token: '', loginTime: new Date() }, (err, doc) => {
     if (err) return res.json({ err });
     return res.clearCookie('auth').status(200).send();
   });
@@ -97,6 +108,17 @@ router.post('/modify', upload.single('image'), (req, res) => {
       console.log('유저정보수정 에러', err);
     }
     res.status(200).send(doc);
+  });
+});
+
+router.post('/category/modify', (req, res) => {
+  const { selectCategry, userId } = req.body;
+  console.log(selectCategry);
+  User.updateOne({ _id: userId }, { category: selectCategry }, (err, doc) => {
+    if (err) {
+      console.log('카테고리 변경에서 에러 발생', err);
+    }
+    res.send({ success: '성공', doc });
   });
 });
 

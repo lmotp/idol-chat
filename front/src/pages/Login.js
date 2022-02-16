@@ -57,6 +57,7 @@ const Login = () => {
     axios
       .post('/api/auth/login', info, { withCredentials: true })
       .then(({ data }) => {
+        console.log(data);
         if (data.loginSuccess) {
           dispatch(userCheckActions());
           if (!data.firstCategory) {

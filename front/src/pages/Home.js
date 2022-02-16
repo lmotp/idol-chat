@@ -14,7 +14,6 @@ const MyCategroyBox = styled.div`
   width: 100%;
   height: 160px;
   border-bottom: 1px solid rgb(200, 200, 200);
-  padding-left: 5%;
   overflow: hidden;
 `;
 
@@ -22,6 +21,7 @@ const MyCategoryWrap = styled(motion.div)`
   width: 100%;
   height: inherit;
   white-space: nowrap;
+  cursor: grab;
 `;
 
 const HomeClassListBox = styled.div`
@@ -82,8 +82,6 @@ const Home = () => {
       setWidth(carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
     }
   }, [myClassList]);
-
-  console.log(width);
 
   return (
     <HomeContainer>

@@ -9,8 +9,6 @@ export const withAuthCheck = (WrapComponents, isAdmin = false) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    console.log(user);
-
     useEffect(() => {
       dispatch(userCheckActions());
       if (!user.result?.loginSuccess) {
@@ -19,8 +17,6 @@ export const withAuthCheck = (WrapComponents, isAdmin = false) => {
           // 로그인이 필요한 페이지일때
           navigate('/');
         }
-      } else if (!user.result?.firstCategory) {
-        navigate('/category');
       } else if (isAdmin === null) {
         //로그인 됬을때 회원가입이나 로그인일때 메인페이지로 돌아가기
         navigate('/pages/home');

@@ -20,7 +20,7 @@ const SelectCategoryContainer = styled.div`
 
 const SelectCategory = () => {
   const [modalState, setModalState] = useState(false);
-  const { category } = useSelector((state) => state.userCheckReducers?.result);
+  const { category, _id } = useSelector((state) => state.userCheckReducers?.result);
   const selectCategory = useSelector((state) => state.userCategoryReducer);
   const dispatch = useDispatch();
   const { pathname } = useLocation();
@@ -49,7 +49,7 @@ const SelectCategory = () => {
         ))}
       </SelectCategoryTextBox>
       <IoIosMore style={{ cursor: 'pointer' }} size="24px" onClick={settingModalOpen} />
-      {modalState && <SettingModal testTag={category} />}
+      {modalState && <SettingModal category={category} setModalState={setModalState} userId={_id} />}
     </SelectCategoryContainer>
   );
 };

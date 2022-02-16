@@ -68,7 +68,7 @@ const MeetingInfoTitle = styled.div`
 `;
 
 const MeetingInfo = styled.div`
-  width: 80%;
+  width: 82%;
 `;
 
 const MeetingInfoItem = styled.div`
@@ -81,13 +81,27 @@ const MeetingInfoItem = styled.div`
   }
 `;
 
+const MeetingRightWrap = styled.div`
+  width: 6%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const MeetingAtendButton = styled.button`
-  width: 8%;
+  width: 100%;
+  height: 36px;
   color: white;
   border-radius: 6px;
   background-color: #8dbad0;
   cursor: ${(props) => (props.joinState ? 'pointer' : 'auto')};
   opacity: ${(props) => (props.joinState ? 1 : 0)};
+`;
+
+const MemberCount = styled.div`
+  font-size: 14px;
+  color: gray;
 `;
 
 const PlusButton = styled.div`
@@ -119,6 +133,12 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
     }
   }, [loading, classId, setMeetingList]);
 
+  const meetingAttend = () => {
+    axios.post('/api/meeting/attend', { userId, classId }).then(() => {
+      setLoading(true);
+    });
+  };
+
   // 모임에 가입했을때 리렌더링해주는 API
   const classJoinFunc = useCallback(() => {
     setReloadState(true);
@@ -126,10 +146,6 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
       setReloadState(false);
     });
   }, [userId, classId, setReloadState]);
-
-  const meetingAttend = () => {
-    console.log('안녕?');
-  };
 
   return (
     <ClassMeetingContainer>
@@ -169,9 +185,12 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
                     {v.price}
                   </MeetingInfoItem>
                 </MeetingInfo>
-                <MeetingAtendButton onClick={meetingAttend} disabled={!joinState} joinState={joinState}>
-                  참석
-                </MeetingAtendButton>
+                <MeetingRightWrap>
+                  <MeetingAtendButton onClick={meetingAttend} disabled={!joinState} joinState={joinState}>
+                    참석
+                  </MeetingAtendButton>
+                  <MemberCount>{v.attendMember.length} / 20</MemberCount>
+                </MeetingRightWrap>
               </MeetingInfoWrap>
             </div>
           ))}
