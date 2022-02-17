@@ -3,17 +3,21 @@ const moment = require('moment');
 const Chat = require('../models/Chat');
 const router = express.Router();
 
-router.get('/message/:classId', (req, res) => {
-  const { classId } = req.params;
+router.get('/message/:classId/:pages', (req, res) => {
+  const { classId, pages } = req.params;
+
+  console.log(pages);
 
   Chat.find({ classId })
+    .limit(10)
+    .skip(pages * 10)
+    .sort({ createdAt: -1 })
     .populate({ path: 'userId', select: ['profileimg', 'nickname'] })
     .exec((err, doc) => {
       if (err) {
         console.log('메세지가져오는데 에러', err);
       }
-      console.log(doc);
-      res.status(200).send(doc);
+      res.status(200).send(doc.reverse());
     });
 });
 

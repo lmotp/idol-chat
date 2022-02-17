@@ -5,6 +5,7 @@ import { FaPaperPlane } from 'react-icons/fa';
 import ChatList from './ChatList';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useElementScroll } from 'framer-motion';
 
 const ChatRoomWrap = styled.div`
   width: 100%;
@@ -46,35 +47,70 @@ const ButtonBox = styled.button`
 
 const ChatItem = ({ _id }) => {
   const [chat, setChat] = useState([]);
+  const [pages, setPages] = useState(0);
+  const [hasData, setHasData] = useState(true);
   const { id } = useParams();
+  const [socket] = useSocket(id);
   const textRef = useRef();
   const scrollRef = useRef();
-  const [socket] = useSocket(id);
 
   useEffect(() => {
     socket.emit('joinRoom', id);
     socket.on('join', (data) => {
       console.log(data);
     });
-    axios.get(`/api/chat/message/${id}`).then(({ data }) => {
-      setChat(data);
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-      }
-    });
   }, [id, socket]);
 
   useEffect(() => {
     socket.on('message', (data) => {
+      const chatPushData = chat.concat(data[0]);
+      setChat(chatPushData);
       if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
-      setChat([...chat, data[0]]);
     });
     return () => {
       socket.off();
     };
   }, [chat, socket]);
+
+  useEffect(() => {
+    axios.get(`/api/chat/message/${id}/${pages}`).then(({ data }) => {
+      if (data.length > 0) {
+        console.log('나 몇번 실행되는거니?');
+        setChat((prevItems) => {
+          return [...data, ...prevItems];
+        });
+      }
+      setHasData(data.length > 0);
+      if (scrollRef.current && !pages) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+    });
+  }, [id, pages]);
+
+  const handleScroll = () => {
+    const scrollTop = scrollRef.current.scrollTop;
+
+    if (!hasData) {
+      console.log('???');
+      return;
+    }
+
+    if (scrollTop === 0 && hasData) {
+      setPages(pages + 1);
+    }
+  };
+
+  useEffect(() => {
+    const scrollClassList = scrollRef.current;
+    scrollClassList.addEventListener('scroll', handleScroll);
+    return () => {
+      scrollClassList.removeEventListener('scroll', handleScroll);
+    };
+  });
+
+  console.log(chat.map((v) => v.message));
 
   const onMessageSubmit = (e) => {
     e.preventDefault();

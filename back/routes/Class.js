@@ -258,34 +258,43 @@ router.post('/info/admin/modify', upload.single('image'), (req, res) => {
 
 // 카테고리에 맞는 모임리스트
 router.post('/list', (req, res) => {
-  const { selectCategory, useSearchCategory } = req.body;
+  const { selectCategory, useSearchCategory, pages } = req.body;
 
   if (useSearchCategory) {
-    Class.find({ hashTag: { $in: useSearchCategory } }, (err, searchCategory) => {
-      if (err) {
-        console.log('검색해서 카테고리찾는거에서 에러', err);
-      }
-      if (!searchCategory.length) {
-        Class.find({ category: useSearchCategory }, (err, category) => {
-          if (err) {
-            console.log('검색해서 카테고리찾는거에서 에러', err);
-          }
-          res.send(category);
-        });
-      } else {
-        res.send(searchCategory);
-      }
-    });
+    Class.find({ hashTag: { $in: useSearchCategory } })
+      .limit(5)
+      .skip(pages * 5)
+      .sort({ createdAt: 1 })
+      .exec((err, searchCategory) => {
+        if (err) {
+          console.log('검색해서 카테고리찾는거에서 에러', err);
+        }
+        if (!searchCategory.length) {
+          Class.find({ category: useSearchCategory }, (err, category) => {
+            if (err) {
+              console.log('검색해서 카테고리찾는거에서 에러', err);
+            }
+            res.send(category);
+          });
+        } else {
+          res.send(searchCategory);
+        }
+      });
   } else {
     if (selectCategory === '전체') {
-      Class.find((err, doc) => {
-        if (err) {
-          console.log('전체카테고리 찾는데 에러', err);
-        }
-        res.send(doc);
-      });
+      Class.find()
+        .limit(5)
+        .skip(pages * 5)
+        .sort({ createdAt: 1 })
+        .exec((err, doc) => {
+          if (err) {
+            console.log('전체카테고리 찾는데 에러', err);
+          }
+          console.log(doc);
+          res.send(doc);
+        });
     } else {
-      Class.find({ category: selectCategory }, (err, doc) => {
+      Class.find({ category: selectCategory }, { limit: 5, skip: pages * 5 }, (err, doc) => {
         if (err) {
           console.log('클래스 카테고리 리스티 찾기 에러', err);
         }

@@ -76,7 +76,7 @@ const ChatList = ({ chat, _id, scrollRef }) => {
               <ChatText>
                 <ChatUser me={me}>
                   <ChatNickName me={me}>{me ? '나' : v.userId.nickname}</ChatNickName>
-                  <ChatTime>{format(new Date(v.createdAt), 'HH시mm분')}</ChatTime>
+                  <ChatTime>{format(new Date(v.createdAt), 'yyyy년 MM월 dd 일 HH시mm분')}</ChatTime>
                 </ChatUser>
                 <ChatMeesage>{v.message}</ChatMeesage>
               </ChatText>

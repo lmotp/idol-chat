@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import ClassList from '../components/ClassList';
@@ -65,11 +65,19 @@ const Home = () => {
   const [classList, setClassList] = useState([]);
   const [myClassList, setMyClassList] = useState([]);
   const [width, setWidth] = useState(0);
+  const [pages, setPages] = useState(0);
+  const [hasData, setHasData] = useState(true);
   const carouselRef = useRef();
+  const classListRef = useRef();
 
   useEffect(() => {
-    axios.post(`/api/class/list`, { selectCategory }).then(({ data }) => setClassList(data));
-  }, [selectCategory, _id]);
+    axios.post(`/api/class/list`, { selectCategory, pages }).then(({ data }) => {
+      setClassList((prevItems) => {
+        return [...prevItems, ...data];
+      });
+      setHasData(data.length > 0);
+    });
+  }, [selectCategory, _id, pages]);
 
   useEffect(() => {
     axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
@@ -82,6 +90,26 @@ const Home = () => {
       setWidth(carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
     }
   }, [myClassList]);
+
+  const handleScroll = () => {
+    const scrollHeight = classListRef.current.scrollHeight;
+    const scrollTop = classListRef.current.scrollTop;
+    const clientHeight = classListRef.current.clientHeight;
+    if (!hasData) {
+      return;
+    }
+    if (scrollHeight === scrollTop + clientHeight) {
+      setPages(pages + 1);
+    }
+  };
+
+  useEffect(() => {
+    const scrollClassList = classListRef.current;
+    scrollClassList.addEventListener('scroll', handleScroll);
+    return () => {
+      scrollClassList.removeEventListener('scroll', handleScroll);
+    };
+  });
 
   return (
     <HomeContainer>
@@ -102,7 +130,7 @@ const Home = () => {
 
       <HomeClassListBox>
         <SelectCategory />
-        <ClassListWrap>
+        <ClassListWrap ref={classListRef}>
           {classList.length > 0 ? (
             <>
               {classList.map((v) => {
