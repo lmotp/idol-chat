@@ -6,6 +6,7 @@ import ChatList from './ChatList';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useElementScroll } from 'framer-motion';
+import { format } from 'date-fns';
 
 const ChatRoomWrap = styled.div`
   width: 100%;
@@ -48,7 +49,8 @@ const ButtonBox = styled.button`
 const ChatItem = ({ _id }) => {
   const [chat, setChat] = useState([]);
   const [pages, setPages] = useState(0);
-  const [hasData, setHasData] = useState(true);
+  const [hasData, setHasData] = useState(false);
+  const [chatSections, setChatSections] = useState({});
   const { id } = useParams();
   const [socket] = useSocket(id);
   const textRef = useRef();
@@ -76,24 +78,39 @@ const ChatItem = ({ _id }) => {
 
   useEffect(() => {
     axios.get(`/api/chat/message/${id}/${pages}`).then(({ data }) => {
+      console.log(data);
       if (data.length > 0) {
-        console.log('나 몇번 실행되는거니?');
         setChat((prevItems) => {
-          return [...data, ...prevItems];
+          return [...data, ...prevItems].reverse();
         });
       }
-      setHasData(data.length > 0);
+      setHasData(data.length >= 10);
       if (scrollRef.current && !pages) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     });
   }, [id, pages]);
 
+  useEffect(() => {
+    const sections = {};
+    if (chat.length) {
+      chat.reverse().forEach((chat) => {
+        const monthDate = format(new Date(chat.createdAt), 'yyyy년 MM월 dd일');
+        if (Array.isArray(sections[monthDate])) {
+          sections[monthDate].push(chat);
+        } else {
+          sections[monthDate] = [chat];
+        }
+      });
+
+      setChatSections(sections);
+    }
+  }, [chat]);
+
   const handleScroll = () => {
     const scrollTop = scrollRef.current.scrollTop;
 
     if (!hasData) {
-      console.log('???');
       return;
     }
 
@@ -109,8 +126,6 @@ const ChatItem = ({ _id }) => {
       scrollClassList.removeEventListener('scroll', handleScroll);
     };
   });
-
-  console.log(chat.map((v) => v.message));
 
   const onMessageSubmit = (e) => {
     e.preventDefault();
@@ -132,7 +147,7 @@ const ChatItem = ({ _id }) => {
 
   return (
     <ChatRoomWrap>
-      <ChatList chat={chat} _id={_id} scrollRef={scrollRef} />
+      <ChatList chatSections={chatSections} _id={_id} ref={scrollRef} />
       <FormBox onSubmit={onMessageSubmit}>
         <TextBox ref={textRef} onKeyDown={onKeydownChat}></TextBox>
         <ButtonBox>

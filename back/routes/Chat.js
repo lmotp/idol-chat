@@ -17,6 +17,7 @@ router.get('/message/:classId/:pages', (req, res) => {
       if (err) {
         console.log('메세지가져오는데 에러', err);
       }
+      console.log(doc.length);
       res.status(200).send(doc.reverse());
     });
 });

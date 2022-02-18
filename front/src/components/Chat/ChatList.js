@@ -1,9 +1,9 @@
 import format from 'date-fns/format';
-import React, { memo } from 'react';
+import React, { forwardRef, memo } from 'react';
 import styled from 'styled-components';
+import { Line } from '../../css/FormStyle';
 const ChatListContainer = styled.div`
-  padding-top: 33px;
-  padding-left: 21px;
+  padding-top: 24px;
   width: 100%;
   height: 86%;
   overflow-y: scroll;
@@ -21,13 +21,13 @@ const ChatWrap = styled.ul`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 0 16px;
 `;
 
 const ChatBox = styled.li`
   display: flex;
   justify-content: ${(props) => props.me && 'flex-end'};
   margin-bottom: 33px;
-  padding-right: 21px;
 `;
 
 const ChatImg = styled.img.attrs((props) => ({
@@ -64,28 +64,44 @@ const ChatMeesage = styled.p`
   white-space: pre-wrap;
 `;
 
-const ChatList = ({ chat, _id, scrollRef }) => {
+const ChatList = forwardRef(({ _id, chatSections }, scrollRef) => {
+  console.log(chatSections);
+  console.log(chatSections ? Object.entries(chatSections).map(([date, chats]) => date) : {});
+
   return (
     <ChatListContainer ref={scrollRef}>
-      <ChatWrap>
-        {chat.map((v) => {
-          const me = v.userId._id === _id;
-          return (
-            <ChatBox me={me} key={v._id}>
-              <ChatImg src={v.userId.profileimg} me={me} />
-              <ChatText>
-                <ChatUser me={me}>
-                  <ChatNickName me={me}>{me ? '나' : v.userId.nickname}</ChatNickName>
-                  <ChatTime>{format(new Date(v.createdAt), 'yyyy년 MM월 dd 일 HH시mm분')}</ChatTime>
-                </ChatUser>
-                <ChatMeesage>{v.message}</ChatMeesage>
-              </ChatText>
-            </ChatBox>
-          );
-        })}
-      </ChatWrap>
+      {chatSections
+        ? Object.entries(chatSections).map(([date, chats]) => {
+            return (
+              <>
+                <Line width="38%" margin="0 0 24px 0" key={date}>
+                  {date}
+                </Line>
+                <ChatWrap>
+                  {chats.map((v) => {
+                    const me = v.userId._id === _id;
+                    return (
+                      <ChatBox me={me} key={v._id}>
+                        <ChatImg src={v.userId.profileimg} me={me} />
+                        <ChatText>
+                          <ChatUser me={me}>
+                            <ChatNickName me={me}>{me ? '나' : v.userId.nickname}</ChatNickName>
+                            <ChatTime>
+                              {format(new Date(v.createdAt), `${'aaa' !== 'pm' ? '오후' : '오전'} HH시 mm분`)}
+                            </ChatTime>
+                          </ChatUser>
+                          <ChatMeesage>{v.message}</ChatMeesage>
+                        </ChatText>
+                      </ChatBox>
+                    );
+                  })}
+                </ChatWrap>
+              </>
+            );
+          })
+        : null}
     </ChatListContainer>
   );
-};
+});
 
 export default memo(ChatList);
