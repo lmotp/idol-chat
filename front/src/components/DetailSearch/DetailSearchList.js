@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BsEmojiNeutralFill, BsPlusCircleDotted } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -45,33 +45,74 @@ const DetailSearchList = ({ category }) => {
   const { location } = useSelector((state) => state.userCheckReducers.result);
   const [classList, setClassList] = useState([]);
   const [mainLocation, setMainLocation] = useState('');
+  const [pages, setPages] = useState(0);
+  const [hasData, setHasData] = useState(true);
   const useSearchCategory = useLocation().state?.searchCategory;
   const example = useLocation().state?.example;
   const navigate = useNavigate();
+  const classListRef = useRef();
+
+  const { pathname } = useLocation();
+  useEffect(() => {
+    setPages(0);
+    setClassList([]);
+  }, [pathname]);
+
+  console.log(useSearchCategory);
 
   useEffect(() => {
     if (!useSearchCategory) {
-      axios.post(`/api/class/list`, { selectCategory: category }).then(({ data }) => {
-        setClassList(data);
+      axios.post(`/api/class/list`, { selectCategory: category, pages }).then(({ data }) => {
+        setClassList((prevItems) => {
+          return [...prevItems, ...data];
+        });
+        setHasData(data.length > 0);
       });
     } else {
-      axios.post(`/api/class/list`, { useSearchCategory }).then(({ data }) => {
-        setClassList(data);
+      axios.post(`/api/class/list`, { useSearchCategory, pages }).then(({ data }) => {
+        if (data.length > 0) {
+          setClassList((prevItems) => {
+            return [...prevItems, ...data];
+          });
+        }
+        setHasData(data.length > 0);
       });
     }
-  }, [category, useSearchCategory]);
+  }, [category, useSearchCategory, pages]);
 
   useEffect(() => {
     const locationArray = location.split(' ');
     setMainLocation(locationArray[1]);
   }, [location]);
 
+  const handleScroll = () => {
+    const scrollHeight = classListRef.current.scrollHeight;
+    const scrollTop = classListRef.current.scrollTop;
+    const clientHeight = classListRef.current.clientHeight;
+    if (!hasData) {
+      return;
+    }
+    if (scrollHeight === scrollTop + clientHeight) {
+      setPages(pages + 1);
+    }
+  };
+
+  useEffect(() => {
+    if (classListRef.current) {
+      const scrollClassList = classListRef.current;
+      scrollClassList.addEventListener('scroll', handleScroll);
+      return () => {
+        scrollClassList.removeEventListener('scroll', handleScroll);
+      };
+    }
+  });
+
   return (
     <DetailSearchListContainer>
       {classList.length > 0 ? (
         <>
           <DetailLocation>{mainLocation}</DetailLocation>
-          <ClassListWrap>
+          <ClassListWrap ref={classListRef}>
             {classList.map((v, i) => {
               return <ClassList on="true" v={v} key={i} />;
             })}

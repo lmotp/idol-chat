@@ -18,7 +18,7 @@ const SelectCategoryContainer = styled.div`
   position: relative;
 `;
 
-const SelectCategory = () => {
+const SelectCategory = ({ pagesHandler }) => {
   const [modalState, setModalState] = useState(false);
   const { category, _id } = useSelector((state) => state.userCheckReducers?.result);
   const selectCategory = useSelector((state) => state.userCategoryReducer);
@@ -41,6 +41,7 @@ const SelectCategory = () => {
             select={v === selectCategory}
             onClick={() => {
               dispatch(mainCategoryChange(v));
+              pagesHandler();
             }}
             key={i}
           >

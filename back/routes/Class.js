@@ -277,6 +277,7 @@ router.post('/list', (req, res) => {
             res.send(category);
           });
         } else {
+          console.log(searchCategory, '테스트');
           res.send(searchCategory);
         }
       });
@@ -294,12 +295,16 @@ router.post('/list', (req, res) => {
           res.send(doc);
         });
     } else {
-      Class.find({ category: selectCategory }, { limit: 5, skip: pages * 5 }, (err, doc) => {
-        if (err) {
-          console.log('클래스 카테고리 리스티 찾기 에러', err);
-        }
-        res.send(doc);
-      });
+      Class.find({ category: selectCategory })
+        .limit(5)
+        .skip(pages * 5)
+        .sort({ createdAt: 1 })
+        .exec((err, selectDoc) => {
+          if (err) {
+            console.log('클래스 카테고리 리스티 찾기 에러', err);
+          }
+          res.send(selectDoc);
+        });
     }
   }
 });

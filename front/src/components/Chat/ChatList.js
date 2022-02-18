@@ -65,9 +65,6 @@ const ChatMeesage = styled.p`
 `;
 
 const ChatList = ({ _id, chatSections, scrollRef }) => {
-  console.log(chatSections);
-  console.log(chatSections ? Object.entries(chatSections).map(([date, chats]) => date) : {});
-
   return (
     <ChatListContainer ref={scrollRef}>
       {chatSections

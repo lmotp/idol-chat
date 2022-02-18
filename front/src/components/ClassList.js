@@ -143,7 +143,7 @@ const ClassList = ({ v, on }) => {
         <InfoLocation mb="4px">
           <InfoLocationWrap>
             <GrLocation />
-            {v.location.split(' ')[1]}
+            {v?.location.split(' ')[1]}
           </InfoLocationWrap>
         </InfoLocation>
         <InfoMainTitle>{v.className}</InfoMainTitle>

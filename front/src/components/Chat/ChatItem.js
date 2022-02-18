@@ -5,7 +5,6 @@ import { FaPaperPlane } from 'react-icons/fa';
 import ChatList from './ChatList';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useElementScroll } from 'framer-motion';
 import { format } from 'date-fns';
 
 const ChatRoomWrap = styled.div`
@@ -65,10 +64,11 @@ const ChatItem = ({ _id }) => {
 
   useEffect(() => {
     socket.on('message', (data) => {
+      console.log(data);
       const chatReverse = chat.reverse();
       setChat([data[0], ...chatReverse]);
       setTimeout(() => {
-        if (scrollRef.current) {
+        if (scrollRef.current && data[0].userId._id === _id) {
           scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
       }, 50);
@@ -77,10 +77,9 @@ const ChatItem = ({ _id }) => {
     return () => {
       socket.off();
     };
-  }, [chat, socket]);
+  }, [chat, socket, _id]);
 
   useEffect(() => {
-    console.log('??');
     axios.get(`/api/chat/message/${id}/${pages}`).then(({ data }) => {
       if (data.length > 0) {
         setChat((prevItems) => {
@@ -147,8 +146,6 @@ const ChatItem = ({ _id }) => {
       }
     }
   };
-
-  console.log(chat);
 
   return (
     <ChatRoomWrap>

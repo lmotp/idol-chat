@@ -111,6 +111,11 @@ const Home = () => {
     };
   });
 
+  const pagesHandler = useCallback(() => {
+    setPages(0);
+    setClassList([]);
+  }, [setPages]);
+
   return (
     <HomeContainer>
       <MyCategroyBox>
@@ -129,7 +134,7 @@ const Home = () => {
       </MyCategroyBox>
 
       <HomeClassListBox>
-        <SelectCategory />
+        <SelectCategory pagesHandler={pagesHandler} />
         <ClassListWrap ref={classListRef}>
           {classList.length > 0 ? (
             <>
