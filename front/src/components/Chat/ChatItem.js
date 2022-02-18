@@ -65,20 +65,23 @@ const ChatItem = ({ _id }) => {
 
   useEffect(() => {
     socket.on('message', (data) => {
-      const chatPushData = chat.concat(data[0]);
-      setChat(chatPushData);
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-      }
+      const chatReverse = chat.reverse();
+      setChat([data[0], ...chatReverse]);
+      setTimeout(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+      }, 50);
     });
+
     return () => {
       socket.off();
     };
   }, [chat, socket]);
 
   useEffect(() => {
+    console.log('??');
     axios.get(`/api/chat/message/${id}/${pages}`).then(({ data }) => {
-      console.log(data);
       if (data.length > 0) {
         setChat((prevItems) => {
           return [...data, ...prevItems].reverse();
@@ -145,9 +148,11 @@ const ChatItem = ({ _id }) => {
     }
   };
 
+  console.log(chat);
+
   return (
     <ChatRoomWrap>
-      <ChatList chatSections={chatSections} _id={_id} ref={scrollRef} />
+      <ChatList chatSections={chatSections} _id={_id} scrollRef={scrollRef} />
       <FormBox onSubmit={onMessageSubmit}>
         <TextBox ref={textRef} onKeyDown={onKeydownChat}></TextBox>
         <ButtonBox>

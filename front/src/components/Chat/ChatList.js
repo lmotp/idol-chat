@@ -1,5 +1,5 @@
 import format from 'date-fns/format';
-import React, { forwardRef, memo } from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 import { Line } from '../../css/FormStyle';
 const ChatListContainer = styled.div`
@@ -64,7 +64,7 @@ const ChatMeesage = styled.p`
   white-space: pre-wrap;
 `;
 
-const ChatList = forwardRef(({ _id, chatSections }, scrollRef) => {
+const ChatList = ({ _id, chatSections, scrollRef }) => {
   console.log(chatSections);
   console.log(chatSections ? Object.entries(chatSections).map(([date, chats]) => date) : {});
 
@@ -81,7 +81,7 @@ const ChatList = forwardRef(({ _id, chatSections }, scrollRef) => {
                   {chats.map((v) => {
                     const me = v.userId._id === _id;
                     return (
-                      <ChatBox me={me} key={v._id}>
+                      <ChatBox me={me}>
                         <ChatImg src={v.userId.profileimg} me={me} />
                         <ChatText>
                           <ChatUser me={me}>
@@ -102,6 +102,6 @@ const ChatList = forwardRef(({ _id, chatSections }, scrollRef) => {
         : null}
     </ChatListContainer>
   );
-});
+};
 
 export default memo(ChatList);
