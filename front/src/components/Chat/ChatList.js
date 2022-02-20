@@ -41,7 +41,11 @@ const ChatImg = styled.img.attrs((props) => ({
   border: 1px solid rgb(200, 200, 200);
   order: ${(props) => props.me && 3};
 `;
-const ChatText = styled.div``;
+const ChatText = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: ${(props) => (props.me ? 'flex-end' : 'flex-start')};
+`;
 const ChatUser = styled.div`
   display: flex;
   margin-bottom: 4px;
@@ -58,7 +62,6 @@ const ChatTime = styled.div`
 `;
 const ChatMeesage = styled.p`
   padding: 10px 10px 10px 12px;
-  width: 100%;
   border: 1px solid rgb(200, 200, 200);
   border-radius: 4px;
   white-space: pre-wrap;
@@ -80,7 +83,7 @@ const ChatList = ({ _id, chatSections, scrollRef }) => {
                     return (
                       <ChatBox me={me}>
                         <ChatImg src={v.userId.profileimg} me={me} />
-                        <ChatText>
+                        <ChatText me={me}>
                           <ChatUser me={me}>
                             <ChatNickName me={me}>{me ? '나' : v.userId.nickname}</ChatNickName>
                             <ChatTime>

@@ -41,7 +41,9 @@ const SelectCategory = ({ pagesHandler }) => {
             select={v === selectCategory}
             onClick={() => {
               dispatch(mainCategoryChange(v));
-              pagesHandler();
+              if (pagesHandler) {
+                pagesHandler();
+              }
             }}
             key={i}
           >

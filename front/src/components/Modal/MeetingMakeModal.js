@@ -9,6 +9,7 @@ import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import axios from 'axios';
 import DatePickerWrap from '../Pickers/DatePickerWrap';
+import { parseISO } from 'date-fns';
 
 const MeetingMakeModalContainer = styled.div`
   width: 90%;
@@ -101,6 +102,8 @@ const MeetingMakeModal = ({ ModalClose, classId, setLoading }) => {
     });
   };
 
+  console.log(format(meetingDayValue, 'dd'));
+
   return (
     <>
       <MeetingMakeModalContainer>
@@ -135,15 +138,15 @@ const MeetingMakeModal = ({ ModalClose, classId, setLoading }) => {
           </MeetingDayValueWrap>
 
           <MeetingInfoThumnail>
-            <MeetingInfoDay>{daysArray[now.getDay()]}</MeetingInfoDay>
+            <MeetingInfoDay>{daysArray[meetingDayValue.getDay()]}</MeetingInfoDay>
             <MeetingInfoDate>
-              {format(now, 'dd') - format(new Date(), 'dd') === 0
+              {format(meetingDayValue, 'dd') - format(new Date(), 'dd') === 0
                 ? '오늘'
-                : format(now, 'dd') - format(new Date(), 'dd') === 1
+                : format(meetingDayValue, 'dd') - format(new Date(), 'dd') === 1
                 ? '내일'
-                : format(now, 'dd') - format(new Date(), 'dd') === 2
+                : format(meetingDayValue, 'dd') - format(new Date(), 'dd') === 2
                 ? '모레'
-                : format(now, 'dd')}
+                : `${format(meetingDayValue, 'dd')}일`}
             </MeetingInfoDate>
             <MeetingInfoTime>{`${
               meetingTimeValue.split(':')[0] > 12 ? '오후' : '오전'

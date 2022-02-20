@@ -14,6 +14,8 @@ function Calendars({ myMeetinsList, setMeetingDayValue, meetingDayValue }) {
             return 'highlight';
           }
         }}
+        locale="ko"
+        dateFormat="yyyy.MM.dd(eee)"
         showFixedNumberOfWeeks={true}
       />
     </div>
