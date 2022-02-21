@@ -4,8 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
-import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label, Line } from '../css/FormStyle';
-import { FaTwitter } from 'react-icons/fa';
+import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label } from '../css/FormStyle';
 import { userCheckActions } from '../modules/actions/UserActions';
 
 const GotoSingUp = styled.div`
@@ -96,11 +95,6 @@ const Login = () => {
 
         <AuthButtonWrap>
           <AuthButton color="black">로그인하기</AuthButton>
-          <Line>또는</Line>
-          <AuthButton color="#00acee">
-            <FaTwitter size="20px" />
-            &nbsp; 트위터 로그인하기
-          </AuthButton>
 
           <GotoSingUp>
             아직 회원이 아니신가요?

@@ -9,7 +9,6 @@ import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import axios from 'axios';
 import DatePickerWrap from '../Pickers/DatePickerWrap';
-import { parseISO } from 'date-fns';
 
 const MeetingMakeModalContainer = styled.div`
   width: 90%;
@@ -74,7 +73,6 @@ const MeetingInfoTime = styled.div`
 `;
 
 const daysArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-const now = new Date();
 
 const MeetingMakeModal = ({ ModalClose, classId, setLoading }) => {
   const meetingNameRef = useRef();

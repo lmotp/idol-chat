@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { BsEmojiNeutralFill, BsPlusCircleDotted } from 'react-icons/bs';
+import { BsPlusCircleDotted } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';

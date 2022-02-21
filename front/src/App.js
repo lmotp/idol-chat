@@ -61,8 +61,8 @@ function App() {
             <Route path="/" element={withAuthCheck(Main)} />
             <Route path="/login" element={withAuthCheck(Login, null)} />
             <Route path="/signup" element={withAuthCheck(SignUp, null)} />
-            <Route path="/category" element={withAuthCheck(FirstLoginCategory)} />
-            <Route path="/pages/*" element={withAuthCheck(PageContainer)}>
+            <Route path="/category" element={<FirstLoginCategory />} />
+            <Route path="/pages/*" element={<PageContainer />}>
               <Route path="home" index element={<Home />} />
               <Route path="search" element={<Search />} />
               <Route path="search/:category" element={<DetailSearch />} />

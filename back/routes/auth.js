@@ -53,7 +53,14 @@ router.post('/login', (req, res) => {
         if (err) return res.status(400).send(err);
         res.cookie('auth', user.token).status(200).json({
           loginSuccess: true,
-          userId: user._id,
+          _id: user._id,
+          gender: user.gender,
+          location: user.location,
+          nickname: user.nickname,
+          profileimg: user.profileimg,
+          myself: user.myself,
+          category: user.category,
+          loginTime: user.loginTime,
           firstCategory: user.firstCategory,
         });
       });

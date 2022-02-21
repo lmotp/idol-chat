@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import styled from 'styled-components';

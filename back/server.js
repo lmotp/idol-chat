@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
+const path = require('path');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -24,7 +25,7 @@ app.use('/api/image', express.static('uploads/'));
 
 function connect() {
   mongoose
-    .connect(process.env.MONGO_URI, { useNewUrlParser: true })
+    .connect(process.env.MONGO_URI_DEPLOY, { useNewUrlParser: true })
     .then(() => {
       console.log('Connected to MongoDB');
     })
@@ -77,6 +78,16 @@ io.on('connection', (socket) => {
     });
   });
 });
+
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static(path.join(__dirname, '../front/', 'build')));
+
+  // index.html for all page routes
+  app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../front/', 'build', 'index.html'));
+  });
+}
 
 server.listen(PORT, () => {
   console.log(`서버 ${PORT}가 열렸습니다.`);

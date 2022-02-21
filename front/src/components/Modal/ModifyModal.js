@@ -59,6 +59,10 @@ const ModifyInfoInput = styled.input`
   outline: none;
   border: 1px solid rgb(200, 200, 200);
 
+  ::placeholder {
+    font-size: 14px;
+  }
+
   &:last-child {
     border: none;
     padding: 0;
@@ -122,6 +126,7 @@ const ModifyModal = ({ setLoadingState, setModalState, id, img }) => {
   const [mySelf, setMySelf] = useState(myself);
   const [mainImg, setMainImg] = useState(img);
   const [fileName, setFileName] = useState('');
+  const [error, setError] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -157,21 +162,29 @@ const ModifyModal = ({ setLoadingState, setModalState, id, img }) => {
 
   const ModifyFunc = () => {
     const formData = new FormData();
+    const nicknameRgx = /\s{1,8}/gm;
+
     formData.append('image', fileName ? fileName : mainImg);
     formData.append('myself', mySelf);
     formData.append('nickname', nickName);
     formData.append('gender', radioSelect);
     formData.append('id', id);
 
-    setLoadingState(true);
+    if (nicknameRgx.test(nickName)) {
+      setError(true);
+      setNickName('');
+      return;
+    } else {
+      setLoadingState(true);
 
-    axios.post('/api/auth/modify', formData).then(({ data }) => {
-      console.log(data);
-      ModalClose();
-      dispatch(userCheckActions());
-
-      setLoadingState(false);
-    });
+      axios.post('/api/auth/modify', formData).then(({ data }) => {
+        console.log(data);
+        ModalClose();
+        dispatch(userCheckActions());
+        setError(false);
+        setLoadingState(false);
+      });
+    }
   };
 
   return (
@@ -199,7 +212,7 @@ const ModifyModal = ({ setLoadingState, setModalState, id, img }) => {
                 value={nickName}
                 onChange={(e) => setNickName(e.target.value)}
                 type="text"
-                placeholder="이름"
+                placeholder={error ? '공백 없이 8자 이하로 작성해주세요.' : '이름'}
               ></ModifyInfoInput>
               <InputCheckBox
                 type="radio"

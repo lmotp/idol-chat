@@ -54,7 +54,7 @@ const InputCheckBox = styled.input`
   }
 `;
 
-export const SignUp = ({ user }) => {
+export const SignUp = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
@@ -112,6 +112,9 @@ export const SignUp = ({ user }) => {
   // 회원가입
   const signUp = (e) => {
     e.preventDefault();
+    const pswRgx = /^[a-zA-Z0-9!@#$%^&*]{8,16}/gm;
+    const emailRgx = /^[0-9a-z]([-_.]?[0-9a-z])*@[a-z]*\.[a-z.]{2,3}$/gm;
+    const nicknameRgx = /\s{1,8}/;
 
     const passwordConfirm = passwordConfirmRef.current.value;
 
@@ -123,7 +126,7 @@ export const SignUp = ({ user }) => {
       location: nowLocation,
     };
 
-    if (!info.email) {
+    if (!info.email || !emailRgx.test(info.email)) {
       return errorFunc(0, '이메일 형식에 맞게 작성해주세요.');
     }
 
@@ -131,19 +134,16 @@ export const SignUp = ({ user }) => {
       return errorFunc(1, '비밀번호를 입력해주세요');
     }
 
-    if (
-      !(info.password.length <= 16 && info.password.length >= 8) ||
-      !(passwordConfirm.length <= 16 && passwordConfirm.length >= 8)
-    ) {
-      return errorFunc(1, '비밀번호는 8자리 이상으로 16자리 이하로 입력해주세요');
+    if (!pswRgx.test(info.password)) {
+      return errorFunc(4, '비밀번호는 8자리 이상으로 16자리 이하, !@#$%^&*를 포함해서 입력해주세요');
     }
 
     if (info.password !== passwordConfirm) {
       return errorFunc(2, '비밀번호가 일치하지 않습니다.');
     }
 
-    if (!info.nickname) {
-      return errorFunc(3, '닉네임을 입력해주세요');
+    if (!info.nickname || nicknameRgx.test(info.nickname)) {
+      return errorFunc(3, '닉네임에 공백 없이 8자이하로 입력해주세요');
     }
 
     axios
