@@ -35,13 +35,10 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "node back/server.js",
-    "frontstart": "react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "dev": "concurrently \"npm run backend\" \"npm run start --prefix front\"",
-    "heroku-postbuild": "npm install --prefix front && npm run build --prefix front"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
