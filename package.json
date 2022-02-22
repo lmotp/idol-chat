@@ -30,13 +30,10 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "node ../back/server.js",
+    "start": "node back/server.js",
     "frontstart": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "dev": "concurrently \"npm start\" \"npm run front\"",
-    "heroku-postbuild": "NODE_MODULES_CACHE=false npm install && npm run build"
+    "heroku-postbuild": "npm install --prefix client && npm run build --prefix client"
   },
   "eslintConfig": {
     "extends": [
