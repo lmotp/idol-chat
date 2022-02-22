@@ -9,10 +9,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "front": "npm start --prefix ../front",
-    "dev": "concurrently \"npm start\" \"npm run front\"",
-    "heroku-postbuild": "NODE_MODULES_CACHE=false npm install --prefilx ../front && npm run build --prefix ../front"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
