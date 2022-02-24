@@ -1,7 +1,8 @@
 import { io } from 'socket.io-client';
 import { useCallback } from 'react';
 
-const backUrl = 'http://localhost:5000';
+const backUrl = 'https://townotaku.herokuapp.com/';
+// const prevbackUrl = 'http://localhost:5000/';
 
 const sockets = {};
 const useSocket = (classId) => {

@@ -63,7 +63,9 @@ io.on('connection', (socket) => {
     let chat = new Chat({ message: msg.message, userId: msg.userId, classId: msg.classId });
 
     chat.save((err, doc) => {
-      if (err) return res.json({ success: false, err });
+      if (err) {
+        console.log('에러 채팅', err);
+      }
 
       Chat.find({ _id: doc._id })
         .populate({ path: 'userId', select: ['profileimg', 'nickname'] })
@@ -81,11 +83,11 @@ io.on('connection', (socket) => {
 
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  app.use(express.static(path.join(__dirname, '../front/', 'build')));
+  app.use(express.static(path.join(__dirname, '../', 'build')));
 
   // index.html for all page routes
   app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../front/', 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../', 'build', 'index.html'));
   });
 }
 
