@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import styled from 'styled-components';
 import { IoIosMore } from 'react-icons/io';
 import SettingModal from './Modal/SettingModal';
@@ -25,6 +25,8 @@ const SelectCategory = ({ pagesHandler }) => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
 
+  console.log('잘뜨니?');
+
   useEffect(() => {
     dispatch(mainCategoryChange('전체'));
   }, [pathname, dispatch]);
@@ -34,27 +36,32 @@ const SelectCategory = ({ pagesHandler }) => {
   };
 
   return (
-    <SelectCategoryContainer>
-      <SelectCategoryTextBox>
-        {category.map((v, i) => (
-          <SelectCategoryText
-            select={v === selectCategory}
-            onClick={() => {
-              dispatch(mainCategoryChange(v));
-              if (pagesHandler) {
-                pagesHandler();
-              }
-            }}
-            key={i}
-          >
-            {v}
-          </SelectCategoryText>
-        ))}
-      </SelectCategoryTextBox>
-      <IoIosMore style={{ cursor: 'pointer' }} size="24px" onClick={settingModalOpen} />
-      {modalState && <SettingModal category={category} setModalState={setModalState} userId={_id} />}
-    </SelectCategoryContainer>
+    <>
+      {category ? (
+        <SelectCategoryContainer>
+          <SelectCategoryTextBox>
+            {category.map((v, i) => (
+              <SelectCategoryText
+                select={v === selectCategory}
+                onClick={() => {
+                  dispatch(mainCategoryChange(v));
+                  if (pagesHandler) {
+                    pagesHandler();
+                  }
+                }}
+                key={i}
+              >
+                {v}
+              </SelectCategoryText>
+            ))}
+          </SelectCategoryTextBox>
+
+          <IoIosMore style={{ cursor: 'pointer' }} size="24px" onClick={settingModalOpen} />
+          {modalState && <SettingModal category={category} setModalState={setModalState} userId={_id} />}
+        </SelectCategoryContainer>
+      ) : null}
+    </>
   );
 };
 
-export default SelectCategory;
+export default memo(SelectCategory);

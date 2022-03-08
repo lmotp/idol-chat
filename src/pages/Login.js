@@ -56,18 +56,17 @@ const Login = () => {
     axios
       .post('/api/auth/login', info, { withCredentials: true })
       .then(({ data }) => {
-        console.log(data);
         if (data.loginSuccess) {
           dispatch(userCheckActions());
           if (!data.firstCategory) {
             navigate('/category');
           } else {
-            navigate('/');
+            navigate('/pages/home');
           }
         }
       })
       .catch(({ response: { data } }) => {
-        console.log(data.message);
+        console.log(data);
       });
   };
 

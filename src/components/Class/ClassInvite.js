@@ -94,10 +94,16 @@ const ClassInvite = ({ category, location, classId }) => {
   }, [category, location, classId]);
 
   const inviteMeesageSend = () => {
-    axios.post(`/api/class/invite/send`, { checkList, classId }).then(({ data }) => {
-      setCheckList([]);
-    });
+    if (checkList.legnth === 0) {
+      return window.alert('모임에 초대 할 사람이 없습니다.');
+    } else {
+      axios.post(`/api/class/invite/send`, { checkList, classId }).then(({ data }) => {
+        setCheckList([]);
+      });
+    }
   };
+
+  console.log(checkList.length);
 
   return (
     <ClassInviteWrap>

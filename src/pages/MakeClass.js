@@ -92,6 +92,13 @@ const MakeClassNameLogo = styled.img.attrs((props) => ({
 
 const ModifyInfoSubTitleWrap = styled.div``;
 
+const ErrorContent = styled.div`
+  margin-top: 8px;
+  font-size: 14px;
+  color: red;
+  visibility: ${(props) => (props.error ? 'visible' : 'hidden')};
+`;
+
 const MakeClass = () => {
   const [modalState, setModalState] = useState(false);
   const [nowLocation, setNowLocation] = useState('');
@@ -104,6 +111,7 @@ const MakeClass = () => {
   const category = useSelector((state) => state.mainCategoryReducer);
   const { _id } = useSelector((state) => state.userCheckReducers.result);
   const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const nowLocationSurch = (e) => {
     e.preventDefault();
@@ -136,19 +144,39 @@ const MakeClass = () => {
   };
 
   const makeClassFunc = () => {
-    axios
-      .post('/api/class/make', {
-        location: nowLocation,
-        category: categoryValue,
-        className: classNameRef.current.value,
-        classTarget: classTargetRef.current.value,
-        memberCount: 20,
-        makeUser: _id,
-        hashTag,
-      })
-      .then(({ data }) => {
-        navigate(`/pages/class/${data}`);
-      });
+    if (!nowLocation) {
+      ModalOpen();
+      return setError('모임이 지역을 선택창에서 설정해주세요!');
+    } else if (!classNameRef.current.value) {
+      classNameRef.current.focus();
+      return setError('모임명을 입력해 주세요!');
+    } else if (!classTargetRef.current.value) {
+      classTargetRef.current.focus();
+      return setError('모임 설명을 입력해주세요!');
+    } else {
+      setError('');
+
+      if (!hashTag.length) {
+        let real = window.confirm('태그는 변경이 불가합니다. 태그 없이 개설 할까요?');
+
+        if (!real) {
+          return;
+        }
+      }
+      axios
+        .post('/api/class/make', {
+          location: nowLocation,
+          category: categoryValue,
+          className: classNameRef.current.value,
+          classTarget: classTargetRef.current.value,
+          memberCount: 20,
+          makeUser: _id,
+          hashTag,
+        })
+        .then(({ data }) => {
+          navigate(`/pages/class/${data}`);
+        });
+    }
   };
 
   return (
@@ -215,7 +243,9 @@ const MakeClass = () => {
 
         <ClassMakeHashTag hashTag={hashTag} setHashTag={setHashTag} />
 
-        <AuthButton color="black" margin="48px 0" onClick={makeClassFunc}>
+        <ErrorContent error={error}>* {error}</ErrorContent>
+
+        <AuthButton color="black" margin="24px 0" onClick={makeClassFunc}>
           개설하기
         </AuthButton>
 

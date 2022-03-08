@@ -77,12 +77,14 @@ const Home = () => {
       });
       setHasData(data.length > 0);
     });
-  }, [selectCategory, _id, pages]);
+  }, [selectCategory, pages]);
 
   useEffect(() => {
-    axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
-      setMyClassList(data);
-    });
+    if (_id) {
+      axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
+        setMyClassList(data);
+      });
+    }
   }, [_id]);
 
   useEffect(() => {

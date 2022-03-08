@@ -100,8 +100,6 @@ const MeetingMakeModal = ({ ModalClose, classId, setLoading }) => {
     });
   };
 
-  console.log(format(meetingDayValue, 'dd'));
-
   return (
     <>
       <MeetingMakeModalContainer>

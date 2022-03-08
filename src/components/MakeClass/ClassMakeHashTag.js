@@ -13,6 +13,8 @@ const HashTagForm = styled.form`
 
 const HashTagListBox = styled.ul`
   display: flex;
+  height: 14px;
+  padding: 0 8px;
 `;
 
 const HashTagList = styled.li`

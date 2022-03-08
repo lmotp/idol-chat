@@ -312,6 +312,7 @@ router.post('/list', (req, res) => {
 // 내 모임
 router.get('/list/my/:id', (req, res) => {
   const { id } = req.params;
+
   User.find({ _id: id }, (err, doc) => {
     if (err) {
       console.log('마이클래스 유저아이템가져오기 실패', err);

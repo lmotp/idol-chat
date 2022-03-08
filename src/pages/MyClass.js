@@ -43,11 +43,13 @@ const MyClass = () => {
   const [myMeetinsList, setMyMeetingList] = useState([]);
 
   useEffect(() => {
-    axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
-      const meetingDayList = data.map((v) => v.meetingDay).flat();
-      setMyMeetingList(meetingDayList);
-      setMyClassList(data);
-    });
+    if (_id) {
+      axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
+        const meetingDayList = data.map((v) => v.meetingDay).flat();
+        setMyMeetingList(meetingDayList);
+        setMyClassList(data);
+      });
+    }
   }, [_id]);
 
   return (

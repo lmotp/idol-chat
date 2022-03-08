@@ -102,7 +102,6 @@ export const SignUp = () => {
   const errorFunc = (code, message) => {
     setErrorMessage(message);
     setErrorCode(code);
-    console.log('ㅇㅇ?', errorCode);
   };
 
   // 성별 바꾸는 함수
