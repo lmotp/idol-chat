@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { ClassMemberCount, ClassMemberCountWrap } from '../../css/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { classJoin } from '../../modules/actions/ClassJoinAction';
 
 const ModifyClassModalContainer = styled.div`
   width: 90%;
@@ -16,9 +18,10 @@ const ModifyInfoSubTitleWrap = styled.div`
   margin-top: 24px;
 `;
 
-const ModifyClassInfo = ({ setModalState, title, classTarget, id, setReloadState }) => {
+const ModifyClassInfo = ({ setModalState, title, classTarget, id }) => {
   const [classTargetValue, setClassTargetValue] = useState(classTarget);
   const [titleValue, setTitleValue] = useState(title);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setTitleValue(title);
@@ -32,13 +35,12 @@ const ModifyClassInfo = ({ setModalState, title, classTarget, id, setReloadState
   };
 
   const ModifyFunc = () => {
-    setReloadState(true);
-
+    dispatch(classJoin());
     axios
       .post('/api/class/info/admin/modify', { id, className: titleValue, classTarget: classTargetValue })
       .then(() => {
         ModalClose();
-        setReloadState(false);
+        dispatch(classJoin());
       });
   };
 

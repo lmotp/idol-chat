@@ -81,7 +81,7 @@ const ChatList = ({ _id, chatSections, scrollRef }) => {
                   {chats.map((v) => {
                     const me = v.userId._id === _id;
                     return (
-                      <ChatBox me={me}>
+                      <ChatBox key={v._id} me={me}>
                         <ChatImg src={v.userId.profileimg} me={me} />
                         <ChatText me={me}>
                           <ChatUser me={me}>

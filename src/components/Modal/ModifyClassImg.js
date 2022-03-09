@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { ButtonWrap, ModifyButton } from '../../css/ModifyStyle';
 import styled from 'styled-components';
 import { AiOutlinePicture } from 'react-icons/ai';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import { classJoin } from '../../modules/actions/ClassJoinAction';
 
 const ModifyClassModalContainer = styled.div`
   width: 90%;
@@ -46,10 +48,11 @@ const ModifyMaingValue = styled.h3`
   text-align: center;
 `;
 
-const ModifyClassImg = ({ setModalState, img, id, setReloadState }) => {
+const ModifyClassImg = ({ setModalState, img, id }) => {
   const [mainImg, setMainImg] = useState(img);
   const [hoverState, setHoverState] = useState(false);
   const [fileName, setFileName] = useState('');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setMainImg(img);
@@ -73,14 +76,14 @@ const ModifyClassImg = ({ setModalState, img, id, setReloadState }) => {
   };
 
   const ModifyFunc = () => {
-    setReloadState(true);
+    dispatch(classJoin());
     const formData = new FormData();
     formData.append('image', fileName ? fileName : mainImg);
     formData.append('id', id);
 
     axios.post('/api/class/info/admin/modify', formData).then(() => {
       ModalClose();
-      setReloadState(false);
+      dispatch(classJoin());
     });
   };
 

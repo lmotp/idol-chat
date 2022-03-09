@@ -54,8 +54,6 @@ const MyCategory = ({ v }) => {
   const [count, setCount] = useState(0);
   const { loginTime } = useSelector((state) => state.userCheckReducers.result);
 
-  console.log('마이카테고리');
-
   useEffect(() => {
     const date = localStorage.getItem(`chat-${v._id}`) || loginTime;
     axios.get(`/api/chat/${v._id}/unreads/${date}`).then(({ data: { count } }) => {

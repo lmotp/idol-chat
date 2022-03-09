@@ -94,74 +94,73 @@ const ClassInvite = ({ category, location, classId }) => {
   }, [category, location, classId]);
 
   const inviteMeesageSend = () => {
+    if (checkList.length === 0) {
+      return window.alert('모임에 초대 할 사람이 없습니다!');
+    }
     axios.post(`/api/class/invite/send`, { checkList, classId }).then(({ data }) => {
       setCheckList([]);
     });
   };
 
   return (
-    <>
-      {inviteMemberList.length > 0 && (
-        <ClassInviteWrap>
-          <InviteTitle>멤버 초대하기 ({location})</InviteTitle>
-          <ButtonBox>
-            <InviteButton
-              id="allCheckBox"
-              type="checkbox"
-              onChange={(e) => {
-                if (e.target.checked) {
-                  const checkedListArray = [];
-                  inviteMemberList.forEach((list) => checkedListArray.push(list._id));
-                  setCheckList(checkedListArray);
-                } else {
-                  setCheckList([]);
-                }
-              }}
-              checked={checkList.length === 0 ? false : checkList.length === inviteMemberList.length ? true : false}
-            />
-            <InviteButtonLavel htmlFor="allCheckBox" />
-            전체 선택
-          </ButtonBox>
-          <InviteUserListBox>
-            {inviteMemberList.map((v) => {
-              return (
-                <InviteUser key={v._id}>
-                  <UserButtonBox>
-                    <InviteButton
-                      id={`checkBox${v._id}`}
-                      type="checkbox"
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setCheckList([...checkList, v._id]);
-                        } else {
-                          setCheckList(checkList.filter((el) => el !== v._id));
-                        }
-                      }}
-                      checked={checkList.includes(v._id) ? true : false}
-                    />
-                    <InviteButtonLavel htmlFor={`checkBox${v._id}`} />
-                  </UserButtonBox>
-                  <UserInfo>
-                    <UserProfileImg src={v.profileimg} />
-                    <UserInfoValue>
-                      <UserNickName>{v.nickname}</UserNickName>
-                      <UserMySelf>{v.myself}</UserMySelf>
-                    </UserInfoValue>
-                  </UserInfo>
-                  <UserLocation>
-                    <GrLocation style={{ marginRight: '2px' }} />
-                    {v.location.split(' ')[1]}
-                  </UserLocation>
-                </InviteUser>
-              );
-            })}
-          </InviteUserListBox>
-          <AuthButton color="black" onClick={inviteMeesageSend}>
-            모임 초대하기
-          </AuthButton>
-        </ClassInviteWrap>
-      )}
-    </>
+    <ClassInviteWrap>
+      <InviteTitle>멤버 초대하기 ({location})</InviteTitle>
+      <ButtonBox>
+        <InviteButton
+          id="allCheckBox"
+          type="checkbox"
+          onChange={(e) => {
+            if (e.target.checked) {
+              const checkedListArray = [];
+              inviteMemberList.forEach((list) => checkedListArray.push(list._id));
+              setCheckList(checkedListArray);
+            } else {
+              setCheckList([]);
+            }
+          }}
+          checked={checkList.length === 0 ? false : checkList.length === inviteMemberList.length ? true : false}
+        />
+        <InviteButtonLavel htmlFor="allCheckBox" />
+        전체 선택
+      </ButtonBox>
+      <InviteUserListBox>
+        {inviteMemberList.map((v) => {
+          return (
+            <InviteUser key={v._id}>
+              <UserButtonBox>
+                <InviteButton
+                  id={`checkBox${v._id}`}
+                  type="checkbox"
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setCheckList([...checkList, v._id]);
+                    } else {
+                      setCheckList(checkList.filter((el) => el !== v._id));
+                    }
+                  }}
+                  checked={checkList.includes(v._id) ? true : false}
+                />
+                <InviteButtonLavel htmlFor={`checkBox${v._id}`} />
+              </UserButtonBox>
+              <UserInfo>
+                <UserProfileImg src={v.profileimg} />
+                <UserInfoValue>
+                  <UserNickName>{v.nickname}</UserNickName>
+                  <UserMySelf>{v.myself}</UserMySelf>
+                </UserInfoValue>
+              </UserInfo>
+              <UserLocation>
+                <GrLocation style={{ marginRight: '2px' }} />
+                {v.location.split(' ')[1]}
+              </UserLocation>
+            </InviteUser>
+          );
+        })}
+      </InviteUserListBox>
+      <AuthButton color="black" onClick={inviteMeesageSend}>
+        모임 초대하기
+      </AuthButton>
+    </ClassInviteWrap>
   );
 };
 

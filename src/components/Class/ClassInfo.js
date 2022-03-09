@@ -68,7 +68,7 @@ const InfoContent = styled.p`
   white-space: pre-wrap;
 `;
 
-const ClassInfo = ({ title, classTarget, location, hashTag, category, admin, img, id, setReloadState }) => {
+const ClassInfo = ({ title, classTarget, location, hashTag, category, admin, id }) => {
   const [modalState, setModalState] = useState(false);
 
   const ModalOpen = () => {
@@ -101,7 +101,6 @@ const ClassInfo = ({ title, classTarget, location, hashTag, category, admin, img
           classTarget={classTarget}
           id={id}
           setModalState={setModalState}
-          setReloadState={setReloadState}
         />
       </Modal>
     </ClassInfoContainer>

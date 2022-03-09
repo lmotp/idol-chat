@@ -56,7 +56,7 @@ const MemberClasses = styled.div`
   color: ${(props) => (props.classes ? '#6667ab' : 'black')};
 `;
 
-const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, reloadState, classInfo, admin }) => {
+const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, classJoinState, classInfo, admin }) => {
   const navigate = useNavigate();
 
   const memberSecession = () => {
@@ -68,7 +68,7 @@ const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, relo
 
   return (
     <>
-      {reloadState ? (
+      {classJoinState ? (
         <Loading />
       ) : (
         <ClassMemberContainer>

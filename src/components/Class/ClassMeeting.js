@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import Modal from '../Modal/Modal';
 import MeetingMakeModal from '../Modal/MeetingMakeModal';
 import { BsPlusCircleDotted } from 'react-icons/bs';
@@ -11,6 +11,8 @@ import { Hr } from '../../css/SelectBoxStyle';
 import { format, parseISO } from 'date-fns';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { classJoin } from '../../modules/actions/ClassJoinAction';
+import { useDispatch } from 'react-redux';
 
 const ClassMeetingContainer = styled.div`
   margin-bottom: 33px;
@@ -111,9 +113,10 @@ const PlusButton = styled.div`
 
 const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
-const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMeetingList, meetingList }) => {
+const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meetingList }) => {
   const [modalState, setModalState] = useState(false);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const ModalOpen = () => {
     setModalState(true);
@@ -141,11 +144,12 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
 
   // 모임에 가입했을때 리렌더링해주는 API
   const classJoinFunc = useCallback(() => {
-    setReloadState(true);
+    dispatch(classJoin());
     axios.post(`/api/class/info/join/member`, { userId, classId }).then(() => {
-      setReloadState(false);
+      console.log('안녕?');
+      dispatch(classJoin());
     });
-  }, [userId, classId, setReloadState]);
+  }, [userId, classId, dispatch]);
 
   return (
     <ClassMeetingContainer>
@@ -222,4 +226,4 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setReloadState, setMe
   );
 };
 
-export default ClassMeeting;
+export default memo(ClassMeeting);

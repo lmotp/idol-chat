@@ -39,6 +39,7 @@ const CircleButton = () => {
   const { pathname } = useLocation();
   const { id } = useParams();
   const { _id } = useSelector((state) => state.userCheckReducers.result);
+  const classJoinState = useSelector((state) => state.classJoinReducer);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const CircleButton = () => {
         setChatState(data[0].member.includes(_id));
       });
     }
-  }, [pathname, id, _id]);
+  }, [pathname, id, _id, classJoinState]);
 
   return (
     <>

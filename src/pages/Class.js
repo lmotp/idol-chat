@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -17,19 +17,19 @@ const ClassContainer = styled.div`
 const Class = () => {
   const { id } = useParams(); // 모임아이디
   const user = useSelector((state) => state.userCheckReducers.result); //유저아이디
+  const classJoinState = useSelector((state) => state.classJoinReducer);
   const [classInfo, setClassInfo] = useState([]);
   const [memberInfo, setMemberInfo] = useState([]);
-  const [reloadState, setReloadState] = useState(false);
   const [adminMember, setAdminMember] = useState('');
   const [meetingList, setMeetingList] = useState([]);
-  const joinStateRef = useRef();
+  const [joinState, setJoinState] = useState(false);
 
   useEffect(() => {
     if (id) {
       axios.get(`/api/class/info/${id}`).then(({ data }) => {
         setClassInfo(data[0]);
         setMeetingList(data[0].meetingDay);
-        joinStateRef.current = data[0].member.includes(user?._id);
+        setJoinState(data[0].member.includes(user?._id));
         console.log(data);
       });
 
@@ -39,11 +39,11 @@ const Class = () => {
         setAdminMember(data.filter((v) => v.classes === '모임장'));
       });
     }
-  }, [id, user?._id, reloadState]);
+  }, [id, user?._id, classJoinState]);
 
   return (
     <>
-      {!reloadState ? (
+      {!classJoinState ? (
         <>
           <ClassMainImg
             admin={user?._id === classInfo.makeUser}
@@ -51,7 +51,6 @@ const Class = () => {
             title={classInfo.className}
             classTarget={classInfo.classTarget}
             id={id}
-            setReloadState={setReloadState}
           />
           <ClassContainer>
             <ClassInfo
@@ -62,24 +61,22 @@ const Class = () => {
               hashTag={classInfo.hashTag}
               category={classInfo.category}
               id={id}
-              setReloadState={setReloadState}
             />
             <ClassMeeting
               admin={user?._id === classInfo.makeUser}
               userId={user?._id}
               classId={id}
-              joinState={joinStateRef.current}
-              setReloadState={setReloadState}
+              joinState={joinState}
               meetingList={meetingList}
               setMeetingList={setMeetingList}
             />
             <ClassMember
               memberInfo={memberInfo}
               adminMember={adminMember}
-              joinState={joinStateRef.current}
+              joinState={joinState}
               userId={user?._id}
               classId={id}
-              reloadState={reloadState}
+              classJoinState={classJoinState}
               classInfo={classInfo}
               admin={user?._id === classInfo.makeUser}
             />

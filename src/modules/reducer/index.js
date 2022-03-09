@@ -5,6 +5,7 @@ import userCheckReducers from './UserReducer';
 import userCategoryReducer from './UserCategoryReducer';
 import mainCategoryReducer from './MainCategoryReducer';
 import chatMemberReducer from './ChatMemberReducer';
+import classJoinReducer from './ClassJoinReducer';
 
 const persistConfig = {
   key: 'root',
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   userCategoryReducer,
   mainCategoryReducer,
   chatMemberReducer,
+  classJoinReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);
