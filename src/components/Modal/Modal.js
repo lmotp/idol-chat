@@ -32,7 +32,7 @@ const ModalContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.6);
 
   ${(props) =>
-    props.modalState &&
+    (props.modalState || props.errorModal) &&
     css`
       display: flex;
       align-items: center;
@@ -51,9 +51,9 @@ const ModalContent = styled.div`
   overflow: hidden;
 `;
 
-const Modal = ({ modalState, children }) => {
+const Modal = ({ modalState, children, errorModal }) => {
   return (
-    <ModalContainer modalState={modalState}>
+    <ModalContainer modalState={modalState} errorModal={errorModal}>
       <ModalContent width="540px">{children}</ModalContent>
     </ModalContainer>
   );

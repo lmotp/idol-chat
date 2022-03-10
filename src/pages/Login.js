@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import BackBar from '../components/BackBar';
-import { AuthButton, AuthButtonWrap, ErrorValue, Form, Input, InputWrap, Label } from '../css/FormStyle';
+import { AuthButton, AuthButtonWrap, Form, Input, InputWrap, Label } from '../css/FormStyle';
 import { userCheckActions } from '../modules/actions/UserActions';
 
 const GotoSingUp = styled.div`
@@ -24,18 +24,20 @@ const LoginContainer = styled.section`
   height: 100vh;
 `;
 
+const ErrorContent = styled.div`
+  margin-top: 8px;
+  font-size: 14px;
+  color: red;
+  height: 20px;
+  visibility: ${(props) => (props.error ? 'visible' : 'hidden')};
+`;
+
 const Login = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
-  const [errorCode, setErrorCode] = useState();
   const dispatch = useDispatch();
-
-  const errorFunc = (code, message) => {
-    setErrorMessage(message);
-    setErrorCode(code);
-  };
 
   const loginFunc = (e) => {
     e.preventDefault();
@@ -46,11 +48,11 @@ const Login = () => {
     };
 
     if (!info.email.length) {
-      return errorFunc(0, '이메일을 입력해주세요');
+      return setErrorMessage('이메일을 입력해주세요');
     }
 
     if (!info.password.length) {
-      return errorFunc(1, '비밀번호를 입력해주세요');
+      return setErrorMessage('비밀번호를 입력해주세요');
     }
 
     axios
@@ -66,7 +68,7 @@ const Login = () => {
         }
       })
       .catch(({ response: { data } }) => {
-        console.log(data);
+        setErrorMessage(data.message);
       });
   };
 
@@ -77,7 +79,6 @@ const Login = () => {
         <InputWrap>
           <Label htmlFor="email">이메일</Label>
           <Input type="text" id="email" placeholder="이메일을 입력해주세요." ref={emailRef}></Input>
-          {errorCode === 0 && <ErrorValue>{errorMessage}</ErrorValue>}
         </InputWrap>
 
         <InputWrap>
@@ -89,10 +90,11 @@ const Login = () => {
             placeholder="비밀번호를 입력해주세요."
             ref={passwordRef}
           ></Input>
-          {errorCode === 1 && <ErrorValue>{errorMessage}</ErrorValue>}
         </InputWrap>
 
-        <AuthButtonWrap>
+        <ErrorContent error={errorMessage}>{`* ${errorMessage}`}</ErrorContent>
+
+        <AuthButtonWrap mt={'0'}>
           <AuthButton color="black">로그인하기</AuthButton>
 
           <GotoSingUp>

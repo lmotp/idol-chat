@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { classJoin } from '../../modules/actions/ClassJoinAction';
 import { useDispatch } from 'react-redux';
+import { ModifyButton } from '../../css/ModifyStyle';
 
 const ClassMeetingContainer = styled.div`
   margin-bottom: 33px;
@@ -70,7 +71,7 @@ const MeetingInfoTitle = styled.div`
 `;
 
 const MeetingInfo = styled.div`
-  width: 82%;
+  width: 80%;
 `;
 
 const MeetingInfoItem = styled.div`
@@ -84,7 +85,7 @@ const MeetingInfoItem = styled.div`
 `;
 
 const MeetingRightWrap = styled.div`
-  width: 6%;
+  width: 8%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -111,15 +112,42 @@ const PlusButton = styled.div`
   margin-right: 4px;
 `;
 
+const ErrorMesage = styled.div`
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid rgb(200, 200, 200);
+  font-weight: 700;
+  font-size: 18px;
+`;
+
+const ErrorButton = styled(ModifyButton)`
+  position: relative;
+  transform: translateX(-50%);
+  left: 50%;
+  margin: 20px 0;
+`;
+
 const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
 const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meetingList }) => {
   const [modalState, setModalState] = useState(false);
+  const [errorModal, setErrorModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const ModalOpen = () => {
+    if (meetingList.length === 3) {
+      return setErrorModal(true);
+    }
+
     setModalState(true);
+  };
+
+  const ErrorModalClose = () => {
+    setErrorModal(false);
   };
 
   const ModalClose = () => {
@@ -136,8 +164,8 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
     }
   }, [loading, classId, setMeetingList]);
 
-  const meetingAttend = () => {
-    axios.post('/api/meeting/attend', { userId, classId }).then(() => {
+  const meetingAttend = (_id) => {
+    axios.post('/api/meeting/attend', { userId, classId, _id }).then(() => {
       setLoading(true);
     });
   };
@@ -146,7 +174,6 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
   const classJoinFunc = useCallback(() => {
     dispatch(classJoin());
     axios.post(`/api/class/info/join/member`, { userId, classId }).then(() => {
-      console.log('안녕?');
       dispatch(classJoin());
     });
   }, [userId, classId, dispatch]);
@@ -157,47 +184,53 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
 
       {meetingList?.length > 0 ? (
         <ClassMeetingDay>
-          {meetingList.map((v, i) => (
-            <div key={i}>
-              <MeetingInfoTitle>{v.name}</MeetingInfoTitle>
-              <MeetingInfoWrap>
-                <MeetingInfoThumnail>
-                  <MeetingInfoDay>{dayArray[parseISO(v.day).getDay()]}</MeetingInfoDay>
-                  <MeetingInfoDate>
-                    {format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 0
-                      ? '오늘'
-                      : format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 1
-                      ? '내일'
-                      : format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 2
-                      ? '모레'
-                      : format(parseISO(v.day), 'dd')}
-                  </MeetingInfoDate>
-                </MeetingInfoThumnail>
-                <MeetingInfo>
-                  <MeetingInfoItem>
-                    <AiOutlineCalendar size="16px" style={{ marginRight: '4px' }} />
-                    {format(parseISO(v.day), 'MM월 dd일 ')}
-                    {dayArray[parseISO(v.day).getDay()]}
-                    {`${v.time.split(':')[0] > 12 ? ' 오후' : ' 오전'} ${v.time}`}
-                  </MeetingInfoItem>
-                  <MeetingInfoItem>
-                    <GrLocation size="16px" style={{ marginRight: '4px' }} />
-                    {v.place}
-                  </MeetingInfoItem>
-                  <MeetingInfoItem>
-                    <BiWon size="16px" style={{ marginRight: '4px' }} />
-                    {v.price}
-                  </MeetingInfoItem>
-                </MeetingInfo>
-                <MeetingRightWrap>
-                  <MeetingAtendButton onClick={meetingAttend} disabled={!joinState} joinState={joinState}>
-                    참석
-                  </MeetingAtendButton>
-                  <MemberCount>{v.attendMember.length} / 20</MemberCount>
-                </MeetingRightWrap>
-              </MeetingInfoWrap>
-            </div>
-          ))}
+          {meetingList.map((v, i) => {
+            return (
+              <div key={i}>
+                <MeetingInfoTitle>{v.name}</MeetingInfoTitle>
+                <MeetingInfoWrap>
+                  <MeetingInfoThumnail>
+                    <MeetingInfoDay>{dayArray[parseISO(v.day).getDay()]}</MeetingInfoDay>
+                    <MeetingInfoDate>
+                      {format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 0
+                        ? '오늘'
+                        : format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 1
+                        ? '내일'
+                        : format(parseISO(v.day), 'dd') - format(new Date(), 'dd') === 2
+                        ? '모레'
+                        : format(parseISO(v.day), 'dd')}
+                    </MeetingInfoDate>
+                  </MeetingInfoThumnail>
+                  <MeetingInfo>
+                    <MeetingInfoItem>
+                      <AiOutlineCalendar size="16px" style={{ marginRight: '4px' }} />
+                      {format(parseISO(v.day), 'MM월 dd일 ')}
+                      {dayArray[parseISO(v.day).getDay()]}
+                      {`${v.time.split(':')[0] > 12 ? ' 오후' : ' 오전'} ${v.time}`}
+                    </MeetingInfoItem>
+                    <MeetingInfoItem>
+                      <GrLocation size="16px" style={{ marginRight: '4px' }} />
+                      {v.place}
+                    </MeetingInfoItem>
+                    <MeetingInfoItem>
+                      <BiWon size="16px" style={{ marginRight: '4px' }} />
+                      {v.price}
+                    </MeetingInfoItem>
+                  </MeetingInfo>
+                  <MeetingRightWrap>
+                    <MeetingAtendButton
+                      onClick={() => meetingAttend(v._id)}
+                      disabled={!joinState}
+                      joinState={joinState}
+                    >
+                      {v.attendMember.includes(userId) ? '참석완료' : '참석하기'}
+                    </MeetingAtendButton>
+                    <MemberCount>{v.attendMember.length} / 20</MemberCount>
+                  </MeetingRightWrap>
+                </MeetingInfoWrap>
+              </div>
+            );
+          })}
         </ClassMeetingDay>
       ) : (
         <ClassNotMeetingDay>
@@ -220,7 +253,17 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
       )}
       <Hr style={{ marginTop: joinState ? '20px' : '0' }} />
       <Modal modalState={modalState}>
-        <MeetingMakeModal classId={classId} ModalClose={ModalClose} setLoading={setLoading} />
+        <MeetingMakeModal
+          classId={classId}
+          ModalClose={ModalClose}
+          setLoading={setLoading}
+          meetingListLength={meetingList.length}
+        />
+      </Modal>
+
+      <Modal errorModal={errorModal}>
+        <ErrorMesage>모임은 3개까지만 만들 수 있습니다!</ErrorMesage>
+        <ErrorButton onClick={ErrorModalClose}>취소</ErrorButton>
       </Modal>
     </ClassMeetingContainer>
   );

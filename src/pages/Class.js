@@ -23,6 +23,7 @@ const Class = () => {
   const [adminMember, setAdminMember] = useState('');
   const [meetingList, setMeetingList] = useState([]);
   const [joinState, setJoinState] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -30,20 +31,19 @@ const Class = () => {
         setClassInfo(data[0]);
         setMeetingList(data[0].meetingDay);
         setJoinState(data[0].member.includes(user?._id));
-        console.log(data);
       });
 
       axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
-        console.log(data);
         setMemberInfo(data);
         setAdminMember(data.filter((v) => v.classes === '모임장'));
+        setLoading(true);
       });
     }
   }, [id, user?._id, classJoinState]);
 
   return (
     <>
-      {!classJoinState ? (
+      {loading ? (
         <>
           <ClassMainImg
             admin={user?._id === classInfo.makeUser}

@@ -7,6 +7,7 @@ import ModifyClassInfo from '../Modal/ModifyClassInfo';
 
 const ClassInfoContainer = styled.div`
   margin-bottom: 54px;
+  min-height: 20vh;
 `;
 const InfoHeader = styled.div`
   width: 100%;

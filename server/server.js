@@ -25,7 +25,7 @@ app.use('/api/image', express.static('uploads/'));
 
 function connect() {
   mongoose
-    .connect(process.env.MONGO_URI_DEPLOY, { minPoolSize: 20, useNewUrlParser: true })
+    .connect(process.env.MONGO_URI_DEPLOY, { minPoolSize: 100, useNewUrlParser: true })
     .then(() => {
       console.log('Connected to MongoDB');
     })

@@ -6,7 +6,7 @@ export const Form = styled.form`
 `;
 
 export const InputWrap = styled.div`
-  margin-bottom: 50px;
+  margin-bottom: 32px;
 `;
 
 export const Input = styled.input`
@@ -49,7 +49,7 @@ export const AuthButton = styled.button`
 `;
 
 export const AuthButtonWrap = styled.div`
-  margin-top: 60px;
+  margin-top: ${(props) => props.mt || '60px'};
   text-align: center;
 `;
 

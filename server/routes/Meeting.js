@@ -32,15 +32,18 @@ router.post('/make', (req, res) => {
   });
 });
 
+//정모 가입하기
 router.post('/attend', (req, res) => {
-  const { userId, classId } = req.body;
+  const { userId, classId, _id } = req.body;
 
-  Meeting.findOneAndUpdate({ classId }, { $addToSet: { attendMember: userId } }, (err, doc) => {
+  Meeting.findOneAndUpdate({ classId, _id }, { $addToSet: { attendMember: userId } }, (err, doc) => {
     if (err) {
       console.log('정모 참여 오류!', err);
     }
     res.send(doc);
   });
 });
+
+//정모 삭제하기
 
 module.exports = router;

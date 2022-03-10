@@ -96,6 +96,11 @@ const MeetingMakeModal = ({ ModalClose, classId, setLoading }) => {
 
     axios.post('/api/meeting/make', meetingValueObj).then((data) => {
       setLoading(true);
+      meetingNameRef.current.value = '';
+      meetingPlaceRef.current.value = '';
+      meetingPriceRef.current.value = '';
+      setMeetingDayValue(new Date());
+      setMeetingTimeValue(format(new Date(), 'HH:mm'));
       ModalClose();
     });
   };

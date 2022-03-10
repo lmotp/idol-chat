@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { format, getDay, parseISO } from 'date-fns';
 import { GrLocation } from 'react-icons/gr';
@@ -39,6 +39,14 @@ const ScheduleDay = styled.div`
     css`
       color: blue;
     `}
+`;
+
+const NotSchedulList = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  font-weight: bold;
 `;
 
 const SchedulListWrap = styled.ul`
@@ -108,7 +116,13 @@ const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일
 const MyClassSchedule = ({ myMeetinsList }) => {
   const [meetingDayValue, setMeetingDayValue] = useState(new Date());
   const navigate = useNavigate();
-  console.log(myMeetinsList);
+  const [test, setTest] = useState([]);
+
+  useEffect(() => {
+    setTest(myMeetinsList.filter((v) => format(parseISO(v.day), 'MM월 dd일') === format(meetingDayValue, 'MM월 dd일')));
+  }, [myMeetinsList, meetingDayValue]);
+
+  console.log(test.length);
 
   return (
     <MyClassScheduleContainer>
@@ -122,10 +136,10 @@ const MyClassSchedule = ({ myMeetinsList }) => {
           <ScheduleDate>{format(meetingDayValue, 'yyyy년 MM월 dd일 ')}</ScheduleDate>
           <ScheduleDay day={getDay(meetingDayValue)}>{dayArray[getDay(meetingDayValue)]}</ScheduleDay>
         </ScheduleDayWrap>
-        <SchedulListWrap>
-          {myMeetinsList
-            .filter((v) => format(parseISO(v.day), 'MM월 dd일') === format(meetingDayValue, 'MM월 dd일'))
-            .map((v) => {
+
+        {test.length ? (
+          <SchedulListWrap>
+            {test.map((v) => {
               return (
                 <List
                   key={v.classId._id}
@@ -153,7 +167,10 @@ const MyClassSchedule = ({ myMeetinsList }) => {
                 </List>
               );
             })}
-        </SchedulListWrap>
+          </SchedulListWrap>
+        ) : (
+          <NotSchedulList>해당 날짜에 모임이 없습니다 !</NotSchedulList>
+        )}
       </ScheduleWrap>
     </MyClassScheduleContainer>
   );

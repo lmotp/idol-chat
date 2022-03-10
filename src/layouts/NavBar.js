@@ -17,17 +17,36 @@ const NavBarConatiner = styled.div`
   justify-content: center;
 `;
 
-const NavButton = styled.button`
+const NavTest = styled(NavLink)`
+  display: block;
   width: 25%;
+  background: #efefef;
   height: inherit;
+  transition: color 200ms ease-in-out, background-color 200ms ease-in-out;
+
+  &[aria-current] {
+    background-color: #a8b4bc;
+    color: white;
+  }
+
+  &:not([aria-current]):hover {
+    background-color: #a8b4bc;
+    color: white;
+  }
 `;
 
 const NavText = styled.div`
   font-size: 12px;
+  margin-top: 2px;
 `;
 
 const NavIconWrap = styled.div`
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: inherit;
+  flex-direction: column;
 `;
 
 const NavBar = () => {
@@ -41,41 +60,33 @@ const NavBar = () => {
     <>
       {!pathname.includes('/chat') && (
         <NavBarConatiner>
-          <NavButton>
-            <NavLink to="/pages/home" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
-              <NavIconWrap>
-                <FaHome size="24px" />
-                <NavText>메인</NavText>
-              </NavIconWrap>
-            </NavLink>
-          </NavButton>
+          <NavTest to="/pages/home">
+            <NavIconWrap>
+              <FaHome size="24px" />
+              <NavText>메인</NavText>
+            </NavIconWrap>
+          </NavTest>
 
-          <NavButton>
-            <NavLink to="/pages/search" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
-              <NavIconWrap>
-                <BiSearch size="24px" />
-                <NavText>검색</NavText>
-              </NavIconWrap>
-            </NavLink>
-          </NavButton>
+          <NavTest to="/pages/search">
+            <NavIconWrap>
+              <BiSearch size="24px" />
+              <NavText>검색</NavText>
+            </NavIconWrap>
+          </NavTest>
 
-          <NavButton>
-            <NavLink to="/pages/my-class" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
-              <NavIconWrap>
-                <FaRegCommentAlt size="20px" />
-                <NavText>모임</NavText>
-              </NavIconWrap>
-            </NavLink>
-          </NavButton>
+          <NavTest to="/pages/my-class">
+            <NavIconWrap>
+              <FaRegCommentAlt size="20px" />
+              <NavText>모임</NavText>
+            </NavIconWrap>
+          </NavTest>
 
-          <NavButton>
-            <NavLink to="/pages/see-more" style={({ isActive }) => ({ color: isActive ? '#db7093' : 'black' })}>
-              <NavIconWrap>
-                <IoIosMore size="24px" />
-                <NavText>더보기</NavText>
-              </NavIconWrap>
-            </NavLink>
-          </NavButton>
+          <NavTest to="/pages/see-more">
+            <NavIconWrap>
+              <IoIosMore size="24px" />
+              <NavText>더보기</NavText>
+            </NavIconWrap>
+          </NavTest>
         </NavBarConatiner>
       )}
     </>

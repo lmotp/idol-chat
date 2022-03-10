@@ -31,7 +31,7 @@ const ClassSearch = ({ pd }) => {
     <Form pd={pd} onSubmit={searchTag}>
       <SearchInputWrap border="1px solid black">
         <BiSearch size="26px" />
-        <Input placeholder="모임이나 커뮤니티를 검색하세요." ref={searchRef} border="none" fz="21px" ml="14px" />
+        <Input placeholder="찾으실 태그로 검색해주세요!" ref={searchRef} border="none" fz="21px" ml="14px" />
       </SearchInputWrap>
     </Form>
   );
