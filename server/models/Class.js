@@ -22,7 +22,6 @@ function memberArrayLimit(val) {
 }
 
 function meetingDayArrayLimit(val) {
-  console.log(val);
   return val.length <= 3;
 }
 

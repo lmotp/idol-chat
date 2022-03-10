@@ -178,7 +178,6 @@ const ModifyModal = ({ setLoadingState, setModalState, id, img }) => {
       setLoadingState(true);
 
       axios.post('/api/auth/modify', formData).then(({ data }) => {
-        console.log(data);
         ModalClose();
         dispatch(userCheckActions());
         setError(false);

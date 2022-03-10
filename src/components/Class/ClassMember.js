@@ -61,7 +61,6 @@ const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, clas
 
   const memberSecession = () => {
     axios.post('/api/class/info/secession/member', { userId, classId }).then(({ data }) => {
-      console.log(data);
       navigate('/pages/home');
     });
   };

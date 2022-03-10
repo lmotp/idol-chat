@@ -80,7 +80,6 @@ export const SignUp = () => {
     e.preventDefault();
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(position.coords.longitude, position.coords.latitude);
         axios
           .get(
             `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${position.coords.longitude}&y=${position.coords.latitude}`,

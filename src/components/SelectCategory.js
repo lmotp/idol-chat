@@ -25,8 +25,6 @@ const SelectCategory = ({ pagesHandler }) => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
 
-  console.log('잘뜨니?');
-
   useEffect(() => {
     dispatch(mainCategoryChange('전체'));
   }, [pathname, dispatch]);

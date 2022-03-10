@@ -14,8 +14,6 @@ const useSocket = (classId) => {
   }, [classId]);
 
   if (!sockets[classId]) {
-    console.log('나 몇번 실행됭?');
-
     sockets[classId] = io(`${backUrl}`, {
       transports: ['websocket'],
       path: '/socket.io',

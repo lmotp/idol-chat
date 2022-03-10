@@ -132,8 +132,6 @@ const InviteMessageBox = () => {
     });
   }, [_id]);
 
-  console.log(classLists);
-
   return (
     <InviteMessageBoxContianer>
       {classLists.length > 0 ? (

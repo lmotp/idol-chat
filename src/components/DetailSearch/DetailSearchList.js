@@ -58,8 +58,6 @@ const DetailSearchList = ({ category }) => {
     setClassList([]);
   }, [pathname]);
 
-  console.log(useSearchCategory);
-
   useEffect(() => {
     if (!useSearchCategory) {
       axios.post(`/api/class/list`, { selectCategory: category, pages }).then(({ data }) => {

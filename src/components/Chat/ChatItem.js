@@ -57,14 +57,11 @@ const ChatItem = ({ _id }) => {
 
   useEffect(() => {
     socket.emit('joinRoom', id);
-    socket.on('join', (data) => {
-      console.log(data);
-    });
+    socket.on('join', (data) => {});
   }, [id, socket]);
 
   useEffect(() => {
     socket.on('message', (data) => {
-      console.log(data);
       const chatReverse = chat.reverse();
       setChat([data[0], ...chatReverse]);
       setTimeout(() => {

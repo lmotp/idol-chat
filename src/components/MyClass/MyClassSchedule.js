@@ -122,8 +122,6 @@ const MyClassSchedule = ({ myMeetinsList }) => {
     setTest(myMeetinsList.filter((v) => format(parseISO(v.day), 'MM월 dd일') === format(meetingDayValue, 'MM월 dd일')));
   }, [myMeetinsList, meetingDayValue]);
 
-  console.log(test.length);
-
   return (
     <MyClassScheduleContainer>
       <Calendars
@@ -156,11 +154,11 @@ const MyClassSchedule = ({ myMeetinsList }) => {
                       <ListTime>{v.time}</ListTime>
                     </ListTimeWrap>
                     <ListLocationWrap>
-                      <GrLocation />
+                      <BiWon />
                       <ListLocation>{v.place}</ListLocation>
                     </ListLocationWrap>
                     <ListLocationWrap>
-                      <BiWon />
+                      <GrLocation />
                       {v.price}
                     </ListLocationWrap>
                   </ListInfoWrap>

@@ -197,8 +197,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
     const question = window.confirm('정말 삭제하시겠습니까?');
 
     if (question) {
-      axios.post('/api/meeting/delete', { classId, _id }).then((data) => {
-        console.log('성공!');
+      axios.post('/api/meeting/delete', { classId, _id }).then(() => {
         setLoading(true);
       });
     }

@@ -42,9 +42,7 @@ const BackBar = ({ title, nextTitle, clickCategory, page, _id }) => {
     if (id && pathname.includes('/chat')) {
       localStorage.setItem(`chat-${id}`, new Date().getTime().toString());
       socket.emit('leaveRoom', id);
-      socket.on('leave', (data) => {
-        console.log('나 실행됭?', data);
-      });
+      socket.on('leave', (data) => {});
       disconnect();
       navigate(-1);
     } else {
