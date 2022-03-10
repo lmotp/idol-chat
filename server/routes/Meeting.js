@@ -45,5 +45,21 @@ router.post('/attend', (req, res) => {
 });
 
 //정모 삭제하기
+router.post('/delete', (req, res) => {
+  const { classId, _id } = req.body;
+  console.log('안녕?');
+
+  Meeting.deleteOne({ _id }, (err, findClass) => {
+    if (err) {
+      console.log('정모삭제하는 모임에서 에러', err);
+    }
+    Class.findOneAndUpdate({ _id: classId }, { $pull: { meetingDay: _id } }, (err, doc) => {
+      if (err) {
+        console.log('정모삭제하는 클래스에서 에러', err);
+      }
+      res.send(doc);
+    });
+  });
+});
 
 module.exports = router;

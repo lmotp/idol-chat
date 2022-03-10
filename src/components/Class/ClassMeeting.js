@@ -2,7 +2,7 @@ import React, { memo, useCallback, useState } from 'react';
 import Modal from '../Modal/Modal';
 import MeetingMakeModal from '../Modal/MeetingMakeModal';
 import { BsPlusCircleDotted } from 'react-icons/bs';
-import { AiOutlineCalendar } from 'react-icons/ai';
+import { AiOutlineCalendar, AiOutlineClose } from 'react-icons/ai';
 import { BiWon } from 'react-icons/bi';
 import { GrLocation } from 'react-icons/gr';
 import styled from 'styled-components';
@@ -18,6 +18,12 @@ import { ModifyButton } from '../../css/ModifyStyle';
 const ClassMeetingContainer = styled.div`
   margin-bottom: 33px;
 `;
+
+const ClassMeetingInfoWrap = styled.div`
+  position: relative;
+  margin-bottom: 20px;
+`;
+
 const ClassMeetingTitle = styled.h3`
   margin-bottom: 16px;
 `;
@@ -85,7 +91,7 @@ const MeetingInfoItem = styled.div`
 `;
 
 const MeetingRightWrap = styled.div`
-  width: 8%;
+  width: 6%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -100,6 +106,7 @@ const MeetingAtendButton = styled.button`
   background-color: #8dbad0;
   cursor: ${(props) => (props.joinState ? 'pointer' : 'auto')};
   opacity: ${(props) => (props.joinState ? 1 : 0)};
+  padding: 0 4px;
 `;
 
 const MemberCount = styled.div`
@@ -128,6 +135,14 @@ const ErrorButton = styled(ModifyButton)`
   transform: translateX(-50%);
   left: 50%;
   margin: 20px 0;
+`;
+
+const MeetingDeleteButton = styled(AiOutlineClose)`
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  color: rgb(150, 150, 150);
 `;
 
 const dayArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -178,6 +193,17 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
     });
   }, [userId, classId, dispatch]);
 
+  const DeleteMeetingFunc = (_id) => {
+    const question = window.confirm('정말 삭제하시겠습니까?');
+
+    if (question) {
+      axios.post('/api/meeting/delete', { classId, _id }).then((data) => {
+        console.log('성공!');
+        setLoading(true);
+      });
+    }
+  };
+
   return (
     <ClassMeetingContainer>
       <ClassMeetingTitle>모임 정모</ClassMeetingTitle>
@@ -186,7 +212,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
         <ClassMeetingDay>
           {meetingList.map((v, i) => {
             return (
-              <div key={i}>
+              <ClassMeetingInfoWrap key={i}>
                 <MeetingInfoTitle>{v.name}</MeetingInfoTitle>
                 <MeetingInfoWrap>
                   <MeetingInfoThumnail>
@@ -226,9 +252,10 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
                       {v.attendMember.includes(userId) ? '참석완료' : '참석하기'}
                     </MeetingAtendButton>
                     <MemberCount>{v.attendMember.length} / 20</MemberCount>
+                    {admin && <MeetingDeleteButton onClick={() => DeleteMeetingFunc(v._id)} />}
                   </MeetingRightWrap>
                 </MeetingInfoWrap>
-              </div>
+              </ClassMeetingInfoWrap>
             );
           })}
         </ClassMeetingDay>
