@@ -49,6 +49,7 @@ const Login = () => {
       email: emailRef.current?.value ?? '',
       password: passwordRef.current?.value ?? '',
     };
+    const email = info.email;
 
     if (!info.email.length) {
       return setErrorMessage('이메일을 입력해주세요');
