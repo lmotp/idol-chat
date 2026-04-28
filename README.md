@@ -48,12 +48,12 @@ npm run preview
 
 ### 클라이언트
 
-- `VITE_KAKAO_REST_API` 또는 `REACT_APP_KAKAO_REST_API`: 카카오 로컬 API 키
+- `VITE_KAKAO_REST_API`: 카카오 로컬 API 키
 - `VITE_USE_MOCKS`: `true`면 프론트에서 MSW mock API를 활성화합니다. 기본값은 개발 모드에서 `true`입니다.
 - `VITE_SUPABASE_URL`: Supabase 프로젝트 URL
 - `VITE_SUPABASE_ANON_KEY`: Supabase anon key
 
-클라이언트는 현재 `VITE_` 접두어를 우선 사용하고, 호환을 위해 `REACT_APP_`도 함께 읽습니다.
+클라이언트는 `VITE_` 접두어만 읽습니다.
 
 ## 폴더 구조
 

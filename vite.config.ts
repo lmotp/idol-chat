@@ -5,7 +5,6 @@ import { fileURLToPath, URL } from 'node:url';
 export default defineConfig(({ mode }) => ({
   base: mode === 'production' ? '/idol-chat/' : '/',
   plugins: [react()],
-  envPrefix: ['VITE_', 'REACT_APP_'],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
