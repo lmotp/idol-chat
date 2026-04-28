@@ -1,7 +1,5 @@
-import { io } from 'socket.io-client';
 import { useCallback } from 'react';
 import { supabase as supabaseMaybe, hasSupabaseConfig } from '@/app/supabaseClient';
-import { socketUrl } from '@/config/env';
 import { useMockApi } from '@/config/mock';
 import { getMockSocket } from '@/mocks/mockSocket';
 
@@ -219,10 +217,12 @@ const useSocket = (classId?: string) => {
     } else if (hasSupabaseConfig) {
       sockets[classId] = createSupabaseSocket(classId);
     } else {
-      sockets[classId] = io(socketUrl, {
-        transports: ['websocket'],
-        path: '/socket.io',
-      }) as unknown as SocketLike;
+      sockets[classId] = {
+        on: () => sockets[classId],
+        off: () => sockets[classId],
+        emit: () => sockets[classId],
+        disconnect: () => undefined,
+      };
     }
   }
 

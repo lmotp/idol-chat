@@ -48,7 +48,6 @@ npm run preview
 
 ### 클라이언트
 
-- `VITE_SOCKET_URL` 또는 `REACT_APP_SOCKET_URL`: 소켓 서버 주소
 - `VITE_KAKAO_REST_API` 또는 `REACT_APP_KAKAO_REST_API`: 카카오 로컬 API 키
 - `VITE_USE_MOCKS`: `true`면 프론트에서 MSW mock API를 활성화합니다. 기본값은 개발 모드에서 `true`입니다.
 - `VITE_SUPABASE_URL`: Supabase 프로젝트 URL
@@ -79,7 +78,7 @@ server/
 - 현재 프론트엔드는 Vite 기반으로 동작합니다.
 - 공통 스타일은 `src/design-system/styles`에 모아 두었습니다.
 - `src/css` 폴더는 더 이상 사용하지 않습니다.
-- 소켓 연결은 `src/config/env.ts`를 통해 환경 변수로 관리합니다.
+- 실시간 채팅은 Supabase Realtime을 사용합니다.
 - 개발 중에는 서버 없이 프런트만 확인하려면 `npm run dev`를 사용합니다.
 
 ## 배포
