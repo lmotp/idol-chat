@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import BackBar from '@/components/BackBar';
+import { supabase, hasSupabaseConfig } from '@/app/supabaseClient';
 import { AuthButton, AuthButtonWrap, Form, Input, InputWrap, Label } from '@/design-system/styles/FormStyle';
 import useAppStore from '@/stores/useAppStore';
 import type { AuthResponse } from '@/types/domain/user';
@@ -23,6 +24,8 @@ const LoginContainer = styled.section`
   width: 100%;
   height: 100vh;
 `;
+
+const DEFAULT_PROFILE_IMG = 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240';
 
 const ErrorContent = styled.div<{ error?: string }>`
   margin-top: 8px;
@@ -55,21 +58,110 @@ const Login = () => {
       return setErrorMessage('비밀번호를 입력해주세요');
     }
 
-    axios
-      .post('/api/auth/login', info, { withCredentials: true })
-      .then(({ data }: { data: AuthResponse }) => {
-        if (data.loginSuccess) {
-          setUser(data);
-          if (!data.firstCategory) {
-            navigate('/category');
-          } else {
-            navigate('/pages/home');
+    const signIn = async () => {
+      if (hasSupabaseConfig && supabase) {
+        const { data, error } = await supabase.auth.signInWithPassword(info);
+
+        if (error || !data.user) {
+          throw error ?? new Error('로그인에 실패했습니다.');
+        }
+
+        if (data.session) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token,
+          });
+
+          if (sessionError) {
+            throw sessionError;
           }
         }
-      })
-      .catch(({ response }: { response?: { data?: { message?: string } } }) => {
-        setErrorMessage(response?.data?.message ?? '로그인에 실패했습니다.');
-      });
+
+        let profile = await supabase
+          .from('profiles')
+          .select('id,email,nickname,profileimg,myself,gender,location,first_category,category,login_time')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        if (profile.error) {
+          throw profile.error;
+        }
+
+        if (!profile.data) {
+          const payload = {
+            id: data.user.id,
+            email,
+            nickname: data.user.user_metadata?.nickname ?? email.split('@')[0] ?? '사용자',
+            profileimg: data.user.user_metadata?.profileimg ?? DEFAULT_PROFILE_IMG,
+            myself: data.user.user_metadata?.myself ?? '안녕하세요? 잘 부탁드립니다',
+            gender: data.user.user_metadata?.gender ?? 'nothing',
+            location: data.user.user_metadata?.location ?? '',
+            first_category: false,
+            category: ['전체'],
+            login_time: new Date().toISOString(),
+          };
+
+          const { error: upsertError } = await supabase.from('profiles').upsert(payload);
+          if (upsertError) {
+            throw upsertError;
+          }
+
+          profile = await supabase
+            .from('profiles')
+            .select('id,email,nickname,profileimg,myself,gender,location,first_category,category,login_time')
+            .eq('id', data.user.id)
+            .single();
+
+          if (profile.error || !profile.data) {
+            throw profile.error ?? new Error('프로필을 찾을 수 없습니다.');
+          }
+        }
+
+        const response: AuthResponse = {
+          loginSuccess: true,
+          _id: profile.data.id,
+          email: profile.data.email,
+          nickname: profile.data.nickname,
+          profileimg: profile.data.profileimg ?? DEFAULT_PROFILE_IMG,
+          profileImg: profile.data.profileimg ?? DEFAULT_PROFILE_IMG,
+          myself: profile.data.myself ?? '',
+          gender: profile.data.gender ?? 'nothing',
+          location: profile.data.location ?? '',
+          category: profile.data.category ?? ['전체'],
+          firstCategory: Boolean(profile.data.first_category),
+          loginTime: profile.data.login_time ?? new Date().toISOString(),
+        };
+
+        setUser(response);
+        if (!response.firstCategory) {
+          navigate('/category');
+        } else {
+          navigate('/pages/home');
+        }
+        return;
+      }
+
+      axios
+        .post('/api/auth/login', info, { withCredentials: true })
+        .then(({ data }: { data: AuthResponse }) => {
+          if (data.loginSuccess) {
+            setUser(data);
+            if (!data.firstCategory) {
+              navigate('/category');
+            } else {
+              navigate('/pages/home');
+            }
+          }
+        })
+        .catch(({ response }: { response?: { data?: { message?: string } } }) => {
+          setErrorMessage(response?.data?.message ?? '로그인에 실패했습니다.');
+        });
+    };
+
+    void signIn().catch((error: unknown) => {
+      const message = error instanceof Error ? error.message : '로그인에 실패했습니다.';
+      setErrorMessage(message);
+    });
   };
 
   return (
