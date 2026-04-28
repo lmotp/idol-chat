@@ -25,7 +25,7 @@ app.use('/api/image', express.static('uploads/'));
 
 function connect() {
   mongoose
-    .connect(process.env.MONGO_URI_DEPLOY, { minPoolSize: 100, useNewUrlParser: true })
+    .connect(process.env.MONGO_URI, { minPoolSize: 100, useNewUrlParser: true })
     .then(() => {
       console.log('Connected to MongoDB');
     })
@@ -83,11 +83,11 @@ io.on('connection', (socket) => {
 
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  app.use(express.static(path.join(__dirname, '../', 'build')));
+  app.use(express.static(path.join(__dirname, '../', 'dist')));
 
   // index.html for all page routes
   app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../', 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../', 'dist', 'index.html'));
   });
 }
 
