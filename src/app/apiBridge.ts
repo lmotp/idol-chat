@@ -657,6 +657,17 @@ async function handleAuthLogin(config: AxiosRequestConfig, body: JsonRecord) {
     throw errorResponse('로그인에 실패하셨습니다.', 403, config);
   }
 
+  if (data.session) {
+    const { error: sessionError } = await supabase.auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+    });
+
+    if (sessionError) {
+      throw sessionError;
+    }
+  }
+
   const currentProfile = await selectProfile(data.user.id);
 
   if (!currentProfile) {
