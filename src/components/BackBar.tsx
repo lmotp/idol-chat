@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import styled from '@emotion/styled';
 import axios from 'axios';
+import { hasSupabaseConfig, supabase } from '@/app/supabaseClient';
 import useSocket from '@/hooks/useSocket';
 import useAppStore from '@/stores/useAppStore';
 type BackBarProps = {
@@ -39,16 +40,36 @@ const BackBar = ({ title, nextTitle, clickCategory, page, _id }: BackBarProps) =
   const { pathname } = useLocation();
   const { id } = useParams();
   const [socket, disconnect] = useSocket(id);
+  const currentUser = useAppStore((state) => state.user.result);
+  const setUser = useAppStore((state) => state.setUser);
   const toggleChatMember = useAppStore((state) => state.toggleChatMember);
 
-  const selectCategory = () => {
+  const selectCategory = async () => {
     if (!page) {
       return;
     }
 
-    axios.post('/api/auth/select-category', { clickCategory, _id }).then((data) => {
+    const category = ['전체', ...(clickCategory ?? [])];
+
+    try {
+      if (hasSupabaseConfig && supabase && _id) {
+        const { error } = await supabase.from('profiles').update({ first_category: true, category }).eq('id', _id);
+
+        if (error) {
+          throw error;
+        }
+
+        setUser({ ...currentUser, category, firstCategory: true });
+        navigate(page);
+        return;
+      }
+
+      await axios.post('/api/auth/select-category', { clickCategory, _id });
+      setUser({ ...currentUser, category, firstCategory: true });
       navigate(page);
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const back = useCallback(() => {
