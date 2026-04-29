@@ -39,7 +39,6 @@ jobs:
 
       - name: Build
         env:
-          VITE_KAKAO_REST_API: ${{ secrets.VITE_KAKAO_REST_API }}
           VITE_USE_MOCKS: "false"
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}

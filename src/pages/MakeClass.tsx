@@ -10,7 +10,7 @@ import ClassMakeHashTag from '@/components/MakeClass/ClassMakeHashTag';
 import LocationModal from '@/components/Modal/LocationModal';
 import { AuthButton, ClassMemberCount, ClassMemberCountWrap, LocationButton } from '@/design-system/styles/FormStyle';
 import { ModifyInfoInput, ModifyInfoTextArea } from '@/design-system/styles/ModifyStyle';
-import { kakaoRestApi } from '@/config/env';
+import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 import useAppStore from '@/stores/useAppStore';
 import { overlay } from 'overlay-kit';
 import Modal from '@/components/Modal/Modal';
@@ -114,36 +114,25 @@ const MakeClass = () => {
   const _id = useAppStore((state) => state.user.result._id);
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const { resolveCurrentLocation } = useCurrentLocation();
 
-  const nowLocationSurch = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        axios
-          .get(`https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${position.coords.longitude}&y=${position.coords.latitude}`, {
-            headers: { Authorization: `KakaoAK ${kakaoRestApi}` },
-          })
-          .then(({ data }) => {
-            setNowLocation(data.documents[0].address.address_name);
-          });
-      },
-      (err) => {
-        console.log(err);
-      },
-    );
+  const handleCurrentLocation = async () => {
+    const address = await resolveCurrentLocation();
+    setNowLocation(address);
+    return address;
   };
 
-  const ModalOpen = () => {
+  const openLocationModal = () => {
     overlay.open(({ isOpen, close, unmount }) => (
       <Modal open={isOpen} onClose={close} onExit={unmount} ariaLabel="현재 위치 선택">
-        <LocationModal setNowLocation={setNowLocation} onClose={close} />
+        <LocationModal setNowLocation={setNowLocation} onClose={close} onUseCurrentLocation={handleCurrentLocation} />
       </Modal>
     ));
   };
 
   const makeClassFunc = () => {
     if (!nowLocation) {
-      ModalOpen();
+      openLocationModal();
       return setError('모임이 지역을 선택창에서 설정해주세요!');
     } else if (!classNameRef.current?.value) {
       classNameRef.current?.focus();
@@ -212,11 +201,18 @@ const MakeClass = () => {
             placeholder="클릭해서 현재 위치를 알려주세요"
             value={nowLocation}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setNowLocation(e.target.value)}
-            onClick={ModalOpen}
+            onClick={openLocationModal}
             style={{ cursor: 'pointer' }}
             readOnly
           />
-          <LocationButton onClick={nowLocationSurch}>
+          <LocationButton
+            onClick={(e: MouseEvent<HTMLButtonElement>) => {
+              e.preventDefault();
+              void handleCurrentLocation().catch((err) => {
+                console.log(err);
+              });
+            }}
+          >
             <BiCurrentLocation size="24px" />
           </LocationButton>
         </MakeClassWrap>

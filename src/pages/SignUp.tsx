@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import BackBar from '@/components/BackBar';
+import LocationModal from '@/components/Modal/LocationModal';
+import Modal from '@/components/Modal/Modal';
 import {
   AuthButton,
   AuthButtonWrap,
@@ -14,11 +16,9 @@ import {
   LocationButton,
   SignUpItemBox,
 } from '@/design-system/styles/FormStyle';
+import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 import { BiCurrentLocation } from 'react-icons/bi';
-import LocationModal from '@/components/Modal/LocationModal';
-import { kakaoRestApi } from '@/config/env';
 import { overlay } from 'overlay-kit';
-import Modal from '@/components/Modal/Modal';
 import type { ChangeEvent, MouseEvent } from 'react';
 
 const SignContainer = styled.section`
@@ -60,36 +60,21 @@ export const SignUp = () => {
   const [errorCode, setErrorCode] = useState<number | undefined>(undefined);
   const [radioSelect, setRadioSelect] = useState('nothing');
   const [nowLocation, setNowLocation] = useState('');
+  const { resolveCurrentLocation } = useCurrentLocation();
 
-  // 모달창 함수
-  const ModalOpen = () => {
-    overlay.open(({ isOpen, close, unmount }) => (
-      <Modal open={isOpen} onClose={close} onExit={unmount} ariaLabel="현재 위치 선택">
-        <LocationModal setNowLocation={setNowLocation} onClose={close} />
-      </Modal>
-    ));
+  const handleCurrentLocation = async () => {
+    const address = await resolveCurrentLocation();
+    setNowLocation(address);
+    return address;
   };
 
-  // 현재위치 알아내는 함수
-  const nowLocationSurch = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        axios
-          .get(
-            `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${position.coords.longitude}&y=${position.coords.latitude}`,
-            {
-              headers: { Authorization: `KakaoAK ${kakaoRestApi}` },
-            },
-          )
-          .then(({ data }) => {
-            setNowLocation(data.documents[0].address.address_name);
-          });
-      },
-      (err) => {
-        console.log(err);
-      },
-    );
+  // 모달창 함수
+  const openLocationModal = () => {
+    overlay.open(({ isOpen, close, unmount }) => (
+      <Modal open={isOpen} onClose={close} onExit={unmount} ariaLabel="현재 위치 선택">
+        <LocationModal setNowLocation={setNowLocation} onClose={close} onUseCurrentLocation={handleCurrentLocation} />
+      </Modal>
+    ));
   };
 
   // 회원가입시 에러 잡는함수
@@ -244,11 +229,18 @@ export const SignUp = () => {
               placeholder="클릭해서 현재 위치를 알려주세요"
               value={nowLocation}
               onChange={(e) => setNowLocation(e.target.value)}
-              onClick={ModalOpen}
+              onClick={openLocationModal}
               cursor="pointer"
               readOnly
             ></Input>
-            <LocationButton onClick={nowLocationSurch}>
+            <LocationButton
+              onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                e.preventDefault();
+                void handleCurrentLocation().catch((err) => {
+                  console.log(err);
+                });
+              }}
+            >
               <BiCurrentLocation size="24px" />
             </LocationButton>
           </SignUpItemBox>

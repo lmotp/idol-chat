@@ -242,25 +242,4 @@ export const handlers = [
     return json({ count: getUnreadCount(params.classId as string, params.date as string) });
   }),
 
-  http.get('https://dapi.kakao.com/v2/local/search/address.json', () => {
-    return json({
-      documents: [
-        { address_name: '서울 강남구 삼성동' },
-        { address_name: '서울 마포구 서교동' },
-        { address_name: '서울 송파구 잠실동' },
-      ],
-    });
-  }),
-
-  http.get('https://dapi.kakao.com/v2/local/geo/coord2address.json', () => {
-    return json({
-      documents: [
-        {
-          address: {
-            address_name: '서울 강남구 삼성동',
-          },
-        },
-      ],
-    });
-  }),
 ];

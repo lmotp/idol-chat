@@ -48,12 +48,18 @@ npm run preview
 
 ### 클라이언트
 
-- `VITE_KAKAO_REST_API`: 카카오 로컬 API 키
 - `VITE_USE_MOCKS`: `true`면 프론트에서 MSW mock API를 활성화합니다. 기본값은 개발 모드에서 `true`입니다.
 - `VITE_SUPABASE_URL`: Supabase 프로젝트 URL
 - `VITE_SUPABASE_ANON_KEY`: Supabase anon key
 
 클라이언트는 `VITE_` 접두어만 읽습니다.
+
+## 주소 입력
+
+- 회원가입과 모임 생성 화면은 공통 주소 검색 모달을 사용합니다.
+- 주소 입력창을 클릭하면 커스텀 주소 검색 모달이 열립니다.
+- 현재 위치 버튼은 유지되며, 브라우저 위치 정보를 Supabase Edge Function 기반 주소 변환으로 현재 주소를 채웁니다.
+- 주소 검색과 현재 위치 변환은 모두 공통 주소 레이어를 통해 처리합니다.
 
 ## 폴더 구조
 

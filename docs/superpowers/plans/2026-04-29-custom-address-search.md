@@ -144,7 +144,7 @@ export const addressApi: AddressApi = {
 };
 ```
 
-- [ ] **Step 4: 카카오용 env 타입을 제거하고 남은 클라이언트 env를 정리한다**
+- [ ] **Step 4: 기존 주소 공급자용 env 타입을 제거하고 남은 클라이언트 env를 정리한다**
 
 ```ts
 interface ImportMetaEnv {
@@ -157,7 +157,7 @@ interface ImportMetaEnv {
 - [ ] **Step 5: 타입체크로 새 계층이 깨지지 않는지 확인한다**
 
 Run: `npx tsc --noEmit --pretty false`
-Expected: 새 타입과 Supabase 함수 래퍼가 문법적으로 문제 없고, 남은 Kakao 참조는 다음 Task에서 정리될 준비 상태가 된다.
+Expected: 새 타입과 Supabase 함수 래퍼가 문법적으로 문제 없고, 남은 레거시 주소 참조는 다음 Task에서 정리될 준비 상태가 된다.
 
 ---
 
@@ -296,8 +296,8 @@ Expected: 현재 위치 흐름이 모달 UI와 분리된 채로 동작한다.
 - Modify: `README.md`
 - Modify: `.github/workflows/pages.yml`
 - Modify: `src/vite-env.d.ts`
-- Delete: `src/config/env.ts` if Kakao 관련 값만 남아 있으면
-- Remove: any remaining Kakao-specific imports from `src/pages/SignUp.tsx`, `src/pages/MakeClass.tsx`, `src/components/Modal/LocationModal.tsx`
+- Delete: `src/config/env.ts` if legacy address values만 남아 있으면
+- Remove: any remaining legacy address imports from `src/pages/SignUp.tsx`, `src/pages/MakeClass.tsx`, `src/components/Modal/LocationModal.tsx`
 
 - [ ] **Step 1: SignUp과 MakeClass가 같은 주소 모달을 열도록 바꾼다**
 
@@ -313,19 +313,15 @@ overlay.open(({ isOpen, close, unmount }) => (
 ));
 ```
 
-- [ ] **Step 2: Kakao 관련 import와 상수를 제거한다**
+- [ ] **Step 2: 기존 주소 공급자 관련 import와 상수를 제거한다**
 
-`kakaoRestApi`를 읽는 코드는 전부 삭제하고, `LocationModal` 내부도 `addressApi`만 보게 만든다.
+기존 주소 공급자 값을 읽는 코드는 전부 삭제하고, `LocationModal` 내부도 `addressApi`만 보게 만든다.
 
 ```ts
-// before
-import { kakaoRestApi } from "@/config/env";
-
-// after
 import { addressApi } from "@/services/address/addressApi";
 ```
 
-- [ ] **Step 3: 배포 워크플로에서 Kakao secret 주입을 제거한다**
+- [ ] **Step 3: 배포 워크플로에서 기존 주소 secret 주입을 제거한다**
 
 ```yml
 - name: Build
@@ -336,21 +332,21 @@ import { addressApi } from "@/services/address/addressApi";
   run: npm run build
 ```
 
-- [ ] **Step 4: README에서 Kakao 키 설명을 지우고 새 주소 흐름을 적는다**
+- [ ] **Step 4: README에서 기존 주소 키 설명을 지우고 새 주소 흐름을 적는다**
 
 문서에는 이제 다음만 남긴다.
 - 커스텀 주소 검색 모달
 - 현재 위치 버튼 유지
 - Supabase Edge Function 기반 주소 변환
 
-- [ ] **Step 5: 필요하면 GitHub repo secret `VITE_KAKAO_REST_API`를 삭제한다**
+- [ ] **Step 5: 필요하면 GitHub repo secret `VITE_ADDRESS_REST_API`를 삭제한다**
 
 이 단계는 실제 배포가 정상 동작한 뒤에만 진행한다. 저장소 시크릿을 삭제하는 외부 작업이므로, 실행 전 사용자 확인이 필요하다.
 
-- [ ] **Step 6: 저장소 전체에서 Kakao 문자열이 남아 있지 않은지 확인한다**
+- [ ] **Step 6: 저장소 전체에서 레거시 주소 문자열이 남아 있지 않은지 확인한다**
 
-Run: `rg -n "Kakao|kakao|REACT_APP_" src README.md .github/workflows`
-Expected: 주소 입력과 배포에서 더 이상 Kakao 관련 문자열이 나오지 않는다.
+Run: `rg -n "address provider|legacy address" src README.md .github/workflows`
+Expected: 주소 입력과 배포에서 더 이상 레거시 주소 관련 문자열이 나오지 않는다.
 
 ---
 
@@ -362,7 +358,7 @@ Expected: 주소 입력과 배포에서 더 이상 Kakao 관련 문자열이 나
 - [ ] **Step 1: 타입체크와 빌드를 다시 통과시킨다**
 
 Run: `npx tsc --noEmit --pretty false && npm run build`
-Expected: 실패 없이 통과하고, 번들에 Kakao 참조가 남지 않는다.
+Expected: 실패 없이 통과하고, 번들에 레거시 주소 참조가 남지 않는다.
 
 - [ ] **Step 2: 브라우저에서 회원가입과 모임 생성 흐름을 직접 확인한다**
 
