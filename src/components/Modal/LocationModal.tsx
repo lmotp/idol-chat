@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { theme } from '@/design-system/theme';
 import { addressApi } from '@/services/address/addressApi';
+import { useCurrentLocation } from '@/hooks/useCurrentLocation';
 import type { AddressSuggestion } from '@/types/domain/address';
 import LocationSearchEmpty from './LocationSearchEmpty';
 import LocationSearchItem from './LocationSearchItem';
@@ -16,7 +17,6 @@ import type { FormEvent } from 'react';
 type LocationModalProps = {
   setNowLocation: (value: string) => void;
   onClose?: () => void;
-  onUseCurrentLocation?: () => Promise<void>;
 };
 
 const LocationModalWrap = styled.div`
@@ -125,12 +125,13 @@ const SearchSection = styled.section`
   margin-top: ${theme.spacing.lg};
 `;
 
-const LocationModal = ({ setNowLocation, onClose, onUseCurrentLocation }: LocationModalProps) => {
+const LocationModal = ({ setNowLocation, onClose }: LocationModalProps) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<AddressSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const { resolveCurrentLocation } = useCurrentLocation();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -156,16 +157,12 @@ const LocationModal = ({ setNowLocation, onClose, onUseCurrentLocation }: Locati
   };
 
   const handleUseCurrentLocation = async () => {
-    if (!onUseCurrentLocation) {
-      onClose?.();
-      return;
-    }
-
     try {
-      await onUseCurrentLocation();
-      onClose?.();
+      setError(null);
+      const address = await resolveCurrentLocation();
+      setNowLocation(address);
     } catch {
-      setError('현재 위치를 불러오지 못했습니다.');
+      setError('현재 위치를 가져오지 못했습니다. 직접 주소를 검색해 주세요.');
     }
   };
 
@@ -230,7 +227,7 @@ const LocationModal = ({ setNowLocation, onClose, onUseCurrentLocation }: Locati
       </SearchSection>
 
       <LocationSearchFooter>
-        <LocationSearchFooterPrimaryButton type="button" onClick={handleUseCurrentLocation} disabled={!onUseCurrentLocation}>
+        <LocationSearchFooterPrimaryButton type="button" onClick={handleUseCurrentLocation}>
           현재 위치 사용
         </LocationSearchFooterPrimaryButton>
         <LocationSearchFooterSecondaryButton type="button" onClick={() => onClose?.()}>
