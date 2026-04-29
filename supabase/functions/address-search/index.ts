@@ -22,55 +22,85 @@ const jsonResponse = (body: unknown, init?: ResponseInit) =>
     },
   });
 
+const readQuery = async (req: Request) => {
+  const url = new URL(req.url);
+  const queryFromSearchParams = url.searchParams.get('query') ?? '';
+
+  if (queryFromSearchParams.trim()) {
+    return queryFromSearchParams;
+  }
+
+  if (req.method !== 'POST') {
+    return '';
+  }
+
+  try {
+    const body = (await req.json()) as { query?: string } | null;
+    return body?.query ?? '';
+  } catch {
+    return '';
+  }
+};
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const url = new URL(req.url);
-  const queryFromSearchParams = url.searchParams.get('query') ?? '';
-  const queryFromBody = queryFromSearchParams.trim()
-    ? ''
-    : req.method === 'POST'
-      ? (((await req.json()) as { query?: string }).query ?? '')
-      : '';
-  const query = queryFromSearchParams || queryFromBody;
+  const query = await readQuery(req);
 
   if (!query.trim()) {
     return jsonResponse([]);
   }
 
-  const response = await fetch(
-    `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=10&q=${encodeURIComponent(query)}`,
-    {
-      headers: {
-        'User-Agent': 'idol-chat-address-search',
-        Accept: 'application/json',
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=10&q=${encodeURIComponent(query)}`,
+      {
+        headers: {
+          'User-Agent': 'idol-chat-address-search',
+          Accept: 'application/json',
+        },
       },
-    },
-  );
+    );
 
-  const raw = (await response.json()) as unknown;
-  const normalized = Array.isArray(raw)
-    ? raw.map((item) => {
-        const addressItem = item as NominatimSearchItem;
+    if (!response.ok) {
+      return jsonResponse({ message: 'Failed to fetch address search results.' }, { status: 502 });
+    }
 
-        return {
-          id: String(addressItem.place_id ?? ''),
-          label: addressItem.display_name ?? '',
-          roadAddress: addressItem.address?.road ?? undefined,
-          jibunAddress: addressItem.address?.suburb ?? addressItem.address?.city_district ?? undefined,
-          latitude:
+    const raw = (await response.json()) as unknown;
+    const normalized = Array.isArray(raw)
+      ? raw.flatMap((item) => {
+          const addressItem = item as NominatimSearchItem;
+          const id = addressItem.place_id;
+          const latitude =
             typeof addressItem.lat === 'string' || typeof addressItem.lat === 'number'
               ? Number(addressItem.lat)
-              : undefined,
-          longitude:
+              : undefined;
+          const longitude =
             typeof addressItem.lon === 'string' || typeof addressItem.lon === 'number'
               ? Number(addressItem.lon)
-              : undefined,
-        };
-      })
-    : [];
+              : undefined;
 
-  return jsonResponse(normalized);
+          if (!id || !addressItem.display_name || !Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+            return [];
+          }
+
+          return [
+            {
+              id: String(id),
+              label: addressItem.display_name,
+              roadAddress: addressItem.address?.road ?? undefined,
+              jibunAddress: addressItem.address?.suburb ?? addressItem.address?.city_district ?? undefined,
+              latitude,
+              longitude,
+            },
+          ];
+        })
+      : [];
+
+    return jsonResponse(normalized);
+  } catch {
+    return jsonResponse({ message: 'Failed to fetch address search results.' }, { status: 502 });
+  }
 });

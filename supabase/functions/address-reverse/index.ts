@@ -19,27 +19,45 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const { latitude, longitude } = (await req.json()) as {
-    latitude?: number;
-    longitude?: number;
-  };
+  let latitude: number | undefined;
+  let longitude: number | undefined;
+
+  try {
+    const body = (await req.json()) as {
+      latitude?: number;
+      longitude?: number;
+    } | null;
+
+    latitude = body?.latitude;
+    longitude = body?.longitude;
+  } catch {
+    return jsonResponse({ address: null }, { status: 400 });
+  }
 
   if (typeof latitude !== 'number' || typeof longitude !== 'number') {
     return jsonResponse({ address: null }, { status: 400 });
   }
 
-  const response = await fetch(
-    `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
-    {
-      headers: {
-        'User-Agent': 'idol-chat-address-search',
-        Accept: 'application/json',
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
+      {
+        headers: {
+          'User-Agent': 'idol-chat-address-search',
+          Accept: 'application/json',
+        },
       },
-    },
-  );
+    );
 
-  const raw = (await response.json()) as NominatimReverseResponse;
-  const address = raw?.display_name ?? null;
+    if (!response.ok) {
+      return jsonResponse({ address: null }, { status: 502 });
+    }
 
-  return jsonResponse({ address });
+    const raw = (await response.json()) as NominatimReverseResponse;
+    const address = raw?.display_name ?? null;
+
+    return jsonResponse({ address });
+  } catch {
+    return jsonResponse({ address: null }, { status: 502 });
+  }
 });
