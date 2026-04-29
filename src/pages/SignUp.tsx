@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
-import axios from 'axios';
-import BackBar from '@/components/BackBar';
-import LocationModal from '@/components/Modal/LocationModal';
-import Modal from '@/components/Modal/Modal';
+import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "@emotion/styled";
+import BackBar from "@/components/BackBar";
+import { apiClient } from "@/app/apiClient";
+import LocationModal from "@/components/Modal/LocationModal";
+import Modal from "@/components/Modal/Modal";
 import {
   AuthButton,
   AuthButtonWrap,
@@ -15,11 +15,11 @@ import {
   Label,
   LocationButton,
   SignUpItemBox,
-} from '@/design-system/styles/FormStyle';
-import { useCurrentLocation } from '@/hooks/useCurrentLocation';
-import { BiCurrentLocation } from 'react-icons/bi';
-import { overlay } from 'overlay-kit';
-import type { ChangeEvent, MouseEvent } from 'react';
+} from "@/design-system/styles/FormStyle";
+import { useCurrentLocation } from "@/hooks/useCurrentLocation";
+import { BiCurrentLocation } from "react-icons/bi";
+import { overlay } from "overlay-kit";
+import type { ChangeEvent, MouseEvent } from "react";
 
 const SignContainer = styled.section`
   width: 100%;
@@ -38,8 +38,8 @@ const LabelGender = styled.label<{ $active?: boolean }>`
   margin-right: 6px;
   font-size: 16px;
   font-weight: 700;
-  color: ${({ $active }) => ($active ? '#fff' : 'rgb(196, 196, 196)')};
-  background: ${({ $active }) => ($active ? 'black' : 'transparent')};
+  color: ${({ $active }) => ($active ? "#fff" : "rgb(196, 196, 196)")};
+  background: ${({ $active }) => ($active ? "black" : "transparent")};
   border: 1px solid rgb(196, 196, 196);
   cursor: pointer;
   display: inline-block;
@@ -56,11 +56,12 @@ export const SignUp = () => {
   const passwordConfirmRef = useRef<HTMLInputElement | null>(null);
   const nicknameRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [errorCode, setErrorCode] = useState<number | undefined>(undefined);
-  const [radioSelect, setRadioSelect] = useState('nothing');
-  const [nowLocation, setNowLocation] = useState('');
+  const [radioSelect, setRadioSelect] = useState("nothing");
+  const [nowLocation, setNowLocation] = useState("");
   const { resolveCurrentLocation } = useCurrentLocation();
+  const normalizeEmail = (value: string) => value.trim().replace(/^["']+|["']+$/g, '');
 
   const handleCurrentLocation = async () => {
     const address = await resolveCurrentLocation();
@@ -95,36 +96,36 @@ export const SignUp = () => {
     const emailRgx = /^[0-9a-z]([-_.]?[0-9a-z])*@[a-z]*\.[a-z.]{2,3}$/gm;
     const nicknameRgx = /\s{1,8}/;
 
-    const passwordConfirm = passwordConfirmRef.current?.value ?? '';
+    const passwordConfirm = passwordConfirmRef.current?.value ?? "";
 
     const info = {
-      email: emailRef.current?.value ?? '',
-      password: passwordRef.current?.value ?? '',
-      nickname: nicknameRef.current?.value ?? '',
+      email: normalizeEmail(emailRef.current?.value ?? ""),
+      password: passwordRef.current?.value ?? "",
+      nickname: nicknameRef.current?.value ?? "",
       gender: radioSelect,
       location: nowLocation,
     };
 
     if (!info.email || !emailRgx.test(info.email)) {
-      return errorFunc(0, '이메일 형식에 맞게 작성해주세요.');
+      return errorFunc(0, "이메일 형식에 맞게 작성해주세요.");
     } else if (!info.password || !passwordConfirm) {
-      return errorFunc(1, '비밀번호를 입력해주세요');
+      return errorFunc(1, "비밀번호를 입력해주세요");
     } else if (info.password !== passwordConfirm) {
-      return errorFunc(2, '비밀번호가 일치하지 않습니다.');
+      return errorFunc(2, "비밀번호가 일치하지 않습니다.");
     } else if (!info.nickname || nicknameRgx.test(info.nickname)) {
-      return errorFunc(3, '닉네임에 공백 없이 8자이하로 입력해주세요');
+      return errorFunc(3, "닉네임에 공백 없이 8자이하로 입력해주세요");
     } else if (!info.location) {
-      return errorFunc(5, '주소창을 선택해서 입력해주세요');
+      return errorFunc(5, "주소창을 선택해서 입력해주세요");
     } else if (!pswRgx.test(info.password)) {
-      return errorFunc(4, '비밀번호는 8자리 이상으로 16자리 이하, !@#$%^&*를 포함해서 입력해주세요');
+      return errorFunc(4, "비밀번호는 8자리 이상으로 16자리 이하, !@#$%^&*를 포함해서 입력해주세요");
     } else {
       setErrorCode(999);
 
-      axios
-        .post('/api/auth/signup', info)
+      apiClient
+        .post<{ success: boolean; message?: string }>("/api/auth/signup", info)
         .then(({ data }) => {
           if (data.success) {
-            navigate('/');
+            navigate("/");
           } else {
             window.alert(data.message);
           }
@@ -136,7 +137,7 @@ export const SignUp = () => {
   return (
     <SignContainer>
       <BackBar title="회원가입" />
-      <Form>
+      <Form pd="20px 20px 0 ">
         <InputWrap>
           <Label htmlFor="email">이메일</Label>
           <Point>*</Point>
@@ -188,10 +189,10 @@ export const SignUp = () => {
               type="radio"
               id="nothing"
               name="gender"
-              checked={radioSelect === 'nothing'}
+              checked={radioSelect === "nothing"}
               onChange={radioCheckChange}
             />
-            <LabelGender htmlFor="nothing" $active={radioSelect === 'nothing'}>
+            <LabelGender htmlFor="nothing" $active={radioSelect === "nothing"}>
               선택안함
             </LabelGender>
 
@@ -199,10 +200,10 @@ export const SignUp = () => {
               type="radio"
               id="men"
               name="gender"
-              checked={radioSelect === 'men'}
+              checked={radioSelect === "men"}
               onChange={radioCheckChange}
             />
-            <LabelGender htmlFor="men" $active={radioSelect === 'men'}>
+            <LabelGender htmlFor="men" $active={radioSelect === "men"}>
               남성
             </LabelGender>
 
@@ -210,10 +211,10 @@ export const SignUp = () => {
               type="radio"
               id="women"
               name="gender"
-              checked={radioSelect === 'women'}
+              checked={radioSelect === "women"}
               onChange={radioCheckChange}
             />
-            <LabelGender htmlFor="women" $active={radioSelect === 'women'}>
+            <LabelGender htmlFor="women" $active={radioSelect === "women"}>
               여성
             </LabelGender>
           </SignUpItemBox>
@@ -248,7 +249,7 @@ export const SignUp = () => {
         </InputWrap>
 
         <AuthButtonWrap>
-          <AuthButton onClick={signUp} color="black">
+          <AuthButton onClick={signUp} color="black" margin="0">
             가입하기
           </AuthButton>
         </AuthButtonWrap>

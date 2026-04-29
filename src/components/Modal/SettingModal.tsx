@@ -1,7 +1,7 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { apiClient } from '@/app/apiClient';
 import { ButtonWrap, ModifyButton } from '@/design-system/styles/ModifyStyle';
 import useAppStore from '@/stores/useAppStore';
 import type { CategoryOption } from '@/types/domain/category';
@@ -92,7 +92,7 @@ const SettingModal = ({
     }
   };
   const modifyCategoryFunc = () => {
-    axios.post('/api/auth/category/modify', { selectCategry, userId }).then((data) => {
+    apiClient.post('/api/auth/category/modify', { selectCategry, userId }).then((data) => {
       void fetchUser();
     });
     onClose?.();

@@ -1,7 +1,7 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { BiCamera } from 'react-icons/bi';
 import styled from '@emotion/styled';
+import { apiClient } from '@/app/apiClient';
 import useAppStore from '@/stores/useAppStore';
 
 type ModifyModalProps = {
@@ -185,7 +185,7 @@ const ModifyModal = ({ setLoadingState, onClose, id, img }: ModifyModalProps) =>
 
     setLoadingState(true);
 
-    axios.post('/api/auth/modify', formData).then(() => {
+    apiClient.post<void>('/api/auth/modify', formData).then(() => {
       ModalClose();
       void fetchUser();
       setError(false);

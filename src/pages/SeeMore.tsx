@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '@/app/apiClient';
 import SeeMoreUserInfo from '@/components/SeeMore/SeeMoreUserInfo';
 import SelectCategory from '@/components/SelectCategory';
 import { AuthButton, Line } from '@/design-system/styles/FormStyle';
@@ -22,7 +22,7 @@ const SeeMore = () => {
   const clearUser = useAppStore((state) => state.clearUser);
 
   const logoutClick = () => {
-    axios.get('/api/auth/logout').then(() => {
+    apiClient.get('/api/auth/logout').then(() => {
       clearUser();
       navigate('/');
     });

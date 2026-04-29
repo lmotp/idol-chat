@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ButtonWrap, ModifyButton } from '@/design-system/styles/ModifyStyle';
 import styled from '@emotion/styled';
 import { AiOutlinePicture } from 'react-icons/ai';
-import axios from 'axios';
+import { apiClient } from '@/app/apiClient';
 import useAppStore from '@/stores/useAppStore';
 import type { ChangeEvent } from 'react';
 import type { HoverProp, SrcProp } from '@/types/ui/styled-props';
@@ -85,7 +85,7 @@ const ModifyClassImg = ({ onClose, img, id }: { onClose?: () => void; img?: stri
     formData.append('image', fileName instanceof File ? fileName : mainImg ?? '');
     formData.append('id', id ?? '');
 
-    axios.post('/api/class/info/admin/modify', formData).then(() => {
+    apiClient.post<void>('/api/class/info/admin/modify', formData).then(() => {
       ModalClose();
       toggleClassJoin();
     });

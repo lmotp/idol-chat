@@ -1,8 +1,8 @@
-import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { BsPlusCircleDotted } from 'react-icons/bs';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { apiClient } from '@/app/apiClient';
 import { AuthButton } from '@/design-system/styles/FormStyle';
 import ClassList from '@/components/ClassList';
 import useAppStore from '@/stores/useAppStore';
@@ -61,14 +61,14 @@ const DetailSearchList = ({ category }: { category: string }) => {
 
   useEffect(() => {
     if (!useSearchCategory) {
-      axios.post(`/api/class/list`, { selectCategory: category, pages }).then(({ data }) => {
+      apiClient.post<ClassSummary[]>(`/api/class/list`, { selectCategory: category, pages }).then(({ data }) => {
         setClassList((prevItems) => {
           return [...prevItems, ...data];
         });
         setHasData(data.length > 0);
       });
     } else {
-      axios.post(`/api/class/list`, { useSearchCategory, pages }).then(({ data }) => {
+      apiClient.post<ClassSummary[]>(`/api/class/list`, { useSearchCategory, pages }).then(({ data }) => {
         if (data.length > 0) {
           setClassList((prevItems) => {
             return [...prevItems, ...data];

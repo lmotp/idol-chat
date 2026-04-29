@@ -1,8 +1,8 @@
-import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import BackBar from '@/components/BackBar';
+import { apiClient } from '@/app/apiClient';
 import { supabase, hasSupabaseConfig } from '@/app/supabaseClient';
 import { AuthButton, AuthButtonWrap, Form, Input, InputWrap, Label } from '@/design-system/styles/FormStyle';
 import useAppStore from '@/stores/useAppStore';
@@ -42,11 +42,13 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const setUser = useAppStore((state) => state.setUser);
 
+  const normalizeEmail = (value: string) => value.trim().replace(/^["']+|["']+$/g, '');
+
   const loginFunc = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const info = {
-      email: emailRef.current?.value ?? '',
+      email: normalizeEmail(emailRef.current?.value ?? ''),
       password: passwordRef.current?.value ?? '',
     };
     const email = info.email;
@@ -142,9 +144,9 @@ const Login = () => {
         return;
       }
 
-      axios
-        .post('/api/auth/login', info, { withCredentials: true })
-        .then(({ data }: { data: AuthResponse }) => {
+      apiClient
+        .post<AuthResponse>('/api/auth/login', info)
+        .then(({ data }) => {
           if (data.loginSuccess) {
             setUser(data);
             if (!data.firstCategory) {

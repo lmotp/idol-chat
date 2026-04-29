@@ -1,7 +1,7 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { GrLocation } from 'react-icons/gr';
 import styled from '@emotion/styled';
+import { apiClient } from '@/app/apiClient';
 import { AuthButton } from '@/design-system/styles/FormStyle';
 import type { ClassInviteRecord } from '@/types/domain/class';
 import type { SrcProp } from '@/types/ui/styled-props';
@@ -91,7 +91,7 @@ const ClassInvite = ({ category, location, classId }: Props) => {
   const [checkList, setCheckList] = useState<string[]>([]);
 
   useEffect(() => {
-    axios.get(`/api/class/invite/member/${category}/${location}/${classId}`).then(({ data }) => {
+    apiClient.get<ClassInviteRecord[]>(`/api/class/invite/member/${category}/${location}/${classId}`).then(({ data }) => {
       setInviteMemberList(data);
     });
   }, [category, location, classId]);
@@ -100,7 +100,7 @@ const ClassInvite = ({ category, location, classId }: Props) => {
     if (checkList.length === 0) {
       return window.alert('모임에 초대 할 사람이 없습니다!');
     }
-    axios.post(`/api/class/invite/send`, { checkList, classId }).then(({ data }) => {
+    apiClient.post<void>(`/api/class/invite/send`, { checkList, classId }).then(({ data }) => {
       setCheckList([]);
     });
   };

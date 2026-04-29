@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import styled from '@emotion/styled';
-import axios from 'axios';
+import { apiClient } from '@/app/apiClient';
 import { hasSupabaseConfig, supabase } from '@/app/supabaseClient';
 import useSocket from '@/hooks/useSocket';
 import useAppStore from '@/stores/useAppStore';
@@ -64,7 +64,7 @@ const BackBar = ({ title, nextTitle, clickCategory, page, _id }: BackBarProps) =
         return;
       }
 
-      await axios.post('/api/auth/select-category', { clickCategory, _id });
+      await apiClient.post<void>('/api/auth/select-category', { clickCategory, _id });
       setUser({ ...currentUser, category, firstCategory: true });
       navigate(page);
     } catch (error) {

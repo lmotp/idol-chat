@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import styled from '@emotion/styled';
+import { apiClient } from '@/app/apiClient';
 import ClassList from '@/components/ClassList';
 import MyCategory from '@/components/Home/MyCategory';
 import SelectCategory from '@/components/SelectCategory';
@@ -72,7 +72,7 @@ const Home = () => {
   const classListRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    axios.post(`/api/class/list`, { selectCategory, pages }).then(({ data }) => {
+    apiClient.post<ClassSummary[]>(`/api/class/list`, { selectCategory, pages }).then(({ data }) => {
       setClassList((prevItems) => {
         return [...prevItems, ...data];
       });
@@ -82,7 +82,7 @@ const Home = () => {
 
   useEffect(() => {
     if (_id) {
-      axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
+      apiClient.get<ClassSummary[]>(`/api/class/list/my/${_id}`).then(({ data }) => {
         setMyClassList(data);
       });
     }

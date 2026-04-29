@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AiOutlinePlus } from 'react-icons/ai';
-import axios from 'axios';
+import { apiClient } from '@/app/apiClient';
 import useAppStore from '@/stores/useAppStore';
+import type { ClassSummary } from '@/types/domain/class';
 
 const CircleButtonContainer = styled.div`
   margin: 0px auto;
@@ -39,9 +40,9 @@ const CircleButton = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (pathname === `/pages/class/${id}`) {
-      axios.get(`/api/class/info/${id}`).then(({ data }) => {
-        setChatState(data[0].member.includes(_id));
+    if (pathname === `/pages/class/${id}` && id) {
+      apiClient.get<ClassSummary[]>(`/api/class/info/${id}`).then(({ data }) => {
+        setChatState(data[0].member.includes(_id ?? ''));
       });
     }
   }, [pathname, id, _id, classJoinState]);

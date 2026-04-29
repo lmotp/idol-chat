@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
-import { installApiBridge } from '@/app/apiBridge';
 import { AppProviders } from '@/app/AppProviders';
 import { useMockApi } from '@/config/mock';
 
@@ -22,8 +21,6 @@ const renderApp = () => {
 };
 
 const bootstrap = async () => {
-  installApiBridge();
-
   if (useMockApi) {
     const { worker } = await import('@/mocks/browser');
     await worker.start({

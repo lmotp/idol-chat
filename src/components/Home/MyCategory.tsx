@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import axios from 'axios';
+import { apiClient } from '@/app/apiClient';
 import useAppStore from '@/stores/useAppStore';
 import type { ClassSummary } from '@/types/domain/class';
 import type { SrcProp } from '@/types/ui/styled-props';
@@ -62,7 +62,7 @@ const MyCategory = ({ v }: MyCategoryProps) => {
 
   useEffect(() => {
     const date = localStorage.getItem(`chat-${v._id}`) || loginTime;
-    axios.get(`/api/chat/${v._id}/unreads/${date}`).then(({ data: { count } }) => {
+    apiClient.get<{ count: number }>(`/api/chat/${v._id}/unreads/${date}`).then(({ data: { count } }) => {
       setCount(count);
     });
   }, [v._id, loginTime]);

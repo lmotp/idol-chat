@@ -7,8 +7,8 @@ import { GrLocation } from 'react-icons/gr';
 import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai';
 import { ClassMemberCount, ClassMemberCountWrap } from '@/design-system/styles/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
-import axios from 'axios';
 import DatePickerWrap from '@/components/Pickers/DatePickerWrap';
+import { apiClient } from '@/app/apiClient';
 import type { Dispatch, SetStateAction } from 'react';
 import type { ClassMeetingRecord } from '@/types/domain/class';
 
@@ -102,7 +102,7 @@ const MeetingMakeModal = ({
       classId,
     };
 
-      axios.post('/api/meeting/make', meetingValueObj).then((data) => {
+      apiClient.post<{ success: boolean }>('/api/meeting/make', meetingValueObj).then((data) => {
         setLoading(true);
         if (meetingNameRef.current) meetingNameRef.current.value = '';
         if (meetingPlaceRef.current) meetingPlaceRef.current.value = '';

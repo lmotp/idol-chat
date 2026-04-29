@@ -4,7 +4,7 @@ import useSocket from '@/hooks/useSocket';
 import { FaPaperPlane } from 'react-icons/fa';
 import ChatList from '@/components/Chat/ChatList';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { apiClient } from '@/app/apiClient';
 import { format } from 'date-fns';
 import type { ChatMessage, ChatSection } from '@/types/domain/chat';
 
@@ -85,7 +85,7 @@ const ChatItem = ({ _id }: { _id?: string }) => {
   }, [chat, socket, _id]);
 
   useEffect(() => {
-    axios.get(`/api/chat/message/${id}/${pages}`).then(({ data }) => {
+    apiClient.get<ChatMessage[]>(`/api/chat/message/${id}/${pages}`).then(({ data }) => {
       if (data.length > 0) {
         setChat((prevItems) => {
           return [...data, ...prevItems].reverse();

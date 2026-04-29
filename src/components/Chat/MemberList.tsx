@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { theme } from '@/design-system/theme';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { apiClient } from '@/app/apiClient';
 import useAppStore from '@/stores/useAppStore';
 import type { ClassMemberRecord } from '@/types/domain/class';
 import type { SrcProp } from '@/types/ui/styled-props';
@@ -102,7 +102,7 @@ const MemberList = ({ _id }: { _id?: string }) => {
   const { id } = useParams();
 
   useEffect(() => {
-    axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
+    apiClient.get<ClassMemberRecord[]>(`/api/class/info/member/${id}`).then(({ data }) => {
       const memberData = data as ClassMemberRecord[];
       setMyProfile(memberData.filter((v: ClassMemberRecord) => v._id === _id));
       setMemberList(memberData);

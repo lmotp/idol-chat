@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { apiClient } from '@/app/apiClient';
 import ClassInfo from '@/components/Class/ClassInfo';
 import ClassMainImg from '@/components/Class/ClassMainImg';
 import ClassMeeting from '@/components/Class/ClassMeeting';
@@ -28,13 +28,13 @@ const Class = () => {
 
   useEffect(() => {
       if (id) {
-        axios.get(`/api/class/info/${id}`).then(({ data }) => {
+        apiClient.get<ClassSummary[]>(`/api/class/info/${id}`).then(({ data }) => {
           setClassInfo(data[0]);
           setMeetingList(data[0].meetingDay ?? []);
           setJoinState(data[0].member.includes(user?._id ?? ''));
         });
 
-        axios.get(`/api/class/info/member/${id}`).then(({ data }) => {
+        apiClient.get<ClassMemberRecord[]>(`/api/class/info/member/${id}`).then(({ data }) => {
           setMemberInfo(data);
           setAdminMember(data.filter((v: ClassMemberRecord) => v.classes === '모임장'));
           setLoading(true);

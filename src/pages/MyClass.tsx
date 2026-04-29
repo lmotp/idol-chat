@@ -1,5 +1,5 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { apiClient } from '@/app/apiClient';
 import { BsPlusCircleDotted } from 'react-icons/bs';
 import styled from '@emotion/styled';
 import ClassList from '@/components/ClassList';
@@ -45,7 +45,7 @@ const MyClass = () => {
 
   useEffect(() => {
     if (_id) {
-      axios.get(`/api/class/list/my/${_id}`).then(({ data }) => {
+      apiClient.get<ClassSummary[]>(`/api/class/list/my/${_id}`).then(({ data }) => {
         const meetingDayList = data.flatMap((v: ClassSummary) => v.meetingDay ?? []);
         setMyMeetingList(meetingDayList);
         setMyClassList(data);

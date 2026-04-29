@@ -1,5 +1,5 @@
-import axios from 'axios';
 import React, { useRef, useState } from 'react';
+import { apiClient } from '@/app/apiClient';
 import { BiCurrentLocation } from 'react-icons/bi';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import { GrLocation } from 'react-icons/gr';
@@ -150,8 +150,8 @@ const MakeClass = () => {
           return;
         }
       }
-      axios
-        .post('/api/class/make', {
+      apiClient
+        .post<string>('/api/class/make', {
           location: nowLocation,
           category: categoryValue,
           className: classNameRef.current?.value ?? '',

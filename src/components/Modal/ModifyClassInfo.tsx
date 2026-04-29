@@ -4,7 +4,7 @@ import { ButtonWrap, ModifyButton, ModifyInfoInput, ModifyInfoTextArea } from '@
 import styled from '@emotion/styled';
 import { ClassMemberCount, ClassMemberCountWrap } from '@/design-system/styles/FormStyle';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
-import axios from 'axios';
+import { apiClient } from '@/app/apiClient';
 import useAppStore from '@/stores/useAppStore';
 import type { ChangeEvent } from 'react';
 
@@ -46,8 +46,8 @@ const ModifyClassInfo = ({
 
   const ModifyFunc = () => {
     toggleClassJoin();
-    axios
-      .post('/api/class/info/admin/modify', { id, className: titleValue, classTarget: classTargetValue })
+    apiClient
+      .post<void>('/api/class/info/admin/modify', { id, className: titleValue, classTarget: classTargetValue })
       .then(() => {
         ModalClose();
         toggleClassJoin();

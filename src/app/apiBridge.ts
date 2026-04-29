@@ -1,4 +1,3 @@
-import axios, { type AxiosAdapter, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import { format } from 'date-fns';
 import { supabase as supabaseMaybe, hasSupabaseConfig } from '@/app/supabaseClient';
 import type { AuthResponse } from '@/types/domain/user';
@@ -11,6 +10,21 @@ import type {
 } from '@/types/domain/supabase';
 
 type JsonRecord = Record<string, unknown>;
+type ApiRequestConfig = {
+  method?: string;
+  url?: string;
+  baseURL?: string;
+  data?: unknown;
+};
+
+type ApiResponse<T> = {
+  data: T;
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  config: ApiRequestConfig;
+  request: unknown;
+};
 
 const supabase = supabaseMaybe as NonNullable<typeof supabaseMaybe>;
 
@@ -34,25 +48,24 @@ function toRecord(value: unknown): JsonRecord {
   return value as JsonRecord;
 }
 
-function errorResponse(message: string, status = 400, config?: AxiosRequestConfig) {
+function errorResponse(message: string, status = 400, config?: ApiRequestConfig) {
   const error = new Error(message) as Error & {
-    response?: AxiosResponse;
-    isAxiosError?: boolean;
+    response?: ApiResponse<unknown>;
   };
 
-  error.isAxiosError = true;
   error.response = {
     data: { message },
     status,
     statusText: message,
     headers: {},
     config: config ?? {},
-  } as AxiosResponse;
+    request: {},
+  };
 
   return error;
 }
 
-function axiosResponse<T>(data: T, config: AxiosRequestConfig, status = 200): AxiosResponse<T> {
+function apiResponse<T>(data: T, config: ApiRequestConfig, status = 200): ApiResponse<T> {
   return {
     data,
     status,
@@ -89,7 +102,7 @@ function parsePath(url?: string, baseURL?: string) {
   return rawUrl;
 }
 
-async function readBody(config: AxiosRequestConfig) {
+async function readBody(config: ApiRequestConfig) {
   if (isFormData(config.data)) {
     const payload: JsonRecord = {};
 
@@ -606,7 +619,7 @@ type ClassMeetingRecord = {
   attendMember: string[];
 };
 
-async function handleAuthSignup(config: AxiosRequestConfig, body: JsonRecord) {
+async function handleAuthSignup(config: ApiRequestConfig, body: JsonRecord) {
   const email = String(body.email ?? '');
   const password = String(body.password ?? '');
   const nickname = String(body.nickname ?? '');
@@ -647,7 +660,7 @@ async function handleAuthSignup(config: AxiosRequestConfig, body: JsonRecord) {
   return { success: true };
 }
 
-async function handleAuthLogin(config: AxiosRequestConfig, body: JsonRecord) {
+async function handleAuthLogin(config: ApiRequestConfig, body: JsonRecord) {
   const email = String(body.email ?? '');
   const password = String(body.password ?? '');
 
@@ -763,7 +776,7 @@ async function handleAuthSelectCategory(body: JsonRecord) {
   return '굿';
 }
 
-async function handleAuthModify(config: AxiosRequestConfig, body: JsonRecord) {
+async function handleAuthModify(config: ApiRequestConfig, body: JsonRecord) {
   const id = String(body.id ?? '');
   const gender = String(body.gender ?? 'nothing');
   const myself = String(body.myself ?? '');
@@ -912,7 +925,7 @@ async function handleClassSecession(body: JsonRecord) {
   return {};
 }
 
-async function handleClassModify(config: AxiosRequestConfig, body: JsonRecord) {
+async function handleClassModify(config: ApiRequestConfig, body: JsonRecord) {
   const classId = String(body.id ?? '');
   const className = body.className == null ? undefined : String(body.className);
   const classTarget = body.classTarget == null ? undefined : String(body.classTarget);
@@ -1095,7 +1108,7 @@ async function handleChatUnreads(classId: string, time: string) {
   return { count: await countUnreadMessages(classId, time) };
 }
 
-async function handleApiRequest(config: AxiosRequestConfig) {
+async function handleApiRequest(config: ApiRequestConfig) {
   if (!hasSupabaseConfig || !supabase) {
     return null;
   }
@@ -1215,29 +1228,22 @@ async function handleApiRequest(config: AxiosRequestConfig) {
   return null;
 }
 
-export function installApiBridge() {
-  if (!hasSupabaseConfig || !supabase) {
-    return;
+export async function requestApi<T>(config: ApiRequestConfig): Promise<ApiResponse<T>> {
+  const response = await handleApiRequest(config);
+
+  if (response === null) {
+    throw new Error(`Unhandled API request: ${config.method ?? 'get'} ${config.url ?? ''}`);
   }
 
-  if (state.__IDOL_CHAT_API_BRIDGE__) {
-    return;
-  }
+  return apiResponse(response as T, config);
+}
 
-  state.__IDOL_CHAT_API_BRIDGE__ = true;
+export const installApiBridge = () => undefined;
 
-  const originalAdapter = axios.defaults.adapter as AxiosAdapter;
+export function getApi<T>(url: string, config?: Omit<ApiRequestConfig, 'method' | 'url'>) {
+  return requestApi<T>({ ...config, method: 'get', url });
+}
 
-  axios.defaults.adapter = async (config) => {
-    try {
-      const response = await handleApiRequest(config);
-      if (response !== null) {
-        return axiosResponse(response, config);
-      }
-
-      return originalAdapter(config);
-    } catch (error) {
-      throw error;
-    }
-  };
+export function postApi<T>(url: string, data?: unknown, config?: Omit<ApiRequestConfig, 'method' | 'url' | 'data'>) {
+  return requestApi<T>({ ...config, method: 'post', url, data });
 }

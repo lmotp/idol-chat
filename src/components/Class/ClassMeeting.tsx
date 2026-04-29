@@ -9,8 +9,8 @@ import styled from '@emotion/styled';
 import { AuthButton } from '@/design-system/styles/FormStyle';
 import { Hr } from '@/design-system/styles/SelectBoxStyle';
 import { format, parseISO } from 'date-fns';
-import axios from 'axios';
 import { useEffect } from 'react';
+import { apiClient } from '@/app/apiClient';
 import { ModifyButton } from '@/design-system/styles/ModifyStyle';
 import useAppStore from '@/stores/useAppStore';
 import { overlay } from 'overlay-kit';
@@ -186,7 +186,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
   //정모 만들었을때 다시 받아오는 API
   useEffect(() => {
     if (loading) {
-      axios.get(`/api/meeting/list/${classId}`).then(({ data }) => {
+      apiClient.get<ClassMeetingRecord[]>(`/api/meeting/list/${classId}`).then(({ data }) => {
         setMeetingList(data);
         setLoading(false);
       });
@@ -194,7 +194,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
   }, [loading, classId, setMeetingList]);
 
   const meetingAttend = (_id: string) => {
-    axios.post('/api/meeting/attend', { userId, classId, _id }).then(() => {
+    apiClient.post<void>('/api/meeting/attend', { userId, classId, _id }).then(() => {
       setLoading(true);
     });
   };
@@ -202,7 +202,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
   // 모임에 가입했을때 리렌더링해주는 API
   const classJoinFunc = useCallback(() => {
     toggleClassJoin();
-    axios.post(`/api/class/info/join/member`, { userId, classId }).then(() => {
+    apiClient.post<void>(`/api/class/info/join/member`, { userId, classId }).then(() => {
       toggleClassJoin();
     });
   }, [userId, classId, toggleClassJoin]);
@@ -211,7 +211,7 @@ const ClassMeeting = ({ admin, userId, classId, joinState, setMeetingList, meeti
     const question = window.confirm('정말 삭제하시겠습니까?');
 
     if (question) {
-      axios.post('/api/meeting/delete', { classId, _id }).then(() => {
+      apiClient.post<void>('/api/meeting/delete', { classId, _id }).then(() => {
         setLoading(true);
       });
     }

@@ -73,10 +73,6 @@ src/
   layouts/            # 공통 레이아웃
   pages/              # 라우트 페이지
   modules/            # 기존 Redux / Saga 로직
-server/
-  routes/             # API 라우트
-  models/             # MongoDB 스키마
-  middleware/         # 인증 등 공통 미들웨어
 ```
 
 ## 참고 사항
@@ -95,4 +91,4 @@ server/
 ## 메모
 
 - 로그인, 회원가입, 모임, 채팅 기능이 중심입니다.
-- 서버 로직은 Supabase 기반으로 옮겨졌고, 기존 MongoDB 데이터는 무시해도 됩니다.
+- 서버 로직은 Supabase 기반으로 옮겨졌습니다.

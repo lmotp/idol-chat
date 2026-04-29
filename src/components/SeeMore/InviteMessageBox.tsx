@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { GrLocation } from 'react-icons/gr';
 import styled from '@emotion/styled';
 import { MdOutlineLocalPostOffice } from 'react-icons/md';
-import axios from 'axios';
+import { apiClient } from '@/app/apiClient';
 import { format, parseISO } from 'date-fns';
 import { Link } from 'react-router-dom';
 import useAppStore from '@/stores/useAppStore';
@@ -139,7 +139,7 @@ const InviteMessageBox = () => {
   const [classLists, setClassList] = useState<ClassInviteRecord[]>([]);
 
   useEffect(() => {
-    axios.get(`/api/class/${_id}/invite/message`).then(({ data }) => {
+    apiClient.get<{ inviteMessage: ClassInviteRecord[] }>(`/api/class/${_id}/invite/message`).then(({ data }) => {
       setClassList(data.inviteMessage);
     });
   }, [_id]);

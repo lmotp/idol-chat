@@ -1,7 +1,7 @@
-import axios from 'axios';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { apiClient } from '@/app/apiClient';
 import { AuthButton } from '@/design-system/styles/FormStyle';
 import Loading from '@/components/Loading';
 import ClassInvite from '@/components/Class/ClassInvite';
@@ -71,7 +71,7 @@ const ClassMember = ({ memberInfo, adminMember, joinState, userId, classId, clas
   const navigate = useNavigate();
 
   const memberSecession = () => {
-    axios.post('/api/class/info/secession/member', { userId, classId }).then(({ data }) => {
+    apiClient.post('/api/class/info/secession/member', { userId, classId }).then(({ data }) => {
       navigate('/pages/home');
     });
   };
