@@ -1,91 +1,91 @@
-# Custom Address Search Design
+# 커스텀 주소 검색 설계
 
-**Goal:** Remove the Kakao map/local API dependency from address entry flows while keeping the "current location" button and preserving the existing signup/class creation UX.
+**목표:** 카카오 맵/로컬 API 의존을 없애면서도 현재 위치 버튼은 유지하고, 기존 회원가입/모임 생성 주소 입력 흐름은 그대로 살린다.
 
-**Scope:** Replace the current Kakao-powered location modal with a custom address search modal, keep geolocation-based "current location" behavior, and remove all Kakao REST API configuration, secrets, and workflow usage from the app.
+**범위:** 카카오 기반 위치 모달을 우리 쪽 커스텀 주소 검색 모달로 교체하고, 현재 위치 기반 자동 입력 기능은 유지한다. 또한 카카오 REST API 관련 환경변수, 시크릿, 워크플로 주입은 제거한다.
 
-**Architecture:** Introduce a small address-search UI layer that is fully owned by this repo. The UI will render its own input, result list, and selection state. A separate location helper will keep the current-location button behavior isolated from the address search UI. The address data source should be swappable through a small provider abstraction so the UI does not depend on one vendor.
+**아키텍처:** 주소 검색 UI는 이 저장소가 직접 소유하는 얇은 레이어로 만든다. UI는 자체 입력창, 결과 목록, 선택 상태만 담당한다. 현재 위치 버튼은 별도 helper로 분리한다. 주소 데이터 소스는 나중에 바뀌어도 UI가 영향받지 않도록 작은 provider/helper 계층으로 감싼다.
 
-**Tech Stack:** React 18, TypeScript, Vite, Zustand, Emotion, GitHub Pages, browser Geolocation API.
+**기술 스택:** React 18, TypeScript, Vite, Zustand, Emotion, GitHub Pages, 브라우저 Geolocation API
 
 ---
 
-## Design
+## 설계
 
-### 1. Address search modal
+### 1. 주소 검색 모달
 
-Create a new address search modal component that is responsible for:
-- rendering a text input
-- submitting search terms
-- showing a list of matching addresses
-- letting the user select one address
-- clearing results on cancel/close
+새 주소 검색 모달 컴포넌트를 만든다. 이 컴포넌트의 역할은 다음과 같다.
+- 검색어 입력 렌더링
+- 검색어 제출
+- 일치하는 주소 목록 표시
+- 사용자의 주소 선택 처리
+- 취소/닫기 시 결과 초기화
 
-The modal should keep the app's existing visual language, but the layout and interaction should be custom, not a third-party popup UI.
+모달의 시각 스타일은 기존 앱과 맞추되, 동작과 레이아웃은 외부 팝업 UI에 의존하지 않고 완전 커스텀으로 만든다.
 
-### 2. Current location flow
+### 2. 현재 위치 흐름
 
-Keep the current location button on signup and class creation screens.
+회원가입과 모임 생성 화면의 현재 위치 버튼은 유지한다.
 
-When the user clicks the button:
-- request browser geolocation permission
-- read latitude/longitude
-- resolve those coordinates into a human-readable address
-- fill the address input with the resolved value
+버튼을 누르면 다음 순서로 동작한다.
+- 브라우저 위치 권한 요청
+- 위도/경도 읽기
+- 좌표를 사람이 읽을 수 있는 주소로 변환
+- 변환된 주소를 입력칸에 채움
 
-The geocoding implementation should live behind a small provider/helper so the UI can remain unchanged if the underlying address service changes later.
+좌표를 주소로 바꾸는 로직은 별도 provider/helper 뒤에 숨겨서, 나중에 주소 서비스가 바뀌어도 UI는 그대로 두도록 한다.
 
-### 3. Shared entry points
+### 3. 공통 진입점
 
-Update both flows to use the same address layer:
+다음 흐름이 같은 주소 레이어를 공유하도록 만든다.
 - `SignUp`
 - `MakeClass`
-- any shared location modal entry point
+- 공통 위치 모달 진입점
 
-The goal is for both screens to use the same modal and current-location helper, rather than carrying their own Kakao-specific logic.
-
----
-
-## Data Flow
-
-1. User opens the address modal from signup or class creation.
-2. The modal accepts a search term and asks the provider for matching addresses.
-3. The modal renders matching addresses in a scrollable list.
-4. The user selects an address and it is written back to the parent form.
-5. If the user clicks the current location button, geolocation resolves an address and writes it back to the same field.
+목표는 두 화면이 각자 카카오 전용 로직을 들고 있는 상태를 없애고, 같은 모달과 같은 현재 위치 helper를 쓰게 하는 것이다.
 
 ---
 
-## Error Handling
+## 데이터 흐름
 
-- If geolocation is denied, unavailable, or times out, keep the form usable and surface a user-facing message.
-- If address search fails, show an empty/error state and keep the modal open.
-- If selection fails or the provider returns no results, do not clear the current value unless the user explicitly cancels or selects another item.
+1. 사용자가 회원가입 또는 모임 생성 화면에서 주소 모달을 연다.
+2. 모달이 검색어를 받아 provider에게 주소 목록을 요청한다.
+3. 모달이 결과 목록을 스크롤 가능한 리스트로 보여준다.
+4. 사용자가 주소를 선택하면 부모 폼의 입력칸으로 전달된다.
+5. 현재 위치 버튼을 누르면 지오로케이션이 주소로 바뀌어 같은 입력칸에 전달된다.
 
 ---
 
-## Configuration Cleanup
+## 오류 처리
 
-Remove the old Kakao-related client config and deployment wiring once the new address flow is in place:
+- 위치 권한이 거부되거나, 위치를 읽을 수 없거나, 시간이 초과되면 폼은 계속 사용 가능하게 두고 사용자 메시지만 보여준다.
+- 주소 검색이 실패하면 모달을 유지한 채 빈 상태 또는 오류 상태를 보여준다.
+- 선택 실패나 결과 없음이 발생해도, 사용자가 직접 취소하거나 다른 항목을 고르기 전까지 현재 값은 지우지 않는다.
+
+---
+
+## 설정 정리
+
+새 주소 흐름이 들어가면 기존 카카오 관련 설정은 제거한다.
 - `VITE_KAKAO_REST_API`
-- any remaining Kakao env references
-- GitHub Pages secret injection for the Kakao key
+- 남아 있는 카카오 env 참조
+- 카카오 키를 GitHub Pages에 주입하던 워크플로 설정
 
-If the new address provider needs its own config later, keep it in a dedicated env key and document it separately.
+나중에 새 주소 provider가 별도 설정을 필요로 하면, 그때 전용 env 키를 따로 두고 문서화한다.
 
 ---
 
-## Testing
+## 테스트
 
-Verify the following manually in the browser:
-- signup page opens the custom address modal
-- class creation page opens the same modal
-- address search returns selectable results
-- selected address fills the parent input
-- current location button still fills the parent input
-- cancelled modal does not change the current value
+브라우저에서 아래를 수동 확인한다.
+- 회원가입 화면에서 커스텀 주소 모달이 열린다
+- 모임 생성 화면에서도 같은 모달이 열린다
+- 주소 검색 결과가 선택 가능하게 나온다
+- 선택한 주소가 부모 입력칸에 채워진다
+- 현재 위치 버튼이 부모 입력칸을 계속 채운다
+- 모달 취소 시 현재 값은 유지된다
 
-Also verify:
+추가로 아래도 확인한다.
 - `npx tsc --noEmit --pretty false`
 - `npm run build`
 
