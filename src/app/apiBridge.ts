@@ -1,6 +1,11 @@
 import { format } from 'date-fns';
+import {
+  buildAuthResponseFromProfile,
+  createProfilePayloadFromUser,
+  DEFAULT_PROFILE_IMG,
+  normalizeEmail,
+} from '@/app/authHelpers';
 import { supabase as supabaseMaybe, hasSupabaseConfig } from '@/app/supabaseClient';
-import type { AuthResponse } from '@/types/domain/user';
 import type {
   SupabaseChatMessageRow,
   SupabaseClassInviteRow,
@@ -28,7 +33,6 @@ type ApiResponse<T> = {
 
 const supabase = supabaseMaybe as NonNullable<typeof supabaseMaybe>;
 
-const DEFAULT_PROFILE_IMG = 'https://pbs.twimg.com/media/FHsyhNHaIAgu6Hy?format=jpg&name=240x240';
 const CLASS_BUCKET = 'class-images';
 const PROFILE_BUCKET = 'profile-images';
 
@@ -164,23 +168,6 @@ async function ensureProfileRow(
   if (error) {
     throw error;
   }
-}
-
-function toAuthResponse(profile: SupabaseProfileRow): AuthResponse {
-  return {
-    loginSuccess: true,
-    _id: profile.id,
-    email: profile.email,
-    nickname: profile.nickname,
-    profileimg: profile.profileimg ?? DEFAULT_PROFILE_IMG,
-    profileImg: profile.profileimg ?? DEFAULT_PROFILE_IMG,
-    myself: profile.myself ?? '',
-    gender: profile.gender ?? 'nothing',
-    location: profile.location ?? '',
-    category: profile.category ?? ['전체'],
-    firstCategory: Boolean(profile.first_category),
-    loginTime: profile.login_time ?? new Date().toISOString(),
-  };
 }
 
 async function uploadPublicImage(bucket: string, userId: string, file: File, prefix: string) {
@@ -620,7 +607,7 @@ type ClassMeetingRecord = {
 };
 
 async function handleAuthSignup(config: ApiRequestConfig, body: JsonRecord) {
-  const email = String(body.email ?? '');
+  const email = normalizeEmail(String(body.email ?? ''));
   const password = String(body.password ?? '');
   const nickname = String(body.nickname ?? '');
   const gender = String(body.gender ?? 'nothing');
@@ -644,7 +631,7 @@ async function handleAuthSignup(config: ApiRequestConfig, body: JsonRecord) {
     throw errorResponse(error.message, 400, config);
   }
 
-  if (data.user) {
+  if (data.user && data.session) {
     await ensureProfileRow(data.user.id, {
       email,
       nickname,
@@ -654,7 +641,7 @@ async function handleAuthSignup(config: ApiRequestConfig, body: JsonRecord) {
       profileimg: DEFAULT_PROFILE_IMG,
       first_category: false,
       category: ['전체'],
-    });
+    }).catch(() => undefined);
   }
 
   return { success: true };
@@ -684,32 +671,32 @@ async function handleAuthLogin(config: ApiRequestConfig, body: JsonRecord) {
   const currentProfile = await selectProfile(data.user.id);
 
   if (!currentProfile) {
-    await ensureProfileRow(data.user.id, {
-      email,
-      nickname: data.user.user_metadata?.nickname ?? email.split('@')[0] ?? '사용자',
-      gender: data.user.user_metadata?.gender ?? 'nothing',
-      location: data.user.user_metadata?.location ?? '',
-      myself: data.user.user_metadata?.myself ?? '안녕하세요? 잘 부탁드립니다',
-      profileimg: data.user.user_metadata?.profileimg ?? DEFAULT_PROFILE_IMG,
-      category: ['전체'],
-      first_category: false,
-      login_time: new Date().toISOString(),
-    });
-  }
+    const payload = createProfilePayloadFromUser(data.user, email);
+    const { error: upsertError } = await supabase.from('profiles').upsert(payload);
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('id,email,nickname,profileimg,myself,gender,location,first_category,category,login_time')
-    .eq('id', data.user.id)
-    .single();
+    if (!upsertError) {
+      const { data: profileAfterInsert } = await supabase
+        .from('profiles')
+        .select('id,email,nickname,profileimg,myself,gender,location,first_category,category,login_time')
+        .eq('id', data.user.id)
+        .single();
 
-  if (!profile) {
-    throw errorResponse('프로필을 찾을 수 없습니다.', 500, config);
+      if (profileAfterInsert) {
+        await supabase.from('profiles').update({ login_time: new Date().toISOString() }).eq('id', data.user.id);
+        return buildAuthResponseFromProfile(profileAfterInsert);
+      }
+    }
   }
 
   await supabase.from('profiles').update({ login_time: new Date().toISOString() }).eq('id', data.user.id);
 
-  return toAuthResponse(profile);
+  const fallbackProfile = createProfilePayloadFromUser(data.user, email, {
+    first_category: false,
+    category: ['전체'],
+    login_time: new Date().toISOString(),
+  });
+
+  return buildAuthResponseFromProfile(fallbackProfile as SupabaseProfileRow);
 }
 
 async function handleAuthCheck() {
@@ -722,27 +709,26 @@ async function handleAuthCheck() {
   const profile = await selectProfile(data.user.id);
 
   if (!profile) {
-    await ensureProfileRow(data.user.id, {
-      email: data.user.email ?? '',
-      nickname: data.user.user_metadata?.nickname ?? data.user.email?.split('@')[0] ?? '사용자',
-      gender: data.user.user_metadata?.gender ?? 'nothing',
-      location: data.user.user_metadata?.location ?? '',
-      myself: data.user.user_metadata?.myself ?? '안녕하세요? 잘 부탁드립니다',
-      profileimg: data.user.user_metadata?.profileimg ?? DEFAULT_PROFILE_IMG,
+    const payload = createProfilePayloadFromUser(data.user, data.user.email ?? '', {
       category: ['전체'],
       first_category: false,
-      login_time: new Date().toISOString(),
     });
 
-    const recreated = await selectProfile(data.user.id);
-    if (!recreated) {
-      return { loginSuccess: false };
-    }
+    const { error: upsertError } = await supabase.from('profiles').upsert(payload);
 
-    return toAuthResponse(recreated);
+    if (!upsertError) {
+      const recreated = await selectProfile(data.user.id);
+      if (recreated) {
+        return buildAuthResponseFromProfile(recreated);
+      }
+    }
   }
 
-  return toAuthResponse(profile);
+  if (!profile) {
+    return { loginSuccess: false };
+  }
+
+  return buildAuthResponseFromProfile(profile);
 }
 
 async function handleAuthLogout() {

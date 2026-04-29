@@ -3,6 +3,13 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import BackBar from "@/components/BackBar";
 import { apiClient } from "@/app/apiClient";
+import {
+  buildAuthResponseFromProfile,
+  createProfilePayloadFromUser,
+  getAuthErrorMessage,
+  normalizeEmail,
+  DEFAULT_PROFILE_IMG,
+} from "@/app/authHelpers";
 import LocationModal from "@/components/Modal/LocationModal";
 import Modal from "@/components/Modal/Modal";
 import {
@@ -19,7 +26,11 @@ import {
 import { useCurrentLocation } from "@/hooks/useCurrentLocation";
 import { BiCurrentLocation } from "react-icons/bi";
 import { overlay } from "overlay-kit";
-import type { ChangeEvent, MouseEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import { supabase, hasSupabaseConfig } from "@/app/supabaseClient";
+import useAppStore from "@/stores/useAppStore";
+import type { AuthResponse } from "@/types/domain/user";
+import type { SupabaseProfileRow } from "@/types/domain/supabase";
 
 const SignContainer = styled.section`
   width: 100%;
@@ -58,10 +69,11 @@ export const SignUp = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [errorCode, setErrorCode] = useState<number | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [radioSelect, setRadioSelect] = useState("nothing");
   const [nowLocation, setNowLocation] = useState("");
   const { resolveCurrentLocation } = useCurrentLocation();
-  const normalizeEmail = (value: string) => value.trim().replace(/^["']+|["']+$/g, '');
+  const setUser = useAppStore((state) => state.setUser);
 
   const handleCurrentLocation = async () => {
     const address = await resolveCurrentLocation();
@@ -90,11 +102,16 @@ export const SignUp = () => {
   };
 
   // 회원가입
-  const signUp = (e: MouseEvent<HTMLButtonElement>) => {
+  const signUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const pswRgx = /[a-zA-Z0-9!@#$%^&*]{8,16}/gm;
-    const emailRgx = /^[0-9a-z]([-_.]?[0-9a-z])*@[a-z]*\.[a-z.]{2,3}$/gm;
-    const nicknameRgx = /\s{1,8}/;
+
+    if (isSubmitting) {
+      return;
+    }
+
+    const pswRgx = /^(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,16}$/;
+    const emailRgx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const nicknameRgx = /^\S{1,8}$/;
 
     const passwordConfirm = passwordConfirmRef.current?.value ?? "";
 
@@ -112,7 +129,7 @@ export const SignUp = () => {
       return errorFunc(1, "비밀번호를 입력해주세요");
     } else if (info.password !== passwordConfirm) {
       return errorFunc(2, "비밀번호가 일치하지 않습니다.");
-    } else if (!info.nickname || nicknameRgx.test(info.nickname)) {
+    } else if (!info.nickname || !nicknameRgx.test(info.nickname)) {
       return errorFunc(3, "닉네임에 공백 없이 8자이하로 입력해주세요");
     } else if (!info.location) {
       return errorFunc(5, "주소창을 선택해서 입력해주세요");
@@ -120,24 +137,86 @@ export const SignUp = () => {
       return errorFunc(4, "비밀번호는 8자리 이상으로 16자리 이하, !@#$%^&*를 포함해서 입력해주세요");
     } else {
       setErrorCode(999);
+      setIsSubmitting(true);
 
-      apiClient
-        .post<{ success: boolean; message?: string }>("/api/auth/signup", info)
-        .then(({ data }) => {
-          if (data.success) {
-            navigate("/");
-          } else {
-            window.alert(data.message);
+      try {
+        if (hasSupabaseConfig && supabase) {
+          const { data, error } = await supabase.auth.signUp({
+            email: info.email,
+            password: info.password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/login`,
+              data: {
+                nickname: info.nickname,
+                gender: info.gender,
+                location: info.location,
+                myself: "안녕하세요? 잘 부탁드립니다",
+                profileimg: DEFAULT_PROFILE_IMG,
+              },
+            },
+          });
+
+          if (error || !data.user) {
+            throw error ?? new Error("회원가입에 실패했습니다.");
           }
-        })
-        .catch((err) => console.log(err));
+
+          if (data.session) {
+            const payload = createProfilePayloadFromUser(data.user, info.email, {
+              nickname: info.nickname,
+              gender: info.gender,
+              location: info.location,
+              myself: "안녕하세요? 잘 부탁드립니다",
+              profileimg: DEFAULT_PROFILE_IMG,
+            });
+
+            const { error: upsertError } = await supabase.from("profiles").upsert(payload);
+            if (upsertError) {
+              const response = buildAuthResponseFromProfile(payload as SupabaseProfileRow);
+              setUser(response);
+              navigate(response.firstCategory ? "/pages/home" : "/category");
+              return;
+            }
+
+            const { data: profile, error: profileError } = await supabase
+              .from("profiles")
+              .select("id,email,nickname,profileimg,myself,gender,location,first_category,category,login_time")
+              .eq("id", data.user.id)
+              .single();
+
+            if (profileError || !profile) {
+              throw profileError ?? new Error("프로필을 찾을 수 없습니다.");
+            }
+
+            const response: AuthResponse = buildAuthResponseFromProfile(profile);
+            setUser(response);
+            navigate(response.firstCategory ? "/pages/home" : "/category");
+            return;
+          }
+
+          window.alert("회원가입이 완료되었습니다. 이메일 인증을 확인한 뒤 로그인해주세요.");
+          navigate("/login");
+          return;
+        }
+
+        const { data } = await apiClient.post<{ success: boolean; message?: string }>("/api/auth/signup", info);
+
+        if (data.success) {
+          navigate("/");
+        } else {
+          window.alert(data.message);
+        }
+      } catch (err) {
+        window.alert(getAuthErrorMessage(err, "회원가입에 실패했습니다."));
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
   return (
     <SignContainer>
       <BackBar title="회원가입" />
-      <Form pd="20px 20px 0 ">
+      <Form pd="20px 20px 0 " onSubmit={signUp}>
         <InputWrap>
           <Label htmlFor="email">이메일</Label>
           <Point>*</Point>
@@ -235,12 +314,12 @@ export const SignUp = () => {
               readOnly
             ></Input>
             <LocationButton
-              onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                e.preventDefault();
-                void handleCurrentLocation().catch((err) => {
-                  console.log(err);
-                });
-              }}
+            onClick={(e) => {
+              e.preventDefault();
+              void handleCurrentLocation().catch((err) => {
+                console.log(err);
+              });
+            }}
             >
               <BiCurrentLocation size="24px" />
             </LocationButton>
@@ -249,8 +328,8 @@ export const SignUp = () => {
         </InputWrap>
 
         <AuthButtonWrap>
-          <AuthButton onClick={signUp} color="black" margin="0">
-            가입하기
+          <AuthButton color="black" margin="0" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "가입 중..." : "가입하기"}
           </AuthButton>
         </AuthButtonWrap>
       </Form>

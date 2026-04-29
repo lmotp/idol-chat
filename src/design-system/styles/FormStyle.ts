@@ -92,6 +92,13 @@ export const AuthButton = styled.button<{ color?: string; margin?: string }>`
     transform: translateY(0);
     box-shadow: ${theme.shadow.soft};
   }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: ${theme.shadow.soft};
+  }
 `;
 
 export const AuthButtonWrap = styled.div<MarginTopProp>`

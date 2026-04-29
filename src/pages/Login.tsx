@@ -3,10 +3,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import BackBar from '@/components/BackBar';
 import { apiClient } from '@/app/apiClient';
+import {
+  buildAuthResponseFromProfile,
+  createProfilePayloadFromUser,
+  getAuthErrorMessage,
+  normalizeEmail,
+} from '@/app/authHelpers';
 import { supabase, hasSupabaseConfig } from '@/app/supabaseClient';
 import { AuthButton, AuthButtonWrap, Form, Input, InputWrap, Label } from '@/design-system/styles/FormStyle';
 import useAppStore from '@/stores/useAppStore';
 import type { AuthResponse } from '@/types/domain/user';
+import type { SupabaseProfileRow } from '@/types/domain/supabase';
 
 const GotoSingUp = styled.div`
   font-size: 12px;
@@ -40,12 +47,15 @@ const Login = () => {
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const setUser = useAppStore((state) => state.setUser);
 
-  const normalizeEmail = (value: string) => value.trim().replace(/^["']+|["']+$/g, '');
-
-  const loginFunc = (e: React.FormEvent<HTMLFormElement>) => {
+  const loginFunc = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
 
     const info = {
       email: normalizeEmail(emailRef.current?.value ?? ''),
@@ -61,23 +71,15 @@ const Login = () => {
       return setErrorMessage('비밀번호를 입력해주세요');
     }
 
-    const signIn = async () => {
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
       if (hasSupabaseConfig && supabase) {
         const { data, error } = await supabase.auth.signInWithPassword(info);
 
         if (error || !data.user) {
           throw error ?? new Error('로그인에 실패했습니다.');
-        }
-
-        if (data.session) {
-          const { error: sessionError } = await supabase.auth.setSession({
-            access_token: data.session.access_token,
-            refresh_token: data.session.refresh_token,
-          });
-
-          if (sessionError) {
-            throw sessionError;
-          }
         }
 
         let profile = await supabase
@@ -91,22 +93,17 @@ const Login = () => {
         }
 
         if (!profile.data) {
-          const payload = {
-            id: data.user.id,
-            email,
-            nickname: data.user.user_metadata?.nickname ?? email.split('@')[0] ?? '사용자',
-            profileimg: data.user.user_metadata?.profileimg ?? DEFAULT_PROFILE_IMG,
-            myself: data.user.user_metadata?.myself ?? '안녕하세요? 잘 부탁드립니다',
-            gender: data.user.user_metadata?.gender ?? 'nothing',
-            location: data.user.user_metadata?.location ?? '',
-            first_category: false,
-            category: ['전체'],
-            login_time: new Date().toISOString(),
-          };
-
+          const payload = createProfilePayloadFromUser(data.user, email);
           const { error: upsertError } = await supabase.from('profiles').upsert(payload);
           if (upsertError) {
-            throw upsertError;
+            const response = buildAuthResponseFromProfile(payload as SupabaseProfileRow);
+            setUser(response);
+            if (!response.firstCategory) {
+              navigate('/category');
+            } else {
+              navigate('/pages/home');
+            }
+            return;
           }
 
           profile = await supabase
@@ -120,20 +117,7 @@ const Login = () => {
           }
         }
 
-        const response: AuthResponse = {
-          loginSuccess: true,
-          _id: profile.data.id,
-          email: profile.data.email,
-          nickname: profile.data.nickname,
-          profileimg: profile.data.profileimg ?? DEFAULT_PROFILE_IMG,
-          profileImg: profile.data.profileimg ?? DEFAULT_PROFILE_IMG,
-          myself: profile.data.myself ?? '',
-          gender: profile.data.gender ?? 'nothing',
-          location: profile.data.location ?? '',
-          category: profile.data.category ?? ['전체'],
-          firstCategory: Boolean(profile.data.first_category),
-          loginTime: profile.data.login_time ?? new Date().toISOString(),
-        };
+        const response: AuthResponse = buildAuthResponseFromProfile(profile.data);
 
         setUser(response);
         if (!response.firstCategory) {
@@ -141,30 +125,23 @@ const Login = () => {
         } else {
           navigate('/pages/home');
         }
-        return;
-      }
+      } else {
+        const { data } = await apiClient.post<AuthResponse>('/api/auth/login', info);
 
-      apiClient
-        .post<AuthResponse>('/api/auth/login', info)
-        .then(({ data }) => {
-          if (data.loginSuccess) {
-            setUser(data);
-            if (!data.firstCategory) {
-              navigate('/category');
-            } else {
-              navigate('/pages/home');
-            }
+        if (data.loginSuccess) {
+          setUser(data);
+          if (!data.firstCategory) {
+            navigate('/category');
+          } else {
+            navigate('/pages/home');
           }
-        })
-        .catch(({ response }: { response?: { data?: { message?: string } } }) => {
-          setErrorMessage(response?.data?.message ?? '로그인에 실패했습니다.');
-        });
-    };
-
-    void signIn().catch((error: unknown) => {
-      const message = error instanceof Error ? error.message : '로그인에 실패했습니다.';
-      setErrorMessage(message);
-    });
+        }
+      }
+    } catch (error: unknown) {
+      setErrorMessage(getAuthErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -190,7 +167,9 @@ const Login = () => {
         <ErrorContent error={errorMessage}>{`* ${errorMessage}`}</ErrorContent>
 
         <AuthButtonWrap mt={'0'}>
-          <AuthButton color="black">로그인하기</AuthButton>
+          <AuthButton color="black" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? '로그인 중...' : '로그인하기'}
+          </AuthButton>
 
           <GotoSingUp>
             아직 회원이 아니신가요?
